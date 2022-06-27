@@ -6,7 +6,7 @@ functions are a black box, i.e., the source code is not available. It searches t
 using several methods to guide BO into extreme cases. When an input is found to trigger an 
 exception in the target CUDA function, the input is shown to the user.
 
-For more details, see the SC22 paper:
+For more details (and to cite this work), please see the SC22 paper:
 ```
 Ignacio Laguna, Ganesh Gopalakrishnan, “Finding Inputs that Trigger Floating-Point 
 Exceptions in GPUs via Bayesian Optimization”. The International Conference for 
@@ -43,13 +43,6 @@ optional arguments:
   -c, --clean           Remove temporal directories (begin with _tmp_)
 ```
 
-To cite this work, please use:
-```
-Ignacio Laguna and Ganesh Gopalakrishnan. "Finding Inputs that Trigger 
-Floating-Point Exceptions in GPUs via Bayesian Optimization". The International 
-Conference for High Performance Computing, Networking, Storage and Analysis (SC22), 
-Dallas, Texas, USA, Nov 13-18, 2022.
-```
 
 ### License
 XScope is distributed under the terms of the MPI license. 
