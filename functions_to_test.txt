@@ -1,0 +1,72 @@
+FUNCTION:acos (double)
+#FUNCTION:acosh (double)
+#FUNCTION:asin (double)
+##FUNCTION:asinh (double)
+#FUNCTION:atan (double)
+#FUNCTION:atan2 (double, double)
+#FUNCTION:atanh (double)
+#FUNCTION:cbrt (double)
+#FUNCTION:ceil (double)
+#FUNCTION:copysign (double, double)
+#FUNCTION:cos (double)
+FUNCTION:cosh (double)
+#FUNCTION:cospi (double)
+#FUNCTION:cyl_bessel_i1 (double)
+#FUNCTION:erf (double)
+#FUNCTION:erfc (double)
+#FUNCTION:erfcinv (double)
+#FUNCTION:erfcx (double)
+#FUNCTION:erfinv (double)
+#FUNCTION:exp (double)
+#FUNCTION:exp10 (double)
+#FUNCTION:exp2 (double)
+#FUNCTION:expm1 (double)
+#FUNCTION:fabs (double)
+#FUNCTION:fdim (double, double)
+#FUNCTION:floor (double)
+#FUNCTION:fmax (double, double)
+#FUNCTION:fmin (double, double)
+#FUNCTION:fmod (double, double)
+#FUNCTION:hypot (double, double)
+#FUNCTION:j0 (double)
+#FUNCTION:j1 (double)
+#FUNCTION:lgamma (double)
+#FUNCTION:log (double)
+#FUNCTION:log10 (double)
+#FUNCTION:log1p (double)
+#FUNCTION:log2 (double)
+#FUNCTION:logb (double)
+#FUNCTION:max (double, double)
+#FUNCTION:min (double, double)
+#FUNCTION:nearbyint (double)
+#FUNCTION:nextafter (double, double)
+#FUNCTION:normcdf (double)
+#FUNCTION:normcdfinv (double)
+#FUNCTION:pow (double, double)
+#FUNCTION:rcbrt (double)
+#FUNCTION:remainder (double, double)
+#FUNCTION:rhypot (double, double)
+#FUNCTION:rint (double)
+#FUNCTION:round (double)
+#FUNCTION:rsqrt (double)
+#FUNCTION:sin (double)
+#FUNCTION:sinpi (double)
+#FUNCTION:tan (double)
+#FUNCTION:tanh (double)
+#FUNCTION:tgamma (double)
+#FUNCTION:trunc (double)
+#FUNCTION:y0 (double)
+#FUNCTION:y1 (double)
+
+#SHARED_LIB:./app_kernels/LULESH/cuda_code_lulesh.cu.so, 3
+#SHARED_LIB:./app_kernels/SW4Lite/cuda_code_sw4lite.cu.so, 2
+#SHARED_LIB:./app_kernels/NAS/common/cuda_code_randlc.cu.so, 2
+#SHARED_LIB:./app_kernels/NAS/SP/cuda_code_sp.cu.so, 2
+#SHARED_LIB:./app_kernels/lammps/cuda_code_lammps.cu.so, 2
+#SHARED_LIB:./app_kernels/CFD_Rodinia/cuda_code_cfd.cu.so, 3
+#SHARED_LIB:./app_kernels/backprop_Rodinia/cuda_code_backprop.cu.so, 1
+#SHARED_LIB:./app_kernels/leukocyte_Rodinia/cuda_code_leukocyte.cu.so, 1
+#SHARED_LIB:./app_kernels/exaMiniMD/cuda_code_examinimd.cu.so, 3
+#SHARED_LIB:./app_kernels/HPCCG/cuda_code_hpccg.cu.so, 2
+#SHARED_LIB:./app_kernels/miniFE/cuda_code_minife.cu.so, 2
+
