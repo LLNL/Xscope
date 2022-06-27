@@ -8,7 +8,10 @@ exception in the target CUDA function, the input is shown to the user.
 
 For more details, see the SC22 paper:
 ```
-Ignacio Laguna, Ganesh Gopalakrishnan, “Finding Inputs that Trigger Floating-Point Exceptions in GPUs via Bayesian Optimization”. The International Conference for High Performance Computing, Networking, Storage and Analysis (SC22), Dallas, TX, USA, Nov 13-18, 2022.
+Ignacio Laguna, Ganesh Gopalakrishnan, “Finding Inputs that Trigger Floating-Point 
+Exceptions in GPUs via Bayesian Optimization”. The International Conference for 
+High Performance Computing, Networking, Storage and Analysis (SC22), Dallas, TX, 
+USA, Nov 13-18, 2022.
 ```
 
 To reproduce the SC22 paper results, see `reproducing_SC22_results.md`.  
@@ -17,7 +20,8 @@ To reproduce the SC22 paper results, see `reproducing_SC22_results.md`.
 The main driver is `xscope`, which takes several options:
 ```
 $ ./xscope.py -h
-usage: xscope.py [-h] [-a AF] [-n NUMBER_SAMPLING] [-r RANGE_SPLITTING] [-s SAMPLES] [--random_sampling] [--random_sampling_unb] [-c] FUNCTION_TO_TEST
+usage: xscope.py [-h] [-a AF] [-n NUMBER_SAMPLING] [-r RANGE_SPLITTING] 
+[-s SAMPLES] [--random_sampling] [--random_sampling_unb] [-c] FUNCTION_TO_TEST
 
 Xscope tool
 
@@ -41,11 +45,15 @@ optional arguments:
 
 To cite this work, please use:
 ```
-Ignacio Laguna and Ganesh Gopalakrishnan. "Finding Inputs that Trigger Floating-Point Exceptions in GPUs via Bayesian Optimization". The International Conference for High Performance Computing, Networking, Storage and Analysis (SC22), Dallas, Texas, USA, Nov 13-18, 2022.
+Ignacio Laguna and Ganesh Gopalakrishnan. "Finding Inputs that Trigger 
+Floating-Point Exceptions in GPUs via Bayesian Optimization". The International 
+Conference for High Performance Computing, Networking, Storage and Analysis (SC22), 
+Dallas, Texas, USA, Nov 13-18, 2022.
 ```
 
 ### License
-XScope is distributed under the terms of the MPI license. All new contributions must be made under the MIT license.
+XScope is distributed under the terms of the MPI license. 
+All new contributions must be made under the MIT license.
 
 See LICENSE and NOTICE for details.
 
