@@ -9,8 +9,8 @@ import ctypes
 from bayes_opt import BayesianOptimization
 from bayes_opt import UtilityFunction
 
-verbose = False
-#verbose = True
+#verbose = False
+verbose = True
 CUDA_LIB = ''
 #MU = 1e-307
 MU = 1.0
@@ -681,26 +681,57 @@ def run_optimizer(bounds, func, exp_name):
   if are_we_done(func, 0.0, exp_name):
     return
   optimizer = BayesianOptimization(f=func, pbounds=bounds, verbose=2, random_state=1)
-  try:
-    if verbose: print('BO opt...')
-    utility = UtilityFunction(kind="ei", kappa=2.5, xi=0.1e-1)
-    #utility = UtilityFunction(kind="ucb", kappa=10, xi=0.1e-1)
-    #utility = UtilityFunction(kind="poi", kappa=10, xi=1e-1)
-    for _ in range(bo_iterations):
-      trials_so_far += 1
+  if verbose: print('BO opt...')
+  utility = UtilityFunction(kind="ei", kappa=2.5, xi=0.1e-1)
+  #utility = UtilityFunction(kind="ucb", kappa=10, xi=0.1e-1)
+  #utility = UtilityFunction(kind="poi", kappa=10, xi=1e-1)
+  for i in range(bo_iterations):
+    repeatedPointsProbed = 0
+    print("iteration: ", i)
+    trials_so_far += 1
+    next_point = 0.0
+    try:
       next_point = optimizer.suggest(utility)
       target = func(**next_point)
       optimizer.register(params=next_point, target=target)
-
+    except Exception as e:
+      if isinstance(e,ValueError):
+        val = optimizer.max['target']
+        save_results(val, exp_name)
+        targets_array = optimizer.space.target
+        if numpy.isposinf(targets_array).any():
+          max_index = targets_array.argmax()
+          optimizer._space._target[max_index] = numpy.finfo(numpy.float64).max
+        elif numpy.isneginf(targets_array).any():
+          min_index = targets_array.argmin()
+          optimizer._space._target[min_index] = numpy.finfo(numpy.float64).min
+    
+       # next_point = optimizer.suggest(utility)
+      else:
+        if verbose: print("Oops!", e.__class__, "occurred.")
+        if verbose: print(e)
+        if verbose: logging.exception("Something awful happened!")
+    finally:
+      continue
+     # target = func(**next_point)
+     # try:
+        #optimizer.register(params=next_point, target=target)
+     # except KeyError:
+      #  try:
+       #   repeatedPointsProbed += 1
+        #  print(
+         #     f'Bayesian algorithm is attempting to probe an existing point: {next_point}.Continuing for now....')
+          #if repeatedPointsProbed > 10:
+           # print('The same point has been requested more than 10 times; quitting')
+            #break
+        #except AttributeError:
+         # repeatedPointsProbed = 1
+           
       update_runs_table(exp_name)
 
       # Check if we are done
-      if are_we_done(func, target, exp_name):
-        return
-  except Exception as e:
-    if verbose: print("Oops!", e.__class__, "occurred.")
-    if verbose: print(e)
-    if verbose: logging.exception("Something awful happened!")
+      #if are_we_done(func, target, exp_name):
+       # return
   if verbose: print(optimizer.max)
   val = optimizer.max['target']
   save_results(val, exp_name)
@@ -737,7 +768,7 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
         initialize()
         for b in bounds_fp_many_1():
           for f in funcs_fp_1:
-            exp_name = [shared_lib, input_type, 'b_many']
+            exp_name = [str(b),shared_lib, input_type, 'b_many']
             run_optimizer(b, f, '|'.join(exp_name))
           
     elif num_inputs == 2:
@@ -757,7 +788,7 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
         initialize()
         for b in bounds_fp_many_2():
           for f in funcs_fp_2:
-            exp_name = [shared_lib, input_type, 'b_many']
+            exp_name = [str(b),shared_lib, input_type, 'b_many']
             run_optimizer(b, f,  '|'.join(exp_name))
 
     elif num_inputs == 3:
@@ -777,7 +808,7 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
         initialize()
         for b in bounds_fp_many_3():
           for f in funcs_fp_3:
-            exp_name = [shared_lib, input_type, 'b_many']
+            exp_name = [str(b),shared_lib, input_type, 'b_many']
             run_optimizer(b, f,  '|'.join(exp_name))
 
   elif input_type == 'exp':
@@ -798,7 +829,7 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
         initialize()
         for b in bounds_exp_many_1():
           for f in funcs_exp_1:
-            exp_name = [shared_lib, input_type, 'b_many']
+            exp_name = [b, shared_lib, input_type, 'b_many']
             run_optimizer(b, f, '|'.join(exp_name))
         
     elif num_inputs == 2:
@@ -818,7 +849,7 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
         initialize()
         for b in bounds_exp_many_2():
           for f in funcs_exp_2:
-            exp_name = [shared_lib, input_type, 'b_many']
+            exp_name = [b, shared_lib, input_type, 'b_many']
             run_optimizer(b, f, '|'.join(exp_name))
 
     elif num_inputs == 3:
@@ -838,7 +869,7 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
         initialize()
         for b in bounds_exp_many_3():
           for f in funcs_exp_3:
-            exp_name = [shared_lib, input_type, 'b_many']
+            exp_name = [b, shared_lib, input_type, 'b_many']
             run_optimizer(b, f, '|'.join(exp_name))
   else:
     print('Invalid input type!')
@@ -848,16 +879,20 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
 #lassen60_26904/cuda_code_acos.cu.so|fp|b_many :    [0, 0, 0, 0, 32]
 #lassen60_26904/cuda_code_hypot.cu.so|fp|b_many :     [0, 0, 5, 0, 0]
 def print_results(shared_lib: str, number_sampling, range_splitting):
-  key = shared_lib+'|'+number_sampling+'|b_'+range_splitting
+  function_key = shared_lib+'|'+number_sampling+'|b_'+range_splitting
   fun_name = os.path.basename(shared_lib)
   print('-------------- Results --------------')
   print(fun_name)
-  if key in results.keys():
-    print('\tINF+:', results[key][0])
-    print('\tINF-:', results[key][1])
-    print('\tSUB-:', results[key][2])
-    print('\tSUB-:', results[key][3])
-    print('\tNaN :', results[key][4])
+  if len(results.keys()) > 0:
+    for key in results.keys():
+      if function_key in key:
+        print('Range:', key.split('|')[0])
+        print('\tINF+:', results[key][0])
+        print('\tINF-:', results[key][1])
+        print('\tSUB-:', results[key][2])
+        print('\tSUB-:', results[key][3])
+        print('\tNaN :', results[key][4])
+        print('\tTotal Exception:', sum(results[key]))
   else:
     print('\tINF+:', 0)
     print('\tINF-:', 0)
@@ -865,7 +900,7 @@ def print_results(shared_lib: str, number_sampling, range_splitting):
     print('\tSUB-:', 0)
     print('\tNaN :', 0) 
 
-  print('\tRuns:', runs_results[key])
+  #print('\tRuns:', runs_results[key])
   #print('\n**** Runs ****')
   #for k in runs_results.keys():
   #  print(k, runs_results[k])
