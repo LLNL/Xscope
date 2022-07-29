@@ -678,6 +678,7 @@ def update_runs_table(exp_name: str):
 
 def run_optimizer(bounds, func, exp_name):
   global trials_to_trigger, trials_so_far
+  num_fail = 0
   trials_so_far = 0
   trials_to_trigger = -1
   if are_we_done(func, 0.0, exp_name):
@@ -692,8 +693,6 @@ def run_optimizer(bounds, func, exp_name):
     trials_so_far += 1
     next_point = 0.0
     try:
-      print(optimizer.space.params)
-      print(optimizer.space.target)
       next_point = optimizer.suggest(utility)
       target = func(**next_point)
       target = validate_output(next_point, target, exp_name)
@@ -702,6 +701,11 @@ def run_optimizer(bounds, func, exp_name):
         target = func(**next_point)
       optimizer.register(params=next_point, target=target)
     except Exception as e:
+      if isinstance(e, ValueError):
+        print(optimizer._space._target)
+        print(optimizer._space._params)
+        num_fail += 1
+        optimizer._space._target[-1] /= (10**num_fail) 
       if verbose: print("Oops!", e.__class__, "occurred.")
       if verbose: print(e)
       #if verbose: logging.exception("Something awful happened!")
@@ -1026,11 +1030,11 @@ def validate_output(input, output, exp_name):
   if numpy.isposinf(output):
     save_results(output, exp_name)
     logger.info("The input {} resulted in the the exception {}".format(input, output))
-    output = 8.95e+307
+    output = 8.95e+305
   elif numpy.isneginf(output):
     save_results(output, exp_name)
     logger.info("The input {} resulted in the the exception {}".format(input, output))
-    output = -8.95e+307
+    output = -8.95e+305
   elif numpy.isnan(output):
     save_results(output, exp_name)
     logger.info("The input {} resulted in the the exception {}".format(input, output))
