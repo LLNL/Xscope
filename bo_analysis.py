@@ -10,7 +10,7 @@ from bayes_opt import BayesianOptimization
 from bayes_opt import UtilityFunction
 
 #verbose = False
-verbose = True
+verbose = False
 CUDA_LIB = ''
 #MU = 1e-307
 MU = 1.0
@@ -676,7 +676,7 @@ def update_runs_table(exp_name: str):
   else:
     runs_results[exp_name] += 1
 
-def run_optimizer(bounds, func, exp_name):
+def run_optimizer(bounds, func,new_max, exp_name):
   global trials_to_trigger, trials_so_far
   num_fail = 0
   trials_so_far = 0
@@ -695,15 +695,16 @@ def run_optimizer(bounds, func, exp_name):
     try:
       next_point = optimizer.suggest(utility)
       target = func(**next_point)
-      target = validate_output(next_point, target, exp_name)
+      target = validate_output(next_point, target,new_max, exp_name)
       if numpy.isnan(target):
         next_point = next_point + np.random.normal(0, .01)
         target = func(**next_point)
       optimizer.register(params=next_point, target=target)
+      if i%10 ==0 and i is not 0:
+        if len(optimizer.space.target) == 0:
+          utility.xi = utility.xi*2
     except Exception as e:
       if isinstance(e, ValueError):
-        print(optimizer._space._target)
-        print(optimizer._space._params)
         num_fail += 1
         optimizer._space._target[-1] /= (10**num_fail) 
       if verbose: print("Oops!", e.__class__, "occurred.")
@@ -735,9 +736,14 @@ def run_optimizer(bounds, func, exp_name):
   save_results(val, exp_name)
 
 # input types: {"fp", "exp"}
-def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
+def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str, new_max:float):
   global CUDA_LIB
+  global results
+  global runs_results
+  results = {}
+  run_results = {}
   CUDA_LIB = shared_lib
+  logger.info("Max value to replace: {}".format(str(new_max)))
 
   assert num_inputs >= 1 and num_inputs <= 3
 
@@ -756,21 +762,21 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
           for f in funcs_fp_1:
             exp_name = [shared_lib, input_type, 'b_whole']
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max,  '|'.join(exp_name))
       if splitting == 'two':
         initialize()
         for b in bounds_fp_two_1():
           for f in funcs_fp_1:
             exp_name = [shared_lib, input_type, 'b_two']
             logging.info('|'.join(exp_name)) 
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max, '|'.join(exp_name))
       if splitting == 'many':
         initialize()
         for b in bounds_fp_many_1():
           for f in funcs_fp_1:
             exp_name = [str(b),shared_lib, input_type, 'b_many']
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max, '|'.join(exp_name))
           
     elif num_inputs == 2:
       if splitting == 'whole':
@@ -779,21 +785,21 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
           for f in funcs_fp_2:
             exp_name = [shared_lib, input_type, 'b_whole']
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max, '|'.join(exp_name))
       if splitting == 'two':
         initialize()
         for b in bounds_fp_two_2():
           for f in funcs_fp_2:
             exp_name = [shared_lib, input_type, 'b_two']
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max, '|'.join(exp_name))
       if splitting == 'many':
         initialize()
         for b in bounds_fp_many_2():
           for f in funcs_fp_2:
             exp_name = [str(b),shared_lib, input_type, 'b_many']
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f,  '|'.join(exp_name))
+            run_optimizer(b, f,new_max,  '|'.join(exp_name))
 
     elif num_inputs == 3:
       if splitting == 'whole':
@@ -802,21 +808,21 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
           for f in funcs_fp_3:
             exp_name = [shared_lib, input_type, 'b_whole']
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max, '|'.join(exp_name))
       if splitting == 'two':
         initialize()
         for b in bounds_fp_two_3():
           for f in funcs_fp_3:
             exp_name = [shared_lib, input_type, 'b_two']
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max, '|'.join(exp_name))
       if splitting == 'many':
         initialize()
         for b in bounds_fp_many_3():
           for f in funcs_fp_3:
             exp_name = [str(b),shared_lib, input_type, 'b_many']
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f,  '|'.join(exp_name))
+            run_optimizer(b, f,new_max,  '|'.join(exp_name))
 
   elif input_type == 'exp':
     if num_inputs == 1:
@@ -826,20 +832,20 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
           for f in funcs_exp_1:
             exp_name = [shared_lib, input_type, 'b_whole']
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max, '|'.join(exp_name))
       if splitting == 'two':
         initialize()
         for b in bounds_exp_two_1():
           for f in funcs_exp_1:
             exp_name = [shared_lib, input_type, 'b_two']
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max, '|'.join(exp_name))
       if splitting == 'many':
         initialize()
         for b in bounds_exp_many_1():
           for f in funcs_exp_1:
             exp_name = [b, shared_lib, input_type, 'b_many',f]
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max, '|'.join(exp_name))
         
     elif num_inputs == 2:
       if splitting == 'whole':
@@ -848,21 +854,21 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
           for f in funcs_exp_2:
             exp_name = [shared_lib, input_type, 'b_whole']
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max, '|'.join(exp_name))
       if splitting == 'two':
         initialize()
         for b in bounds_exp_two_2():
           for f in funcs_exp_2:
             exp_name = [shared_lib, input_type, 'b_two']
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max, '|'.join(exp_name))
       if splitting == 'many':
         initialize()
         for b in bounds_exp_many_2():
           for f in funcs_exp_2:
             exp_name = [b, shared_lib, input_type, 'b_many']
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max, '|'.join(exp_name))
 
     elif num_inputs == 3:
       if splitting == 'whole':
@@ -871,21 +877,21 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
           for f in funcs_exp_3:
             exp_name = [shared_lib, input_type, 'b_whole']
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max, '|'.join(exp_name))
       if splitting == 'two':
         initialize()
         for b in bounds_exp_two_3():
           for f in funcs_exp_3:
             exp_name = [shared_lib, input_type, 'b_two']
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max, '|'.join(exp_name))
       if splitting == 'many':
         initialize()
         for b in bounds_exp_many_3():
           for f in funcs_exp_3:
             exp_name = [b, shared_lib, input_type, 'b_many']
             logging.info('|'.join(exp_name))
-            run_optimizer(b, f, '|'.join(exp_name))
+            run_optimizer(b, f,new_max, '|'.join(exp_name))
   else:
     print('Invalid input type!')
     exit()
@@ -899,6 +905,7 @@ def print_results(shared_lib: str, number_sampling, range_splitting):
   print('-------------- Results --------------')
   print(fun_name)
   if len(results.keys()) > 0:
+    total_exception = 0
     for key in results.keys():
       if function_key in key:
         print('Range:', key.split('|')[0])
@@ -907,7 +914,10 @@ def print_results(shared_lib: str, number_sampling, range_splitting):
         print('\tSUB-:', results[key][2])
         print('\tSUB-:', results[key][3])
         print('\tNaN :', results[key][4])
-        print('\tTotal Exception:', sum(results[key]))
+        #print('\tTotal Exception for range {}: {}'.format(key.split('|')[0], sum(results[key]))
+        total_exception += sum(results[key])
+    print('\tTotal Exception: ', total_exception)
+    logger.info('\tTotal Exception: {} '.format(total_exception))
   else:
     print('\tINF+:', 0)
     print('\tINF-:', 0)
@@ -1026,15 +1036,16 @@ def optimize_randomly(shared_lib: str, num_inputs: int, max_iters: int, unbounde
       found = save_results_random(r, exp_name, unbounded)
       if found: break
 
-def validate_output(input, output, exp_name):
+def validate_output(input, output, new_max,  exp_name):
   if numpy.isposinf(output):
     save_results(output, exp_name)
     logger.info("The input {} resulted in the the exception {}".format(input, output))
-    output = 8.95e+305
+    #output = 8.95e+305
+    output = new_max
   elif numpy.isneginf(output):
     save_results(output, exp_name)
     logger.info("The input {} resulted in the the exception {}".format(input, output))
-    output = -8.95e+305
+    output = -new_max
   elif numpy.isnan(output):
     save_results(output, exp_name)
     logger.info("The input {} resulted in the the exception {}".format(input, output))
