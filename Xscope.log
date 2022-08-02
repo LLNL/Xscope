@@ -1,0 +1,1152 @@
+INFO:bo_analysis:Max value to replace: 1.7976931348623157e+308
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_31932/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_31932/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_31932/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:Max value to replace: 1.7976931348623157e+308
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception -inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception -inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception -inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception -inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception -inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception -inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception -inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception -inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception inf
+INFO:bo_analysis:	Total Exception: 40 
+INFO:bo_analysis:Max value to replace: 8.95e+307
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception -inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception -inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception -inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception -inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception -inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception -inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception -inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception -inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception inf
+INFO:bo_analysis:	Total Exception: 56 
+INFO:bo_analysis:Max value to replace: 8.95e+305
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception -inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception -inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception -inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception -inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception -inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception -inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception -inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception -inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception inf
+INFO:bo_analysis:	Total Exception: 104 
+INFO:bo_analysis:Max value to replace: 8.95e+303
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5146430752.194328} resulted in the the exception inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5146430752.194328} resulted in the the exception -inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5146430752.194328} resulted in the the exception -inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5146430752.194328} resulted in the the exception inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4853569257.805672} resulted in the the exception inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4853569257.805672} resulted in the the exception -inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4853569257.805672} resulted in the the exception -inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4853569257.805672} resulted in the the exception inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5.146430747340759e+99} resulted in the the exception inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5.146430747340759e+99} resulted in the the exception -inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5.146430747340759e+99} resulted in the the exception -inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5.146430747340759e+99} resulted in the the exception inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4.853569252659241e+99} resulted in the the exception inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4.853569252659241e+99} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4.853569252659241e+99} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4.853569252659241e+99} resulted in the the exception inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception -inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception -inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception inf
+INFO:bo_analysis:	Total Exception: 120 
+INFO:bo_analysis:Max value to replace: 8.95e+301
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5146430752.194328} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 343858433.4875884} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 1259327897.2072158} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 580527322.9756777} resulted in the the exception inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5146430752.194328} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 343858433.4875884} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 1259327897.2072158} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 580527322.9756777} resulted in the the exception -inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5146430752.194328} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 343858433.4875884} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 1259327897.2072158} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 580527322.9756777} resulted in the the exception -inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5146430752.194328} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 343858433.4875884} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 1259327897.2072158} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 580527322.9756777} resulted in the the exception inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4853569257.805672} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9656141576.512411} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -8740672112.792784} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9419472687.024323} resulted in the the exception inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4853569257.805672} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9656141576.512411} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -8740672112.792784} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9419472687.024323} resulted in the the exception -inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4853569257.805672} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9656141576.512411} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -8740672112.792784} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9419472687.024323} resulted in the the exception -inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4853569257.805672} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9656141576.512411} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -8740672112.792784} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9419472687.024323} resulted in the the exception inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5.146430747340759e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 3.438584238314468e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 1.2593278884665438e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5.80527313556205e+98} resulted in the the exception inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5.146430747340759e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 3.438584238314468e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 1.2593278884665438e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5.80527313556205e+98} resulted in the the exception -inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5.146430747340759e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 3.438584238314468e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 1.2593278884665438e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5.80527313556205e+98} resulted in the the exception -inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5.146430747340759e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 3.438584238314468e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 1.2593278884665438e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5.80527313556205e+98} resulted in the the exception inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4.853569252659241e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.656141576168553e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -8.740672111533456e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.419472686443795e+99} resulted in the the exception inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4.853569252659241e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.656141576168553e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -8.740672111533456e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.419472686443795e+99} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4.853569252659241e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.656141576168553e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -8.740672111533456e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.419472686443795e+99} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4.853569252659241e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.656141576168553e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -8.740672111533456e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.419472686443795e+99} resulted in the the exception inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception -inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception -inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception inf
+INFO:bo_analysis:	Total Exception: 168 
+INFO:bo_analysis:Max value to replace: 8.95e+299
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.0, 1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-307, -0.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-307, 1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-100, -1e-307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-100, 1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1e-10, -1e-100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1e-10, 0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-0.1, -1e-10)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (0.1, 1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-1.0, -0.1)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (1.0, 10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (-10.0, -1.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5146430752.194328} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 343858433.4875884} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 1259327897.2072158} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 580527322.9756777} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9283376688.249327} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 3032784380.64563} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5814926397.072761} resulted in the the exception inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5146430752.194328} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 343858433.4875884} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 1259327897.2072158} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 580527322.9756777} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9283376688.249327} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 3032784380.64563} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5814926397.072761} resulted in the the exception -inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5146430752.194328} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 343858433.4875884} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 1259327897.2072158} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 580527322.9756777} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9283376688.249327} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 3032784380.64563} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5814926397.072761} resulted in the the exception -inf
+INFO:root:{'x0': (10.0, 10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4170220052.85552} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7502953697.150085} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8303889958.223618} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9828792403.159359} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 21688326.35995672} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8423158663.628847} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5146430752.194328} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 343858433.4875884} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 1259327897.2072158} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 580527322.9756777} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9283376688.249327} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 3032784380.64563} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5814926397.072761} resulted in the the exception inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4853569257.805672} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9656141576.512411} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -8740672112.792784} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9419472687.024323} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -716623321.7506733} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -6967215629.35437} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4185073612.9272394} resulted in the the exception inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4853569257.805672} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9656141576.512411} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -8740672112.792784} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9419472687.024323} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -716623321.7506733} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -6967215629.35437} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4185073612.9272394} resulted in the the exception -inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4853569257.805672} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9656141576.512411} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -8740672112.792784} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9419472687.024323} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -716623321.7506733} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -6967215629.35437} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4185073612.9272394} resulted in the the exception -inf
+INFO:root:{'x0': (-10000000000.0, -10.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5829779957.14448} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2497046312.8499146} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1696110051.7763824} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -171207606.84064102} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9978311683.640043} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1576841346.3711529} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4853569257.805672} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9656141576.512411} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -8740672112.792784} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9419472687.024323} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -716623321.7506733} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -6967215629.35437} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4185073612.9272394} resulted in the the exception inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5.146430747340759e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 3.438584238314468e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 1.2593278884665438e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5.80527313556205e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9.283376687532704e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 3.0327843736784145e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5.814926392887687e+99} resulted in the the exception inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5.146430747340759e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 3.438584238314468e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 1.2593278884665438e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5.80527313556205e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9.283376687532704e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 3.0327843736784145e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5.814926392887687e+99} resulted in the the exception -inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5.146430747340759e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 3.438584238314468e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 1.2593278884665438e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5.80527313556205e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 9.283376687532704e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 3.0327843736784145e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': 5.814926392887687e+99} resulted in the the exception -inf
+INFO:root:{'x0': (10000000000.0, 1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.1702200470257403e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 7.502953694653039e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.303889956527507e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9.82879240298815e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 2.1688316381645036e+97} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 8.423158662052006e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5.146430747340759e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 3.438584238314468e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 1.2593278884665438e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5.80527313556205e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 9.283376687532704e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 3.0327843736784145e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': 5.814926392887687e+99} resulted in the the exception inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4.853569252659241e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.656141576168553e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -8.740672111533456e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.419472686443795e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -7.166233124672963e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -6.967215626321586e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4.1850736071123127e+99} resulted in the the exception inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4.853569252659241e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.656141576168553e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -8.740672111533456e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.419472686443795e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -7.166233124672963e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -6.967215626321586e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4.1850736071123127e+99} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4.853569252659241e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.656141576168553e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -8.740672111533456e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -9.419472686443795e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -7.166233124672963e+98} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -6.967215626321586e+99} resulted in the the exception -inf
+INFO:bo_analysis:The input {'x0': -4.1850736071123127e+99} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+100, -10000000000.0)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -2.497046305346961e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.696110043472493e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.7120759701184955e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.978311683618355e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -1.5768413379479945e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4.853569252659241e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.656141576168553e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -8.740672111533456e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -9.419472686443795e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -7.166233124672963e+98} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -6.967215626321586e+99} resulted in the the exception inf
+INFO:bo_analysis:The input {'x0': -4.1850736071123127e+99} resulted in the the exception inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception -inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception -inf
+INFO:root:{'x0': (1e+100, 1e+307)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': 4.17022004702574e+306} resulted in the the exception inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception -inf
+INFO:root:{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_32096/cuda_code_cosh.cu.so|fp|b_many
+INFO:bo_analysis:The input {'x0': -5.82977995297426e+306} resulted in the the exception inf
+INFO:bo_analysis:	Total Exception: 216 
