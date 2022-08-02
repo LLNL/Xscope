@@ -1,4 +1,7 @@
 #!//usr/bin/env python3
+from botorch.optim import optimize_acqf
+from botorch import fit_gpytorch_model
+from gpytorch import ExactMarginalLogLikelihood
 
 import random_fp_generator
 import logging
@@ -8,6 +11,10 @@ import numpy
 import ctypes
 from bayes_opt import BayesianOptimization
 from bayes_opt import UtilityFunction
+from botorch.models import SingleTaskGP
+import os
+import torch
+from botorch.acquisition.analytic import ExpectedImprovement
 
 verbose = False
 #verbose = True
@@ -691,12 +698,11 @@ def run_optimizer(bounds, func, exp_name):
       next_point = optimizer.suggest(utility)
       target = func(**next_point)
       optimizer.register(params=next_point, target=target)
-
       update_runs_table(exp_name)
 
       # Check if we are done
-      if are_we_done(func, target, exp_name):
-        return
+      # if are_we_done(func, target, exp_name):
+      #   return
   except Exception as e:
     if verbose: print("Oops!", e.__class__, "occurred.")
     if verbose: print(e)
@@ -704,6 +710,46 @@ def run_optimizer(bounds, func, exp_name):
   if verbose: print(optimizer.max)
   val = optimizer.max['target']
   save_results(val, exp_name)
+
+# def run_optimizer(bounds, func, exp_name):
+#   bounds = torch.tensor(bounds['x0'])
+#   global trials_to_trigger, trials_so_far
+#   trials_so_far = 0
+#   trials_to_trigger = -1
+#   if are_we_done(func, 0.0, exp_name):
+#     return
+#   train_X = torch.rand(20)
+#   train_Y = torch.tensor([func(dict(zip('x0', x.item()))) for x in train_X])
+#   mll, optimizer = initialize_model(train_X, train_Y)
+#   try:
+#     if verbose: print('BO opt...')
+#     #utility = UtilityFunction(kind="ucb", kappa=10, xi=0.1e-1)
+#     #utility = UtilityFunction(kind="poi", kappa=10, xi=1e-1)
+#     for _ in range(bo_iterations):
+#       fit_gpytorch_model(mll, optimizer)
+#       acquisition_function = ExpectedImprovement(optimizer, torch.max(train_Y))
+#       trials_so_far += 1
+#       next_point = optimize_acqf_and_get_observation(acquisition_function, bounds)
+#       target = func(**next_point)
+#       train_X = torch.cat([train_X, next_point])
+#       train_Y = torch.cat([train_Y, torch.tensor(target)])
+#
+#       update_runs_table(exp_name)
+#       mll, optimizer = initialize_model(
+#         train_X,
+#         train_Y,
+#         optimizer.state_dict(),
+#       )
+#       # Check if we are done
+#       if are_we_done(func, target, exp_name):
+#         return
+#   except Exception as e:
+#     if verbose: print("Oops!", e.__class__, "occurred.")
+#     if verbose: print(e)
+#     if verbose: logging.exception("Something awful happened!")
+#   if verbose: print(optimizer.max)
+#   val = optimizer.max['target']
+#   save_results(val, exp_name)
 
 # input types: {"fp", "exp"}
 def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
@@ -737,7 +783,7 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
         initialize()
         for b in bounds_fp_many_1():
           for f in funcs_fp_1:
-            exp_name = [shared_lib, input_type, 'b_many']
+            exp_name = [str(b),shared_lib, input_type, 'b_many']
             run_optimizer(b, f, '|'.join(exp_name))
           
     elif num_inputs == 2:
@@ -852,6 +898,7 @@ def print_results(shared_lib: str, number_sampling, range_splitting):
   fun_name = os.path.basename(shared_lib)
   print('-------------- Results --------------')
   print(fun_name)
+  
   if key in results.keys():
     print('\tINF+:', results[key][0])
     print('\tINF-:', results[key][1])
@@ -974,10 +1021,35 @@ def optimize_randomly(shared_lib: str, num_inputs: int, max_iters: int, unbounde
       x2 = random_fp_generator.fp64_generate_number()
       r = call_GPU_kernel_3(x0,x1,x2)
       found = save_results_random(r, exp_name, unbounded)
-      if found: break 
+      if found: break
+
+def optimize_acqf_and_get_observation(acq_func, bounds):
+  """Optimizes the acquisition function, and returns a new candidate and a noisy observation."""
+  # optimize
+  candidate, _ = optimize_acqf(
+    acq_function=acq_func,
+    bounds=bounds,
+    q=1,
+    num_restarts=1
+  )
+  return dict(zip('x0',candidate.detach()))
+
+def initialize_model(train_x, train_obj, state_dict=None):
+  # define models for objective and constraint
+  model_obj = SingleTaskGP(train_x, train_obj)
+
+  mll = ExactMarginalLogLikelihood(model_obj.likelihood, model_obj)
+  # load state dict if it is passed
+  if state_dict is not None:
+    model_obj.load_state_dict(state_dict)
+  return mll, model_obj
+
 
 # -------------------------------------------------------
 
 if __name__ == '__main__':
   optimize()
 
+
+{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_30304/cuda_code_cosh.cu.so|fp|b_many
+{'x0': (-1e+307, -1e+100)}|_tmp_ganesh-desktop_30304/cuda_code_acos.cu.so|fp|b_many
