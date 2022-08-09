@@ -8,6 +8,7 @@ import os
 import bo_analysis
 import sys
 import shutil
+import random_optimizer
 
 #------------------------------------------------------------------------------
 # Globals
@@ -231,8 +232,8 @@ if __name__ == "__main__":
       unbounded = False
       if args.random_sampling_unb:
         unbounded = True
-      bo_analysis.optimize_randomly(shared_lib, inputs, max_iters, unbounded)
-      bo_analysis.print_results_random(shared_lib)
+      random_optimizer.optimize_randomly(shared_lib, inputs, max_iters, unbounded)
+      random_optimizer.print_results_random(shared_lib)
 
     # Run BO optimization
     print('*** Running BO on:', shared_lib)
