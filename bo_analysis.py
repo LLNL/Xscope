@@ -8,9 +8,11 @@ import numpy
 import ctypes
 from bayes_opt import BayesianOptimization
 from bayes_opt import UtilityFunction
+from functools import partial
+from utils import *
 
 #verbose = False
-verbose = False
+verbose = True
 CUDA_LIB = ''
 #MU = 1e-307
 MU = 1.0
@@ -46,7 +48,8 @@ def set_max_iterations(n: int):
 #----------------------------------------------------------------------------
 # Ctype Wrappers
 #----------------------------------------------------------------------------
-def call_GPU_kernel_1(x0):
+def call_GPU_kernel_1(x):
+  x0 = x[0]
   script_dir = os.path.abspath(os.path.dirname(__file__))
   lib_path = os.path.join(script_dir, CUDA_LIB)
   E = ctypes.cdll.LoadLibrary(lib_path)
@@ -54,7 +57,8 @@ def call_GPU_kernel_1(x0):
   res = E.kernel_wrapper_1(ctypes.c_double(x0))
   return res
 
-def call_GPU_kernel_2(x0, x1):
+def call_GPU_kernel_2(x):
+  x0,x1 = x[0], x[1]
   script_dir = os.path.abspath(os.path.dirname(__file__))
   lib_path = os.path.join(script_dir, CUDA_LIB)
   E = ctypes.cdll.LoadLibrary(lib_path)
@@ -62,7 +66,8 @@ def call_GPU_kernel_2(x0, x1):
   res = E.kernel_wrapper_1(ctypes.c_double(x0), ctypes.c_double(x1))
   return res
 
-def call_GPU_kernel_3(x0, x1, x2):
+def call_GPU_kernel_3(x):
+  x0,x1,x2= x[0], x[1], x[2]
   script_dir = os.path.abspath(os.path.dirname(__file__))
   lib_path = os.path.join(script_dir, CUDA_LIB)
   E = ctypes.cdll.LoadLibrary(lib_path)
@@ -70,7 +75,8 @@ def call_GPU_kernel_3(x0, x1, x2):
   res = E.kernel_wrapper_1(ctypes.c_double(x0), ctypes.c_double(x1), ctypes.c_double(x2))
   return res
 
-def call_GPU_kernel_4(x0, x1, x2, x3):
+def call_GPU_kernel_4(x):
+  x0,x1,x2,x3 = x[0], x[1], x[2], x[3]
   script_dir = os.path.abspath(os.path.dirname(__file__))
   lib_path = os.path.join(script_dir, CUDA_LIB)
   E = ctypes.cdll.LoadLibrary(lib_path)
@@ -78,476 +84,36 @@ def call_GPU_kernel_4(x0, x1, x2, x3):
   res = E.kernel_wrapper_1(ctypes.c_double(x0), ctypes.c_double(x1), ctypes.c_double(x2), ctypes.c_double(x3))
   return res
 
+def function_to_optimize(x0, num_input, func_type = "max_inf", mode="fp"):
+  if mode == "exp":
+    x0 = numpy.power(10, x0)
+  if num_input == 1:
+    r = call_GPU_kernel_1(x0)
+  elif num_input ==2:
+    r = call_GPU_kernel_2(x0)
+  elif num_input==3:
+    r = call_GPU_kernel_3(x0)
+  else:
+    r = call_GPU_kernel_4(x0)
 
-#----------------------------------------------------------------------------
-# Black box functions
-#----------------------------------------------------------------------------
-
-#def black_box_function(x0, x1, x2):
-#  x0_fp = 1.0 * math.pow(10, x0)
-#  x1_fp = 1.0 * math.pow(10, x1)
-#  x2_fp = 1.0 * math.pow(10, x2)
-
-  #return -call_GPU_kernel(x0, x1, x2)
-  #r = call_GPU_kernel(x0, x1, x2)
-#  r = call_GPU_kernel(x0_fp, x1_fp, x2_fp)
-#  smallest_subnormal = -4.94e-323
-#  if r==0.0 or r==-0.0:
-#    return -1.0;
-#  elif r > smallest_subnormal:
-#    return -r
-#  return r
-
-#****************************** 1 Input ***********************************
-# --------- Based on FP inputs --------
-# Function goals: (1) maximize (2) find INF (3) use fp inputs
-def function_max_inf_fp_1(x0):
-  return call_GPU_kernel_1(x0)
-
-# Function goals: (1) minimize (2) find INF (3) use fp inputs
-def function_min_inf_fp_1(x0):
-  return -call_GPU_kernel_1(x0)
-
-# Function goals: (1) maximize (2) find Underflows (3) use fp inputs
-def function_max_under_fp_1(x0):
-  r = call_GPU_kernel_1(x0)
-  if r==0.0 or r==-0.0:
-    return -MU
-  elif r > -smallest_subnormal:
+  if func_type == "min_inf":
     return -r
-  return r
-
-# Function goals: (1) minimize (2) find Underflows (3) use fp inputs
-def function_min_under_fp_1(x0):
-  r = call_GPU_kernel_1(x0)
-  if r==0.0 or r==-0.0:
-    return MU
-  elif r < smallest_subnormal:
-    return -r
-  return r
-
-# --------- Based on Exponent inputs --------
-# Function goals: (1) maximize (2) find INF (3) use exp inputs
-def function_max_inf_exp_1(x0):
-  x0_fp = 1.0 * math.pow(10, x0)
-  return call_GPU_kernel_1(x0_fp)
-
-# Function goals: (1) minimize (2) find INF (3) use exp inputs
-def function_min_inf_exp_1(x0):
-  x0_fp = 1.0 * math.pow(10, x0)
-  return -call_GPU_kernel_1(x0_fp)
-
-# Function goals: (1) maximize (2) find Underflows (3) use exp inputs
-def function_max_under_exp_1(x0):
-  x0_fp = 1.0 * math.pow(10, x0)
-  r = call_GPU_kernel_1(x0_fp)
-  if r==0.0 or r==-0.0:
-    return -MU
-  elif r > -smallest_subnormal:
-    return -r
-  return r
-
-# Function goals: (1) minimize (2) find Underflows (3) use exp inputs
-def function_min_under_exp_1(x0):
-  x0_fp = 1.0 * math.pow(10, x0)
-  r = call_GPU_kernel_1(x0_fp)
-  if r==0.0 or r==-0.0:
-    return MU
-  elif r < smallest_subnormal:
-    return -r
-  return r
-
-
-#****************************** 2 Inputs ***********************************
-# --------- Based on FP inputs --------
-# Function goals: (1) maximize (2) find INF (3) use fp inputs
-def function_max_inf_fp_2(x0, x1):
-  return call_GPU_kernel_2(x0, x1)
-
-# Function goals: (1) minimize (2) find INF (3) use fp inputs
-def function_min_inf_fp_2(x0, x1):
-  return -call_GPU_kernel_2(x0, x1)
-
-# Function goals: (1) maximize (2) find Underflows (3) use fp inputs
-def function_max_under_fp_2(x0, x1):
-  r = call_GPU_kernel_2(x0, x1)
-  if r==0.0 or r==-0.0:
-    return -MU
-  elif r > -smallest_subnormal:
-    return -r
-  return r
-
-# Function goals: (1) minimize (2) find Underflows (3) use fp inputs
-def function_min_under_fp_2(x0, x1):
-  r = -call_GPU_kernel_2(x0, x1)
-  if r==0.0 or r==-0.0:
-    return MU
-  elif r > smallest_subnormal:
-    return -r
-  return r
-
-# --------- Based on Exponent inputs --------
-# Function goals: (1) maximize (2) find INF (3) use exp inputs
-def function_max_inf_exp_2(x0, x1):
-  x0_fp = 1.0 * math.pow(10, x0)
-  x1_fp = 1.0 * math.pow(10, x1)
-  return call_GPU_kernel_2(x0_fp, x1_fp)
-
-# Function goals: (1) minimize (2) find INF (3) use exp inputs
-def function_min_inf_exp_2(x0, x1):
-  x0_fp = 1.0 * math.pow(10, x0)
-  x1_fp = 1.0 * math.pow(10, x1)
-  return -call_GPU_kernel_2(x0_fp, x1_fp)
-
-# Function goals: (1) maximize (2) find Underflows (3) use exp inputs
-def function_max_under_exp_2(x0, x1):
-  x0_fp = 1.0 * math.pow(10, x0)
-  x1_fp = 1.0 * math.pow(10, x1)
-  r = call_GPU_kernel_2(x0_fp, x1_fp)
-  if r==0.0 or r==-0.0:
-    return -MU
-  elif r > -smallest_subnormal:
-    return -r
-  return r
-
-# Function goals: (1) minimize (2) find Underflows (3) use exp inputs
-def function_min_under_exp_2(x0, x1):
-  x0_fp = 1.0 * math.pow(10, x0)
-  x1_fp = 1.0 * math.pow(10, x1)
-  r = -call_GPU_kernel_2(x0_fp, x1_fp)
-  if r==0.0 or r==-0.0:
-    return MU
-  elif r > smallest_subnormal:
-    return -r
-  return r
-
-
-#****************************** 3 Inputs ***********************************
-# --------- Based on FP inputs --------
-# Function goals: (1) maximize (2) find INF (3) use fp inputs
-def function_max_inf_fp_3(x0, x1, x2):
-  return call_GPU_kernel_3(x0, x1, x2)
-
-# Function goals: (1) minimize (2) find INF (3) use fp inputs
-def function_min_inf_fp_3(x0, x1, x2):
-  return -call_GPU_kernel_3(x0, x1, x2)
-
-# Function goals: (1) maximize (2) find Underflows (3) use fp inputs
-def function_max_under_fp_3(x0, x1, x2):
-  r = call_GPU_kernel_3(x0, x1, x2)
-  if r==0.0 or r==-0.0:
-    return -MU
-  elif r > -smallest_subnormal:
-    return -r
-  return r
-
-# Function goals: (1) minimize (2) find Underflows (3) use fp inputs
-def function_min_under_fp_3(x0, x1, x2):
-  r = call_GPU_kernel_3(x0, x1, x2)
-  if r==0.0 or r==-0.0:
-    return MU
-  elif r < smallest_subnormal:
-    return -r
-  return r
-
-# --------- Based on Exponent inputs --------
-# Function goals: (1) maximize (2) find INF (3) use exp inputs
-def function_max_inf_exp_3(x0, x1, x2):
-  x0_fp = 1.0 * math.pow(10, x0)
-  x1_fp = 1.0 * math.pow(10, x1)
-  x2_fp = 1.0 * math.pow(10, x2)
-  return call_GPU_kernel_3(x0_fp, x1_fp, x2_fp)
-
-# Function goals: (1) minimize (2) find INF (3) use exp inputs
-def function_min_inf_exp_3(x0, x1, x2):
-  x0_fp = 1.0 * math.pow(10, x0)
-  x1_fp = 1.0 * math.pow(10, x1)
-  x2_fp = 1.0 * math.pow(10, x2)
-  return -call_GPU_kernel_3(x0_fp, x1_fp, x2_fp)
-
-# Function goals: (1) maximize (2) find Underflows (3) use exp inputs
-def function_max_under_exp_3(x0, x1, x2):
-  x0_fp = 1.0 * math.pow(10, x0)
-  x1_fp = 1.0 * math.pow(10, x1)
-  x2_fp = 1.0 * math.pow(10, x2)
-  r = call_GPU_kernel_3(x0_fp, x1_fp, x2_fp)
-  if r==0.0 or r==-0.0:
-    return -MU
-  elif r > -smallest_subnormal:
-    return -r
-  return r
-
-# Function goals: (1) minimize (2) find Underflows (3) use exp inputs
-def function_min_under_exp_3(x0, x1, x2):
-  x0_fp = 1.0 * math.pow(10, x0)
-  x1_fp = 1.0 * math.pow(10, x1)
-  x2_fp = 1.0 * math.pow(10, x2)
-  r = call_GPU_kernel_3(x0_fp, x1_fp, x2_fp)
-  if r==0.0 or r==-0.0:
-    return MU
-  elif r < smallest_subnormal:
-    return -r
-  return r
-
-#****************************** 4 Inputs ***********************************
-# --------- Based on FP inputs --------
-# Function goals: (1) maximize (2) find INF (3) use fp inputs
-def function_max_inf_fp_4(x0, x1, x2, x3):
-  return call_GPU_kernel_4(x0, x1, x2, x3)
-
-# Function goals: (1) minimize (2) find INF (3) use fp inputs
-def function_min_inf_fp_4(x0, x1, x2, x3):
-  return -call_GPU_kernel_4(x0, x1, x2, x3)
-
-# Function goals: (1) maximize (2) find Underflows (3) use fp inputs
-def function_max_under_fp_4(x0, x1, x2, x3):
-  r = call_GPU_kernel_4(x0, x1, x2, x3)
-  if r==0.0 or r==-0.0:
-    return -MU
-  elif r > -smallest_subnormal:
-    return -r
-  return r
-
-# Function goals: (1) minimize (2) find Underflows (3) use fp inputs
-def function_min_under_fp_4(x0, x1, x2, x3):
-  r = call_GPU_kernel_4(x0, x1, x2, x3)
-  if r==0.0 or r==-0.0:
-    return MU
-  elif r < smallest_subnormal:
-    return -r
-  return r
-
-# --------- Based on Exponent inputs --------
-# Function goals: (1) maximize (2) find INF (3) use exp inputs
-def function_max_inf_exp_4(x0, x1, x2, x3):
-  x0_fp = 1.0 * math.pow(10, x0)
-  x1_fp = 1.0 * math.pow(10, x1)
-  x2_fp = 1.0 * math.pow(10, x2)
-  x3_fp = 1.0 * math.pow(10, x3)
-  return call_GPU_kernel_4(x0_fp, x1_fp, x2_fp, x3_fp)
-
-# Function goals: (1) minimize (2) find INF (3) use exp inputs
-def function_min_inf_exp_4(x0, x1, x2, x3):
-  x0_fp = 1.0 * math.pow(10, x0)
-  x1_fp = 1.0 * math.pow(10, x1)
-  x2_fp = 1.0 * math.pow(10, x2)
-  x3_fp = 1.0 * math.pow(10, x3)
-  return -call_GPU_kernel_4(x0_fp, x1_fp, x2_fp, x3_fp)
-
-# Function goals: (1) maximize (2) find Underflows (3) use exp inputs
-def function_max_under_exp_3(x0, x1, x2, x3):
-  x0_fp = 1.0 * math.pow(10, x0)
-  x1_fp = 1.0 * math.pow(10, x1)
-  x2_fp = 1.0 * math.pow(10, x2)
-  x3_fp = 1.0 * math.pow(10, x3)
-  r = call_GPU_kernel_4(x0_fp, x1_fp, x2_fp, x3_fp)
-  if r==0.0 or r==-0.0:
-    return -MU
-  elif r > -smallest_subnormal:
-    return -r
-  return r
-
-# Function goals: (1) minimize (2) find Underflows (3) use exp inputs
-def function_min_under_exp_3(x0, x1, x2, x3):
-  x0_fp = 1.0 * math.pow(10, x0)
-  x1_fp = 1.0 * math.pow(10, x1)
-  x2_fp = 1.0 * math.pow(10, x2)
-  x3_fp = 1.0 * math.pow(10, x3)
-  r = call_GPU_kernel_4(x0_fp, x1_fp, x2_fp, x3_fp)
-  if r==0.0 or r==-0.0:
-    return MU
-  elif r < smallest_subnormal:
-    return -r
-  return r
+  elif func_type == "max_under":
+    if r==0.0 or r==-0.0:
+      return -MU
+    elif r > -smallest_subnormal:
+      return -r
+  elif func_type == "min_under":
+    if r==0.0 or r==-0.0:
+      return MU
+    elif r < smallest_subnormal:
+      return -r
+  return r   
 
 #----------------------------------------------------------------------------
 # Optimization loop
 #----------------------------------------------------------------------------
-max_normal = 1e+307
 
-# -------------- 1 Input ----------------------
-def bounds_fp_whole_1():
-  b = []
-  b.append({'x0': (-max_normal, max_normal)})
-  return b
-
-def bounds_fp_two_1():
-  b = []
-  b.append({'x0': (-max_normal, 0)})
-  b.append({'x0': (0, max_normal)})
-  return b
-
-def bounds_fp_many_1():
-  b = []
-  limits = [0.0, 1e-307, 1e-100, 1e-10, 1e-1, 1e0, 1e+1, 1e+10, 1e+100, 1e+307]
-  ranges = []
-  for i in range(len(limits)-1):
-    x = limits[i]
-    y = limits[i+1]
-    t = (min(x,y), max(x,y))
-    ranges.append(t)
-    x = -limits[i]
-    y = -limits[i+1]
-    t = (min(x,y), max(x,y))
-    ranges.append(t)
-  
-  for r1 in ranges:
-    b.append({'x0': r1})
-
-  return b
-  
-def bounds_exp_whole_1():
-  b = []
-  b.append({'x0': (-307, 307)})
-  return b
-
-def bounds_exp_two_1():
-  b = []
-  b.append({'x0': (-307, 0)})
-  b.append({'x0': (0, 307)})
-  return b
-
-def bounds_exp_many_1():
-  b = []
-  limits = [-307, -100, -10, -1, 0, +1, +10, +100, +307]
-  for i in range(len(limits)-1):
-    x = limits[i]
-    y = limits[i+1]
-    t = (min(x,y), max(x,y))
-    b.append({'x0': t}) 
- 
-  return b
-
-# -------------- 2 Inputs ----------------------
-def bounds_fp_whole_2():
-  b = []
-  b.append({'x0': (-max_normal, max_normal), 'x1': (-max_normal, max_normal)})
-  return b
-
-def bounds_fp_two_2():
-  b = []
-  b.append({'x0': (-max_normal, 0), 'x1': (-max_normal, 0)})
-  b.append({'x0': (0, max_normal), 'x1': (0, max_normal)})
-  return b
-
-def bounds_fp_many_2():
-  b = []
-  # {'target': -5e-324, 'params': {'x0': 1e-100, 'x1': 3.234942383692966}}
-  #b.append({'x0': (1e-100, 1e-300), 'x1': (0, 4.0)}) # finds subnormal in pow(x0, x1)
-  #b.append({'x0': (1e-100, 1e-307), 'x1': (0, 1e+1)}) # finds subnormal in pow(x0, x1)
-
-  # finds subnormal in pow(x0, x1): 
-  # {'target': -2.9950764292998e-310, 'params': {'x0': 6.639021130307829e-101, 'x1': 3.089739399676855}}
-  # MU = 1.0
-  # bo_iterations = 25 # number of iterations
-  # utility = UtilityFunction(kind="ei", kappa=2.5, xi=0.1e-1)
-  #b.append({'x0': (1e-307, 1e-100), 'x1': (1e0, 1e+1)}) 
-
-  limits = [0.0, 1e-307, 1e-100, 1e-10, 1e-1, 1e0, 1e+1, 1e+10, 1e+100, 1e+307]
-  ranges = []
-  for i in range(len(limits)-1):
-    x = limits[i]
-    y = limits[i+1]
-    t = (min(x,y), max(x,y))
-    ranges.append(t)
-    x = -limits[i]
-    y = -limits[i+1]
-    t = (min(x,y), max(x,y))
-    ranges.append(t)
-  
-  for r1 in ranges:
-    for r2 in ranges:
-      b.append({'x0': r1, 'x1': r2})
-
-  return b
-
-def bounds_exp_whole_2():
-  b = []
-  b.append({'x0': (-307, 307), 'x1': (-307, 307)})
-  return b
-
-def bounds_exp_two_2():
-  b = []
-  b.append({'x0': (-307, 0), 'x1': (-307, 0)})
-  b.append({'x0': (0, 307),'x1': (0, 307)})
-  return b
-
-def bounds_exp_many_2():
-  b = []
-  limits = [-307, -100, -10, -1, 0, +1, +10, +100, +307]
-  ranges = []
-  for i in range(len(limits)-1):
-    x = limits[i]
-    y = limits[i+1]
-    t = (min(x,y), max(x,y))
-    ranges.append(t)
-  
-  for r1 in ranges:
-    for r2 in ranges:
-      b.append({'x0': r1, 'x1': r2})
-
-  return b
-
-# -------------- 3 Inputs ----------------------
-def bounds_fp_whole_3():
-  b = []
-  b.append({'x0': (-max_normal, max_normal), 'x1': (-max_normal, max_normal), 'x2': (-max_normal, max_normal)})
-  return b
-
-def bounds_fp_two_3():
-  b = []
-  b.append({'x0': (-max_normal, 0), 'x1': (-max_normal, 0), 'x2': (-max_normal, 0)})
-  b.append({'x0': (0, max_normal), 'x1': (0, max_normal), 'x2': (0, max_normal)})
-  return b
-
-def bounds_fp_many_3():
-  b = []
-  limits = [0.0, 1e-307, 1e-100, 1e-10, 1e-1, 1e0, 1e+1, 1e+10, 1e+100, 1e+307]
-  ranges = []
-  for i in range(len(limits)-1):
-    x = limits[i]
-    y = limits[i+1]
-    t = (min(x,y), max(x,y))
-    ranges.append(t)
-    x = -limits[i]
-    y = -limits[i+1]
-    t = (min(x,y), max(x,y))
-    ranges.append(t)
-  
-  for r1 in ranges:
-    for r2 in ranges:
-      #for r3 in ranges:
-      b.append({'x0': r1, 'x1': r2, 'x2': r2})
-
-  return b
-
-def bounds_exp_whole_3():
-  b = []
-  b.append({'x0': (-307, 307), 'x1': (-307, 307), 'x2': (-307, 307)})
-  return b
-
-def bounds_exp_two_3():
-  b = []
-  b.append({'x0': (-307, 0), 'x1': (-307, 0), 'x2': (-307, 0)})
-  b.append({'x0': (0, 307),'x1': (0, 307), 'x3': (0, 307)})
-  return b
-
-def bounds_exp_many_3():
-  b = []
-  limits = [-307, -100, -10, -1, 0, +1, +10, +100, +307]
-  ranges = []
-  for i in range(len(limits)-1):
-    x = limits[i]
-    y = limits[i+1]
-    t = (min(x,y), max(x,y))
-    ranges.append(t)
-  
-  for r1 in ranges:
-    for r2 in ranges:
-      #for r3 in ranges:
-      b.append({'x0': r1, 'x1': r2, 'x2': r2})
-
-  return b
 
 # -------------- 4 Inputs ----------------------
 #
@@ -625,51 +191,6 @@ def save_results(val: float, exp_name: str):
     else:
       results[exp_name][4] += 1
 
-def are_we_done(func, recent_val, exp_name):
-  global found_inf_pos, found_inf_neg, found_under_pos, found_under_neg
-
-  # Finding INF+
-  if 'max_inf' in func.__name__:
-    if found_inf_pos:
-      return True
-    else:
-      if is_inf_pos(recent_val):
-        found_inf_pos = True
-        save_results(recent_val, exp_name)
-        return True
-
-  # Finding INF-
-  elif 'min_inf' in func.__name__:
-    if found_inf_neg:
-      return True
-    else:
-      if is_inf_neg(recent_val):
-        found_inf_neg = True
-        save_results(recent_val, exp_name)
-        return True
-
-  # Finding Under-
-  elif 'max_under' in func.__name__:
-    if found_under_neg:
-      return True
-    else:
-      if is_under_neg(recent_val):
-        found_under_neg = True
-        save_results(recent_val, exp_name)
-        return True
-
-  # Finding Under+
-  elif 'min_under' in func.__name__:
-    if found_under_pos:
-      return True
-    else:
-      if is_under_pos(recent_val):
-        found_under_pos = True
-        save_results(recent_val, exp_name)
-        return True
-
-  return False
-
 def update_runs_table(exp_name: str):
   if exp_name not in runs_results.keys():
     runs_results[exp_name] = 0
@@ -696,9 +217,9 @@ def run_optimizer(bounds, func,new_max, exp_name):
       next_point = optimizer.suggest(utility)
       target = func(**next_point)
       target = validate_output(next_point, target,new_max, exp_name)
-      if numpy.isnan(target):
-        next_point = next_point + np.random.normal(0, .01)
-        target = func(**next_point)
+      #if numpy.isnan(target):
+        #next_point['x0'] += numpy.random.normal(0, .01)
+        #target = func(**next_point)
       optimizer.register(params=next_point, target=target)
       if i%10 ==0 and i is not 0:
         if len(optimizer.space.target) == 0:
@@ -747,151 +268,17 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str, 
 
   assert num_inputs >= 1 and num_inputs <= 3
 
-  funcs_fp_1 = [function_max_inf_fp_1, function_min_inf_fp_1, function_max_under_fp_1, function_min_under_fp_1]
-  funcs_exp_1 = [function_max_inf_exp_1, function_min_inf_exp_1, function_max_under_exp_1, function_min_under_exp_1]
-  funcs_fp_2 = [function_max_inf_fp_2, function_min_inf_fp_2, function_max_under_fp_2, function_min_under_fp_2]
-  funcs_exp_2 = [function_max_inf_exp_2, function_min_inf_exp_2, function_max_under_exp_2, function_min_under_exp_2]
-  funcs_fp_3 = [function_max_inf_fp_3, function_min_inf_fp_3, function_max_under_fp_3, function_min_under_fp_3]
-  funcs_exp_3 = [function_max_inf_exp_3, function_min_inf_exp_3, function_max_under_exp_3, function_min_under_exp_3]
-    
-  if input_type == 'fp':
-    if num_inputs == 1:
-      if splitting == 'whole':
-        initialize()
-        for b in bounds_fp_whole_1():
-          for f in funcs_fp_1:
-            exp_name = [shared_lib, input_type, 'b_whole']
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max,  '|'.join(exp_name))
-      if splitting == 'two':
-        initialize()
-        for b in bounds_fp_two_1():
-          for f in funcs_fp_1:
-            exp_name = [shared_lib, input_type, 'b_two']
-            logging.info('|'.join(exp_name)) 
-            run_optimizer(b, f,new_max, '|'.join(exp_name))
-      if splitting == 'many':
-        initialize()
-        for b in bounds_fp_many_1():
-          for f in funcs_fp_1:
-            exp_name = [str(b),shared_lib, input_type, 'b_many']
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max, '|'.join(exp_name))
-          
-    elif num_inputs == 2:
-      if splitting == 'whole':
-        initialize()
-        for b in bounds_fp_whole_2():
-          for f in funcs_fp_2:
-            exp_name = [shared_lib, input_type, 'b_whole']
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max, '|'.join(exp_name))
-      if splitting == 'two':
-        initialize()
-        for b in bounds_fp_two_2():
-          for f in funcs_fp_2:
-            exp_name = [shared_lib, input_type, 'b_two']
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max, '|'.join(exp_name))
-      if splitting == 'many':
-        initialize()
-        for b in bounds_fp_many_2():
-          for f in funcs_fp_2:
-            exp_name = [str(b),shared_lib, input_type, 'b_many']
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max,  '|'.join(exp_name))
+  funcs = ["max_inf", "min_inf", "max_under", "min_under"]
+  num_inputs = [1,2,3,4]
+  
+  for f in funcs:
+    initialize()
+    for b in bounds(split=splitting, num_input=num_inputs, input_type=input_type):
+      exp_name = [shared_lib, input_type, splitting]
+      g = partial(function_to_optimize(num_input=num_inputs, func_type = f, mode=input_type))
+      logging.info('|'.join(exp_name))
+      run_optimizer(b, g, new_max,  '|'.join(exp_name))
 
-    elif num_inputs == 3:
-      if splitting == 'whole':
-        initialize()
-        for b in bounds_fp_whole_3():
-          for f in funcs_fp_3:
-            exp_name = [shared_lib, input_type, 'b_whole']
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max, '|'.join(exp_name))
-      if splitting == 'two':
-        initialize()
-        for b in bounds_fp_two_3():
-          for f in funcs_fp_3:
-            exp_name = [shared_lib, input_type, 'b_two']
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max, '|'.join(exp_name))
-      if splitting == 'many':
-        initialize()
-        for b in bounds_fp_many_3():
-          for f in funcs_fp_3:
-            exp_name = [str(b),shared_lib, input_type, 'b_many']
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max,  '|'.join(exp_name))
-
-  elif input_type == 'exp':
-    if num_inputs == 1:
-      if splitting == 'whole':
-        initialize()
-        for b in bounds_exp_whole_1():
-          for f in funcs_exp_1:
-            exp_name = [shared_lib, input_type, 'b_whole']
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max, '|'.join(exp_name))
-      if splitting == 'two':
-        initialize()
-        for b in bounds_exp_two_1():
-          for f in funcs_exp_1:
-            exp_name = [shared_lib, input_type, 'b_two']
-            run_optimizer(b, f,new_max, '|'.join(exp_name))
-      if splitting == 'many':
-        initialize()
-        for b in bounds_exp_many_1():
-          for f in funcs_exp_1:
-            exp_name = [b, shared_lib, input_type, 'b_many',f]
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max, '|'.join(exp_name))
-        
-    elif num_inputs == 2:
-      if splitting == 'whole':
-        initialize()
-        for b in bounds_exp_whole_2():
-          for f in funcs_exp_2:
-            exp_name = [shared_lib, input_type, 'b_whole']
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max, '|'.join(exp_name))
-      if splitting == 'two':
-        initialize()
-        for b in bounds_exp_two_2():
-          for f in funcs_exp_2:
-            exp_name = [shared_lib, input_type, 'b_two']
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max, '|'.join(exp_name))
-      if splitting == 'many':
-        initialize()
-        for b in bounds_exp_many_2():
-          for f in funcs_exp_2:
-            exp_name = [b, shared_lib, input_type, 'b_many']
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max, '|'.join(exp_name))
-
-    elif num_inputs == 3:
-      if splitting == 'whole':
-        initialize()
-        for b in bounds_exp_whole_3():
-          for f in funcs_exp_3:
-            exp_name = [shared_lib, input_type, 'b_whole']
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max, '|'.join(exp_name))
-      if splitting == 'two':
-        initialize()
-        for b in bounds_exp_two_3():
-          for f in funcs_exp_3:
-            exp_name = [shared_lib, input_type, 'b_two']
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max, '|'.join(exp_name))
-      if splitting == 'many':
-        initialize()
-        for b in bounds_exp_many_3():
-          for f in funcs_exp_3:
-            exp_name = [b, shared_lib, input_type, 'b_many']
-            logging.info('|'.join(exp_name))
-            run_optimizer(b, f,new_max, '|'.join(exp_name))
   else:
     print('Invalid input type!')
     exit()
@@ -1049,6 +436,7 @@ def validate_output(input, output, new_max,  exp_name):
   elif numpy.isnan(output):
     save_results(output, exp_name)
     logger.info("The input {} resulted in the the exception {}".format(input, output))
+    output = new_max
   return output
 
 # -------------------------------------------------------
