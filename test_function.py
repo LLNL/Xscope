@@ -3,14 +3,17 @@ import ctypes
 import numpy
 
 class TestFunction:
-    def __init__(self, CUDA_LIB):
+    def __init__(self):
+        self.lib = None
+        self.MU = 1.0
+        self.smallest_subnormal = 4e-323
+
+    def set_kernel(self, CUDA_LIB):
         self.lib = CUDA_LIB
         script_dir = os.path.abspath(os.path.dirname(__file__))
         lib_path = os.path.join(script_dir, self.lib)
         self.E = ctypes.cdll.LoadLibrary(lib_path)
         self.E.kernel_wrapper_1.restype = ctypes.c_double
-        self.MU = 1.0
-        self.smallest_subnormal = 4e-323
 
     def call_GPU_kernel_1(self, x):
         x0 = x[0]

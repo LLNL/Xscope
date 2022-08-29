@@ -49,7 +49,7 @@ def set_max_iterations(n: int):
     global bo_iterations
     bo_iterations = n
 
-test_func = TestFunction(CUDA_LIB)
+test_func = TestFunction()
 result_logger = ResultLogger()
 
 # ----------------------------------------------------------------------------
@@ -115,7 +115,7 @@ def run_optimizer(bounds, func, new_max, exp_name):
     result_logger.save_results(train_X[train_Y.argmax()], exp_name)
 
 def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str, new_max: float):
-    test_func.lib = shared_lib
+    test_func.set_kernel(shared_lib)
     logger.info("Max value to replace: {}".format(str(new_max)))
     if input_type != "exp" or input_type != "fp":
         print('Invalid input type!')

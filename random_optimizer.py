@@ -3,7 +3,7 @@ from test_function import *
 from utils import *
 # --------------- Random Sampling Optimizer -------------
 
-test_func = TestFunction(CUDA_LIB)
+test_func = TestFunction()
 result_logger = ResultLogger()
 
 def save_results_random(val: float, exp_name: str, unbounded: bool):
@@ -85,7 +85,7 @@ def print_results_random(shared_lib):
 
 def optimize_randomly(shared_lib: str, num_inputs: int, max_iters: int, unbounded: bool):
     global CUDA_LIB
-    CUDA_LIB = shared_lib
+    test_func.set_kernel(shared_lib)
     exp_name = shared_lib + '|' + 'RANDOM'
     for i in range(max_iters):
         if num_inputs == 1:
