@@ -34,7 +34,7 @@ def data_initialization(obj_func, batch_shape, sample_dim):
     initial_X = torch.cuda.DoubleTensor((batch_shape, sample_dim)).uniform_(-1e+307, 1e+307)
     initial_Y = []
     for x in initial_X:
-        initial_Y.append(obj_func(x.detach().numpy()))\
+        initial_Y.append(obj_func(x.detach().numpy()))
     initial_Y = torch.Tensor(initial_X, dtype=dtype, device=device)
     return initial_X, initial_Y
 
