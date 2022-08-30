@@ -67,7 +67,7 @@ def bounds(split, num_input, input_type="fp"):
                 ranges.append(t)
         if num_input == 1:
             for r1 in ranges:
-                b.append(torch.tensor([r1], dtype=dtype, device=device))
+                b.append(torch.tensor([r1], dtype=dtype, device=device).squeeze(0))
         elif num_input == 2:
             for r1 in ranges:
                 for r2 in ranges:
@@ -246,3 +246,5 @@ class ResultLogger:
             print('\tSUB-:', 0)
             print('\tNaN :', 0)
         print('')
+
+print(bounds("many", 2)[0].shape)

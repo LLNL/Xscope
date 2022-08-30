@@ -31,11 +31,12 @@ found_under_pos = False
 found_under_neg = False
 # -----------------------------
 def data_initialization(obj_func, batch_shape, sample_dim):
-    initial_X = torch.cuda.DoubleTensor((batch_shape, sample_dim)).uniform_(-1e+307, 1e+307)
+    initial_X = torch.DoubleTensor((batch_shape, sample_dim)).uniform_(-1, 1)
     initial_Y = []
     for x in initial_X:
         initial_Y.append(obj_func(x.detach().numpy()))
-    initial_Y = torch.Tensor(initial_X, dtype=dtype, device=device)
+    initial_Y = torch.cuda.DoubleTensor(initial_Y)
+    initial_X = initial_X.to(device=device)
     return initial_X, initial_Y
 
 def initialize():
@@ -61,7 +62,7 @@ def run_optimizer(bounds, func, new_max, exp_name):
     num_fail = 0
     trials_so_far = 0
     trials_to_trigger = -1
-    train_X, train_Y = data_initialization(func, 10, bounds.shape[2])
+    train_X, train_Y = data_initialization(func, 10, bounds.shape[-1])
     train_Y = standardize(train_Y)
     best_Y = train_Y.max()
 
@@ -92,7 +93,8 @@ def run_optimizer(bounds, func, new_max, exp_name):
                 new_x = candidates.detach()
                 train_X = torch.cat([train_X, new_x])
                 for x in new_x:
-                    new_Y.append(func(x.numpy()))
+                    y = torch.cuda.DoubleTensor(func(x.numpy()))
+                    new_Y.append(y)
                 train_Y = torch.cat([train_Y, new_Y])
                 gp = SingleTaskGP(train_X, train_Y)
                 mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
@@ -117,14 +119,13 @@ def run_optimizer(bounds, func, new_max, exp_name):
 def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str, new_max: float):
     test_func.set_kernel(shared_lib)
     logger.info("Max value to replace: {}".format(str(new_max)))
-    if input_type != "exp" or input_type != "fp":
+    if input_type != "exp" and input_type != "fp":
         print('Invalid input type!')
         exit()
 
     assert num_inputs >= 1 and num_inputs <= 3
 
     funcs = ["max_inf", "min_inf", "max_under", "min_under"]
-    num_inputs = [1, 2, 3, 4]
     exp_name = [shared_lib, input_type, splitting]
     logging.info('|'.join(exp_name))
     for f in funcs:
