@@ -31,11 +31,11 @@ found_under_pos = False
 found_under_neg = False
 # -----------------------------
 def data_initialization(obj_func, batch_shape, sample_dim):
-    initial_X = torch.DoubleTensor((batch_shape, sample_dim)).uniform_(-1, 1)
+    initial_X = torch.cuda.DoubleTensor(batch_shape, sample_dim).uniform_(-1, 1)
     initial_Y = []
     for x in initial_X:
-        initial_Y.append(obj_func(x.detach().numpy()))
-    initial_Y = torch.cuda.DoubleTensor(initial_Y)
+        initial_Y.append(obj_func(x))
+    initial_Y = torch.cuda.DoubleTensor(initial_Y).unsqueeze(-1)
     initial_X = initial_X.to(device=device)
     return initial_X, initial_Y
 
@@ -75,12 +75,11 @@ def run_optimizer(bounds, func, new_max, exp_name):
     if verbose: print('BO opt...')
     sampler = SobolQMCNormalSampler(1024)
     qEI = qExpectedImprovement(gp, best_Y, sampler)
-
-    for i in range(bo_iterations):
-        print("iteration: ", i)
-        trials_so_far += 1
-        try:
-            for bound in bounds:
+    for bound in bounds:
+        for i in range(bo_iterations):
+            print("iteration: ", i)
+            trials_so_far += 1
+            try:
                 candidates, _ = optimize_acqf(
                     acq_function=qEI,
                     bounds=bound,
@@ -93,27 +92,26 @@ def run_optimizer(bounds, func, new_max, exp_name):
                 new_x = candidates.detach()
                 train_X = torch.cat([train_X, new_x])
                 for x in new_x:
-                    y = torch.cuda.DoubleTensor(func(x.numpy()))
-                    new_Y.append(y)
+                    new_Y.append(func(x))
+                    
+                new_Y = torch.cuda.DoubleTensor(new_Y).unsqueeze(-1)
                 train_Y = torch.cat([train_Y, new_Y])
+
                 gp = SingleTaskGP(train_X, train_Y)
                 mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
                 fit_gpytorch_model(mll)
-
-        except Exception as e:
-            break
+            except Exception as e:
+                result_logger.save_results(train_Y.max(), exp_name)
+                result_logger.update_runs_table(exp_name)
+                break
             # if isinstance(e, ValueError):
             #     num_fail += 1
             #     optimizer._space._target[-1] /= (10 ** num_fail)
             # if verbose: print("Oops!", e.__class__, "occurred.")
             # if verbose: print(e)
             # if verbose: logging.exception("Something awful happened!")
-        finally:
-            result_logger.save_results(train_Y.max(), exp_name)
-            result_logger.update_runs_table(exp_name)
-            continue
 
-    if verbose: print(train_Y.max)
+    if verbose: print(train_Y.max())
     result_logger.save_results(train_X[train_Y.argmax()], exp_name)
 
 def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str, new_max: float):

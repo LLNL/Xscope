@@ -16,8 +16,7 @@ class TestFunction:
         self.E.kernel_wrapper_1.restype = ctypes.c_double
 
     def call_GPU_kernel_1(self, x):
-        x0 = x[0]
-        res = self.E.kernel_wrapper_1(ctypes.c_double(x0))
+        res = self.E.kernel_wrapper_1(ctypes.c_double(x))
         return res
 
     def call_GPU_kernel_2(self, x):
