@@ -79,7 +79,7 @@ def bounds(split, num_input, input_type="fp"):
                     bound = torch.transpose(torch.tensor([r1,r2,r2], dtype=dtype, device=device).squeeze(),0,1)
                     b.append(bound)
         b = torch.stack(b, dim=0)
-        b = torch.split(b, 5)
+        b = torch.split(b, 10)
     return b
 
 
@@ -118,22 +118,22 @@ class ResultLogger:
         self.trials_results = {}
         self.random_results = {}
 
-    def save_trials_to_trigger(self, exp_name: str):
-        global trials_to_trigger, trials_so_far
-        if trials_to_trigger == -1:
-            trials_to_trigger = trials_so_far
-            self.trials_results[exp_name] = trials_to_trigger
+    # def save_trials_to_trigger(self, exp_name: str):
+    #     global trials_to_trigger, trials_so_far
+    #     if trials_to_trigger == -1:
+    #         trials_to_trigger = trials_so_far
+    #         self.trials_results[exp_name] = trials_to_trigger
 
-    def save_results(self, val: float, exp_name: str):
+    def save_results(self, val: torch.Tensor, exp_name: str):
         # Infinity
-        if math.isinf(val):
+        if torch.isinf(val):
             if exp_name not in self.results.keys():
                 if val < 0.0:
                     self.results[exp_name] = [1, 0, 0, 0, 0]
-                    self.save_trials_to_trigger(exp_name)
+                    # self.save_trials_to_trigger(exp_name)
                 else:
                     self.results[exp_name] = [0, 1, 0, 0, 0]
-                    self.save_trials_to_trigger(exp_name)
+                    # self.save_trials_to_trigger(exp_name)
             else:
                 if val < 0.0:
                     self.results[exp_name][0] += 1
@@ -141,26 +141,26 @@ class ResultLogger:
                     self.results[exp_name][1] += 1
 
         # Subnormals
-        if numpy.isfinite(val):
+        if torch.isfinite(val):
             if val > -2.22e-308 and val < 2.22e-308:
                 if val != 0.0 and val != -0.0:
                     if exp_name not in self.results.keys():
                         if val < 0.0:
                             self.results[exp_name] = [0, 0, 1, 0, 0]
-                            self.save_trials_to_trigger(exp_name)
+                            # self.save_trials_to_trigger(exp_name)
                         else:
                             self.results[exp_name] = [0, 0, 0, 1, 0]
-                            self.save_trials_to_trigger(exp_name)
+                            # self.save_trials_to_trigger(exp_name)
                     else:
                         if val < 0.0:
                             self.results[exp_name][2] += 1
                         else:
                             self.results[exp_name][3] += 1
 
-        if math.isnan(val):
+        if torch.isnan(val):
             if exp_name not in self.results.keys():
                 self.results[exp_name] = [0, 0, 0, 0, 1]
-                self.save_trials_to_trigger(exp_name)
+                # self.save_trials_to_trigger(exp_name)
             else:
                 self.results[exp_name][4] += 1
 

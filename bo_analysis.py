@@ -20,8 +20,8 @@ CUDA_LIB = ''
 bo_iterations = 25  # number of iteration
 logging.basicConfig(filename='Xscope.log', level=logging.INFO)
 logger = logging.getLogger(__name__)
-BATCH_SIZE = 5
-NUM_RESTARTS = 10
+BATCH_SIZE = 3
+NUM_RESTARTS = 5
 RAW_SAMPLES = 512
 
 # ----- Status variables ------
@@ -75,35 +75,36 @@ def run_optimizer(bounds, func, new_max, exp_name):
     if verbose: print('BO opt...')
     sampler = SobolQMCNormalSampler(1024)
     qEI = qExpectedImprovement(gp, best_Y, sampler)
-    for bound in bounds:
-        for i in range(bo_iterations):
-            print("iteration: ", i)
-            trials_so_far += 1
-            try:
+
+    for i in range(bo_iterations):
+        print("iteration: ", i)
+        trials_so_far += 1
+        try:
+            new_Y = []
+            for bound in bounds:
                 candidates, _ = optimize_acqf(
                     acq_function=qEI,
                     bounds=bound,
                     q=BATCH_SIZE,
                     num_restarts=NUM_RESTARTS,
                     raw_samples=RAW_SAMPLES,  # used for intialization heuristic
-                    options={"batch_limit": 5, "maxiter": 200},
+                    options={"batch_limit": 3, "maxiter": 100},
                 )
-                new_Y = []
+
                 new_x = candidates.detach()
                 train_X = torch.cat([train_X, new_x])
                 for x in new_x:
                     new_Y.append(func(x))
-                    
-                new_Y = torch.cuda.DoubleTensor(new_Y).unsqueeze(-1)
-                train_Y = torch.cat([train_Y, new_Y])
 
-                gp = SingleTaskGP(train_X, train_Y)
-                mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
-                fit_gpytorch_model(mll)
-            except Exception as e:
-                result_logger.save_results(train_Y.max(), exp_name)
-                result_logger.update_runs_table(exp_name)
-                break
+            new_Y = torch.cuda.DoubleTensor(new_Y).unsqueeze(-1)
+            train_Y = torch.cat([train_Y, new_Y])
+            gp = SingleTaskGP(train_X, train_Y)
+            mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
+            fit_gpytorch_model(mll)
+        except Exception as e:
+            result_logger.save_results(train_Y.max(), exp_name)
+            result_logger.update_runs_table(exp_name)
+            break
             # if isinstance(e, ValueError):
             #     num_fail += 1
             #     optimizer._space._target[-1] /= (10 ** num_fail)
