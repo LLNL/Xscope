@@ -81,7 +81,7 @@ def bounds(split, num_input, input_type="fp"):
                     bound = torch.transpose(torch.tensor([r1,r2,r2], dtype=dtype, device=device).squeeze(),0,1)
                     b.append(bound)
         b = torch.stack(b, dim=0)
-        b = torch.split(b, 10)
+        # b = torch.split(b, 10)
     return b
 
 
@@ -231,3 +231,5 @@ class UtilityFunction(object):
         mean, std = output.mean, output.std
         z = (mean - y_max - xi)/std
         return norm.cdf(z)
+
+

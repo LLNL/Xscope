@@ -1,5 +1,4 @@
 import gpytorch
-import torchmin
 from gpytorch.likelihoods import GaussianLikelihood
 from torch.optim import Adam
 from gpytorch.mlls import ExactMarginalLogLikelihood
@@ -127,35 +126,33 @@ class BaysianOptimization():
             """
 
         # Warm up with random points
-        x_tries = torch.distributions.uniform.Uniform(self.bounds[0], self.bounds[1])
-        x_tries = x_tries.sample((n_warmup,)).to(device=device, dtype=dtype)
-        mean, std = self.acq.forward(self.GP, self.likelihood, x_tries, self.y_max)
-        ys = self.acq.forward(mean, std, self.y_max)
+        x_sampler = torch.distributions.uniform.Uniform(self.bounds[0], self.bounds[1])
+        x_tries = x_sampler.sample((n_warmup,)).to(device=device, dtype=dtype)
+        self.likelihood.eval()
+        self.GP.eval()
+        ys = self.likelihood(self.GP(x_tries))
         x_max = x_tries[ys.argmax()]
         max_acq = ys.max()
 
         # Explore the parameter space more throughly
-        x_seeds = numpy.random.uniform(self.bounds[0], self.bounds[1], (n_iter, self.bounds.shape[-1]))
+        x_seeds = x_sampler.sample((n_iter,)).to(device=device, dtype=dtype)
 
         to_minimize = lambda x: -self.acq.forward(x.reshape(1, -1), self.GP, self.likelihood, y_max=self.y_max)
 
-        bounds_dict = {'lb': self.bounds[0],
-                           'ub': self.bounds[1]}
-
         for x_try in x_seeds:
             # Find the minimum of minus the acquisition function
-            res = torchmin.minimize_constr(lambda x: to_minimize(x),
-                                           x_try,
-                                           bounds=bounds_dict,
-                                           method="L-BFGS-B")
-            # See if success
-            if not res.success:
-                continue
-
-            # Store it if better than previous minimum(maximum).
-            if max_acq is None or -torch.squeeze(res.fun) >= max_acq:
-                x_max = res.x
-                max_acq = -torch.squeeze(res.fun)
+            x_try.require_grad = True
+            optimizer = torch.optim.LBFGS(x_try, lr=1e-5)
+            for _ in range(10):
+                loss = to_minimize(x_try)
+                optimizer.zero_grad()
+                with torch.no_grad():
+                    loss[:] = loss.clamp(self.bounds[0], self.bounds[1])
+                loss.backward()
+                optimizer.step()
+                if max_acq is None or -torch.squeeze(loss) >= max_acq:
+                    x_max = x_try
+                    max_acq = -torch.squeeze(loss)
 
         # Clip output to make sure it lies within the bounds. Due to floating
         # point technicalities this is not always the case.
@@ -193,16 +190,20 @@ class BaysianOptimization():
         return False
 
     def train(self):
+        new_train_x = []
+        new_train_y = []
         for i in range(self.iteration):
             # Set the gradients from previous iteration to zero
             if i == 0 or i%self.batch_size==0:
-                self.optim.zero_grad()
+                new_train_x = new_train_x.stack(new_train_x)
+                new_train_y = new_train_y.stack(new_train_y).unsqueeze(-1)
+                # self.optim.zero_grad()
                 # Output from model
-                output = self.GP(self.train_x)
+                self.GP = self.GP.get_fantasy_model(new_train_x, new_train_y)
                 # Compute loss and backprop gradients
-                loss = -self.mll(output, self.train_y)
-                loss.backward()
-                self.optim.step()
+                # loss = -self.mll(output, self.train_y)
+                # loss.backward()
+                # self.optim.step()
 
             new_candidate = self.suggest_new_candidate()
             new_candidate = torch.from_numpy(new_candidate).to(dtype=torch.double, device=self.device)
@@ -211,5 +212,5 @@ class BaysianOptimization():
             if self.check_exception(new_candidate, new_cadidate_target):
                 logger.info("parameter {} caused floating point error {}".format(new_candidate, new_cadidate_target))
                 break
-            self.train_x = torch.cat((self.train_x, new_candidate), 0)
-            self.train_y = torch.cat((self.train_y, new_cadidate_target), 0)
+            new_train_x.append(new_candidate)
+            new_train_y.append(new_cadidate_target)
