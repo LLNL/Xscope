@@ -237,7 +237,7 @@ if __name__ == "__main__":
 
     # Run BO optimization
     print('*** Running BO on:', shared_lib)
-    new_maxes = [sys.float_info.max, 8.95e+307, 8.95e+305, 8.95e+303, 8.95e+301, 8.95e+299]
+    new_maxes = [1]
     for new_max in new_maxes:
       print("max use: ", new_max)
       bo_analysis.optimize(shared_lib,

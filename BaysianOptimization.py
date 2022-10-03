@@ -1,5 +1,5 @@
 import gpytorch
-import numpy as np
+import torchmin
 from gpytorch.likelihoods import GaussianLikelihood
 from torch.optim import Adam
 from gpytorch.mlls import ExactMarginalLogLikelihood
@@ -102,13 +102,11 @@ class BaysianOptimization():
         :return: Tuple
             A tuple containing the training data
         """
-        sample_dim = self.bounds.shape[-1]
-        initial_X = np.random.uniform(self.bounds[0], self.bounds[1], (num_sample, sample_dim))
-        initial_X = torch.from_numpy(initial_X).to(dtype=torch.double, device=self.device)
-        initial_Y = np.zeros(num_sample)
+        initial_X = torch.distributions.uniform.Uniform(self.bounds[0], self.bounds[1])
+        initial_X = initial_X.sample((num_sample,)).to(device=device, dtype=dtype)
+        initial_Y = torch.zeros(num_sample).to(device=device, dtype=dtype)
         for index, x in enumerate(initial_X):
             initial_Y[index] = self.eval_func(x)
-        initial_Y = torch.from_numpy(initial_Y).to(dtype=torch.double, device=self.device)
         return initial_X, initial_Y
 
     def suggest_new_candidate(self, n_warmup=10000, n_iter=10):
@@ -129,8 +127,8 @@ class BaysianOptimization():
             """
 
         # Warm up with random points
-        x_tries = numpy.random.uniform(self.bounds[0], self.bounds[1], (n_warmup, self.bounds.shape[-1]))
-        x_tries = torch.from_numpy(x_tries).to(dtype=torch.double, device=self.device)
+        x_tries = torch.distributions.uniform.Uniform(self.bounds[0], self.bounds[1])
+        x_tries = x_tries.sample((n_warmup,)).to(device=device, dtype=dtype)
         mean, std = self.acq.forward(self.GP, self.likelihood, x_tries, self.y_max)
         ys = self.acq.forward(mean, std, self.y_max)
         x_max = x_tries[ys.argmax()]
@@ -155,13 +153,13 @@ class BaysianOptimization():
                 continue
 
             # Store it if better than previous minimum(maximum).
-            if max_acq is None or -numpy.squeeze(res.fun) >= max_acq:
+            if max_acq is None or -torch.squeeze(res.fun) >= max_acq:
                 x_max = res.x
-                max_acq = -numpy.squeeze(res.fun)
+                max_acq = -torch.squeeze(res.fun)
 
         # Clip output to make sure it lies within the bounds. Due to floating
         # point technicalities this is not always the case.
-        return numpy.clip(x_max, self.bounds[0], self.bounds[1])
+        return torch.clip(x_max, self.bounds[0], self.bounds[1])
 
     def check_exception(self, param, val):
         # Infinity
