@@ -1,8 +1,10 @@
 import math
 import numpy
-import os
-
 import torch
+from torch.linalg import norm
+from os.path import isfile
+import time
+import pandas as pd
 
 max_normal = 1e+307
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -112,139 +114,120 @@ def is_under_neg(val):
 class ResultLogger:
     def __init__(self):
         self.results = {}
-        self.runs_results = {}
-        self.trials_so_far = 0
-        self.trials_to_trigger = -1
-        self.trials_results = {}
         self.random_results = {}
+        self.exception_induced_params = {}
+        self.bounds_list = []
+        self.total_error_per_bound = []
+        self.start = 0
+        self.execution_time = 0
 
-    # def save_trials_to_trigger(self, exp_name: str):
-    #     global trials_to_trigger, trials_so_far
-    #     if trials_to_trigger == -1:
-    #         trials_to_trigger = trials_so_far
-    #         self.trials_results[exp_name] = trials_to_trigger
+        self.funcs = ["max_inf", "min_inf", "max_under", "min_under", "nan"]
 
-    def save_results(self, val: torch.Tensor, exp_name: str):
-        # Infinity
-        if torch.isinf(val):
-            if exp_name not in self.results.keys():
-                if val < 0.0:
-                    self.results[exp_name] = [1, 0, 0, 0, 0]
-                    # self.save_trials_to_trigger(exp_name)
-                else:
-                    self.results[exp_name] = [0, 1, 0, 0, 0]
-                    # self.save_trials_to_trigger(exp_name)
-            else:
-                if val < 0.0:
-                    self.results[exp_name][0] += 1
-                else:
-                    self.results[exp_name][1] += 1
+        for type in self.funcs:
+            self.results[type] = 0
+            self.exception_induced_params[type] = []
 
-        # Subnormals
-        if torch.isfinite(val):
-            if val > -2.22e-308 and val < 2.22e-308:
-                if val != 0.0 and val != -0.0:
-                    if exp_name not in self.results.keys():
-                        if val < 0.0:
-                            self.results[exp_name] = [0, 0, 1, 0, 0]
-                            # self.save_trials_to_trigger(exp_name)
-                        else:
-                            self.results[exp_name] = [0, 0, 0, 1, 0]
-                            # self.save_trials_to_trigger(exp_name)
-                    else:
-                        if val < 0.0:
-                            self.results[exp_name][2] += 1
-                        else:
-                            self.results[exp_name][3] += 1
+    def start_time(self):
+        self.start = time.time()
 
-        if torch.isnan(val):
-            if exp_name not in self.results.keys():
-                self.results[exp_name] = [0, 0, 0, 0, 1]
-                # self.save_trials_to_trigger(exp_name)
-            else:
-                self.results[exp_name][4] += 1
+    def log_time(self):
+        self.execution_time = time.time() - self.start
 
-    def update_runs_table(self, exp_name: str):
-        if exp_name not in self.runs_results.keys():
-            self.runs_results[exp_name] = 0
+    def log_result(self, bo_errors):
+        error_count = 0
+        for type in self.funcs:
+            self.results[type] += bo_errors[type]
+            # result_logger.exception_induced_params[type] += bo.exception_induced_params[type]
+            error_count += self.results[type]
+        self.total_error_per_bound.append(error_count)
+
+    def summarize_result(self, func_name):
+        total_exception = 0
+        bgrt_bo_data = {'Function': [func_name]}
+        for type in self.funcs:
+            print('\t' + type + ": ", self.results[type])
+            bgrt_bo_data[type] = [self.results[type]]
+            total_exception += self.results[type]
+
+        print('\tTotal Exception: ', total_exception)
+        bgrt_bo_data.update({'Total Exception': [total_exception],
+                             'Execution Time': [self.execution_time]})
+        bgrt_interval_data = {}
+        bgrt_interval_data['Function'] = [func_name]
+        for bound, total_error in zip(self.bounds_list, self.total_error_per_bound):
+            bgrt_interval_data[bound] = [total_error]
+
+        bgrt_bo_df = pd.DataFrame(bgrt_bo_data)
+        bgrt_interval_df = pd.DataFrame(bgrt_interval_data)
+
+        return bgrt_bo_df, bgrt_interval_df
+
+    def write_result_to_file(self, file_name, data):
+        if isfile(file_name):
+            data.to_csv(file_name, mode='a', index=False, header=False)
         else:
-            self.runs_results[exp_name] += 1
+            data.to_csv(file_name, index=False)
 
-    def are_we_done(self, func, recent_val, exp_name):
-        global found_inf_pos, found_inf_neg, found_under_pos, found_under_neg
 
-        # Finding INF+
-        if 'max_inf' in func.__name__:
-            if found_inf_pos:
-                return True
-            else:
-                if is_inf_pos(recent_val):
-                    found_inf_pos = True
-                    self.save_results(recent_val, exp_name)
-                    return True
 
-        # Finding INF-
-        elif 'min_inf' in func.__name__:
-            if found_inf_neg:
-                return True
-            else:
-                if is_inf_neg(recent_val):
-                    found_inf_neg = True
-                    self.save_results(recent_val, exp_name)
-                    return True
 
-        # Finding Under-
-        elif 'max_under' in func.__name__:
-            if found_under_neg:
-                return True
-            else:
-                if is_under_neg(recent_val):
-                    found_under_neg = True
-                    self.save_results(recent_val, exp_name)
-                    return True
+"""
+This code is inspired by this github: https://github.com/fmfn/BayesianOptimization
+"""
 
-        # Finding Under+
-        elif 'min_under' in func.__name__:
-            if found_under_pos:
-                return True
-            else:
-                if is_under_pos(recent_val):
-                    found_under_pos = True
-                    self.save_results(recent_val, exp_name)
-                    return True
-        return False
+class UtilityFunction(object):
+    """
+    An object to compute the acquisition functions.
+    """
 
-    def get_results(self):
-        return self.results
+    def __init__(self, kind, kappa, xi, kappa_decay=1, kappa_decay_delay=0):
+        self.kappa = kappa
+        self._kappa_decay = kappa_decay
+        self._kappa_decay_delay = kappa_decay_delay
 
-    def get_random_results(self):
-        return self.random_results
+        self.xi = xi
 
-    def print_result(self, shared_lib, number_sampling, range_splitting, logger):
-        function_key = shared_lib + '|' + number_sampling + '|b_' + range_splitting
-        fun_name = os.path.basename(shared_lib)
-        print('-------------- Results --------------')
-        print(fun_name)
-        if len(self.results.keys()) > 0:
-            total_exception = 0
-            for key in self.results.keys():
-                if function_key in key:
-                    print('Range:', key.split('|')[0])
-                    print('\tINF+:', self.results[key][0])
-                    print('\tINF-:', self.results[key][1])
-                    print('\tSUB-:', self.results[key][2])
-                    print('\tSUB-:', self.results[key][3])
-                    print('\tNaN :', self.results[key][4])
-                    # print('\tTotal Exception for range {}: {}'.format(key.split('|')[0], sum(results[key]))
-                    total_exception += sum(self.results[key])
-            print('\tTotal Exception: ', total_exception)
-            logger.info('\tTotal Exception: {} '.format(total_exception))
+        self._iters_counter = 0
+
+        if kind not in ['ucb', 'ei', 'poi']:
+            err = "The utility function " \
+                  "{} has not been implemented, " \
+                  "please choose one of ucb, ei, or poi.".format(kind)
+            raise NotImplementedError(err)
         else:
-            print('\tINF+:', 0)
-            print('\tINF-:', 0)
-            print('\tSUB-:', 0)
-            print('\tSUB-:', 0)
-            print('\tNaN :', 0)
-        print('')
+            self.kind = kind
 
-print(bounds("many", 2)[0].shape)
+    def update_params(self):
+        self._iters_counter += 1
+
+        if self._kappa_decay < 1 and self._iters_counter > self._kappa_decay_delay:
+            self.kappa *= self._kappa_decay
+
+    def forward(self,gp, likelihood, x, y_max):
+        if self.kind == 'ucb':
+            return self._ucb(gp, likelihood, x, self.kappa)
+        if self.kind == 'ei':
+            return self._ei(gp, likelihood, x, y_max, self.xi)
+        if self.kind == 'poi':
+            return self._poi(gp, likelihood, x, y_max, self.xi)
+
+    @staticmethod
+    def _ucb(gp, likelihood, x, kappa):
+        output = likelihood(gp(x))
+        mean, std = output.mean, output.std
+        return mean + kappa * std
+
+    @staticmethod
+    def _ei(gp, likelihood, x, y_max, xi):
+        output = likelihood(gp(x))
+        mean, std = output.mean, output.std
+        a = (mean - y_max - xi)
+        z = a / std
+        return a * norm.cdf(z) + std * norm.pdf(z)
+
+    @staticmethod
+    def _poi(gp, likelihood, x, y_max, xi):
+        output = likelihood(gp(x))
+        mean, std = output.mean, output.std
+        z = (mean - y_max - xi)/std
+        return norm.cdf(z)
