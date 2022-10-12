@@ -143,12 +143,15 @@ class BaysianOptimization():
             x_try.require_grad = True
             optimizer = torch.optim.LBFGS([x_try], lr=1e-5)
             for _ in range(10):
-                loss = to_minimize(x_try)
-                optimizer.zero_grad()
-                with torch.no_grad():
-                    loss[:] = loss.clamp(self.bounds[0], self.bounds[1])
-                loss.backward()
-                optimizer.step()
+                def closure():
+                    loss = to_minimize(x_try)
+                    optimizer.zero_grad()
+                    loss.backward()
+                    with torch.no_grad():
+                        loss[:] = loss.clamp(self.bounds[0], self.bounds[1])
+                    return loss
+                loss = closure()
+                optimizer.step(closure)
                 if max_acq is None or -torch.squeeze(loss) >= max_acq:
                     x_max = x_try
                     max_acq = -torch.squeeze(loss)
