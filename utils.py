@@ -2,7 +2,7 @@ import math
 import numpy
 import torch
 from torch.distributions import Normal
-from torch.linalg import norm
+from multipledispatch.dispatcher import Dispatcher
 from os.path import isfile
 import time
 import pandas as pd

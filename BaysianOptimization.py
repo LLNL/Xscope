@@ -4,6 +4,7 @@ from torch.optim import Adam
 from gpytorch.mlls import ExactMarginalLogLikelihood
 from utils import *
 import logging
+from botorch.optim.fit import fit_gpytorch_torch
 logging.basicConfig(filename='Xscope.log', level=logging.INFO)
 logger = logging.getLogger(__name__)
 max_normal = 1e+307
@@ -71,7 +72,6 @@ class BaysianOptimization():
         self.device = device
         self.likelihood = likelihood_func.to(device=self.device)
 
-
         # initialize training data and model
         self.train_x, self.train_y = self.initialize_data(initial_sample)
         self.y_max = self.train_y.max()
@@ -80,7 +80,7 @@ class BaysianOptimization():
         self.acq = UtilityFunction(self.acquisition_function, kappa=2.5, xi=0.1e-1)
 
         self.optim = Adam(self.GP.parameters(), lr=0.1)
-        self.mll = ExactMarginalLogLikelihood(self.likelihood, self.GP)
+        self.mll = ExactMarginalLogLikelihood(self.GP.likelihood, self.GP)
 
         # Result report
         self.results = {}
@@ -129,14 +129,14 @@ class BaysianOptimization():
         x_tries = x_sampler.sample((n_warmup,)).to(device=device, dtype=dtype)
         self.likelihood.eval()
         self.GP.eval()
-        ys = self.likelihood(self.GP.forward(x_tries)).mean
+        ys = self.GP.likelihood(self.GP.forward(x_tries)).mean
         x_max = x_tries[ys.argmax()]
         max_acq = ys.max()
 
         # Explore the parameter space more throughly
         x_seeds = x_sampler.sample((n_iter,)).to(device=device, dtype=dtype)
 
-        to_minimize = lambda x: -self.acq.forward(self.GP, self.likelihood, x.reshape(1, -1),  y_max=self.y_max)
+        to_minimize = lambda x: -self.acq.forward(self.GP, self.GP.likelihood, x.reshape(1, -1),  y_max=self.y_max)
 
         for x_try in x_seeds:
             # Find the minimum of minus the acquisition function
@@ -194,6 +194,7 @@ class BaysianOptimization():
     def train(self):
         new_train_x = []
         new_train_y = []
+        self.mll, _ = fit_gpytorch_torch(self.mll)
         for i in range(self.iteration):
             # Set the gradients from previous iteration to zero
             if i%self.batch_size==0 and i!=0:
@@ -201,7 +202,8 @@ class BaysianOptimization():
                 new_train_y = torch.stack(new_train_y).unsqueeze(-1)
                 # self.optim.zero_grad()
                 # Output from model
-                self.GP = self.GP.get_fantasy_model(new_train_x, new_train_y)
+                self.mll.model.get_fantasy_model(new_train_x, new_train_y)
+                self.mll, _ = fit_gpytorch_torch(self.mll)
                 new_train_x = []
                 new_train_y = []
                 # Compute loss and backprop gradients
