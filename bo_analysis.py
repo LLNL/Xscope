@@ -51,7 +51,7 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str, 
             result_logger.log_result(bo.results)
             del bo
     result_logger.log_time()
-
+    print("execution time: ", result_logger.execution_time)
     bgrt_bo_df, bgrt_interval_df = result_logger.summarize_result(shared_lib)
 
     if num_inputs==1:

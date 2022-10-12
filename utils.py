@@ -224,15 +224,16 @@ class UtilityFunction(object):
         mean, std = output.mean, torch.sqrt(output.variance)
         a = (mean - y_max - xi)
         z = a / std
-        norm = Normal(torch.tensor([0.0]), torch.tensor([1.0]))
-        return a * norm.cdf(z) + std * norm.pdf(z)
+        norm = Normal(torch.tensor([0.0]).to(device=device, dtype=dtype), torch.tensor([1.0]).to(device=device, dtype=dtype))
+        pdf = 1/torch.sqrt(torch.tensor(2.0*math.pi).to(device=device, dtype=dtype)) * torch.exp(-z**2/2)
+        return a * norm.cdf(z) + std * pdf
 
     @staticmethod
     def _poi(gp, likelihood, x, y_max, xi):
         output = likelihood(gp.forward(x))
         mean, std = output.mean, torch.sqrt(output.variance)
         z = (mean - y_max - xi)/std
-        norm = Normal(torch.tensor([0.0]), torch.tensor([1.0]))
+        norm = Normal(torch.tensor([0.0]).to(device=device, dtype=dtype), torch.tensor([1.0]).to(device=device, dtype=dtype))
         return norm.cdf(z)
 
 
