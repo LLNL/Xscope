@@ -210,9 +210,8 @@ class BaysianOptimization():
                 # self.optim.step()
 
             new_candidate = self.suggest_new_candidate()
-            new_candidate = torch.from_numpy(new_candidate).to(dtype=torch.double, device=self.device)
             new_cadidate_target = self.eval_func(new_candidate)
-            new_cadidate_target = torch.cuda.DoubleTensor(new_cadidate_target)
+            new_cadidate_target = torch.as_tensor(new_cadidate_target).to(dtype=dtype)
             if self.check_exception(new_candidate, new_cadidate_target):
                 logger.info("parameter {} caused floating point error {}".format(new_candidate, new_cadidate_target))
                 break
