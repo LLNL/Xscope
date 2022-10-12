@@ -27,13 +27,12 @@ class ExactGPModel(gpytorch.models.ExactGP):
     def __init__(self, train_x, train_y, likelihood):
         super(ExactGPModel, self).__init__(train_x, train_y, likelihood)
         self.mean_module = gpytorch.means.ConstantMean()
-        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+        self.covar_module = gpytorch.kernels.MaternKernel()
 
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
         return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
-
 
 class BaysianOptimization():
     """
@@ -130,19 +129,19 @@ class BaysianOptimization():
         x_tries = x_sampler.sample((n_warmup,)).to(device=device, dtype=dtype)
         self.likelihood.eval()
         self.GP.eval()
-        ys = self.likelihood(self.GP(x_tries))
+        ys = self.likelihood(self.GP.forward(x_tries)).mean
         x_max = x_tries[ys.argmax()]
         max_acq = ys.max()
 
         # Explore the parameter space more throughly
         x_seeds = x_sampler.sample((n_iter,)).to(device=device, dtype=dtype)
 
-        to_minimize = lambda x: -self.acq.forward(x.reshape(1, -1), self.GP, self.likelihood, y_max=self.y_max)
+        to_minimize = lambda x: -self.acq.forward(self.GP, self.likelihood, x.reshape(1, -1),  y_max=self.y_max)
 
         for x_try in x_seeds:
             # Find the minimum of minus the acquisition function
             x_try.require_grad = True
-            optimizer = torch.optim.LBFGS(x_try, lr=1e-5)
+            optimizer = torch.optim.LBFGS([x_try], lr=1e-5)
             for _ in range(10):
                 loss = to_minimize(x_try)
                 optimizer.zero_grad()
@@ -194,12 +193,14 @@ class BaysianOptimization():
         new_train_y = []
         for i in range(self.iteration):
             # Set the gradients from previous iteration to zero
-            if i == 0 or i%self.batch_size==0:
-                new_train_x = new_train_x.stack(new_train_x)
-                new_train_y = new_train_y.stack(new_train_y).unsqueeze(-1)
+            if i%self.batch_size==0 and i!=0:
+                new_train_x = torch.stack(new_train_x)
+                new_train_y = torch.stack(new_train_y).unsqueeze(-1)
                 # self.optim.zero_grad()
                 # Output from model
                 self.GP = self.GP.get_fantasy_model(new_train_x, new_train_y)
+                new_train_x = []
+                new_train_y = []
                 # Compute loss and backprop gradients
                 # loss = -self.mll(output, self.train_y)
                 # loss.backward()

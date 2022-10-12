@@ -213,22 +213,22 @@ class UtilityFunction(object):
 
     @staticmethod
     def _ucb(gp, likelihood, x, kappa):
-        output = likelihood(gp(x))
-        mean, std = output.mean, output.std
+        output = likelihood(gp.forward(x))
+        mean, std = output.mean, torch.sqrt(output.var)
         return mean + kappa * std
 
     @staticmethod
     def _ei(gp, likelihood, x, y_max, xi):
-        output = likelihood(gp(x))
-        mean, std = output.mean, output.std
+        output = likelihood(gp.forward(x))
+        mean, std = output.mean, torch.sqrt(output.var)
         a = (mean - y_max - xi)
         z = a / std
         return a * norm.cdf(z) + std * norm.pdf(z)
 
     @staticmethod
     def _poi(gp, likelihood, x, y_max, xi):
-        output = likelihood(gp(x))
-        mean, std = output.mean, output.std
+        output = likelihood(gp.forward(x))
+        mean, std = output.mean, torch.sqrt(output.var)
         z = (mean - y_max - xi)/std
         return norm.cdf(z)
 
