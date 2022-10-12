@@ -1,6 +1,7 @@
 import math
 import numpy
 import torch
+from torch.distributions import Normal
 from torch.linalg import norm
 from os.path import isfile
 import time
@@ -214,22 +215,24 @@ class UtilityFunction(object):
     @staticmethod
     def _ucb(gp, likelihood, x, kappa):
         output = likelihood(gp.forward(x))
-        mean, std = output.mean, torch.sqrt(output.var)
+        mean, std = output.mean, torch.sqrt(output.variance)
         return mean + kappa * std
 
     @staticmethod
     def _ei(gp, likelihood, x, y_max, xi):
         output = likelihood(gp.forward(x))
-        mean, std = output.mean, torch.sqrt(output.var)
+        mean, std = output.mean, torch.sqrt(output.variance)
         a = (mean - y_max - xi)
         z = a / std
+        norm = Normal(torch.tensor([0.0]), torch.tensor([1.0]))
         return a * norm.cdf(z) + std * norm.pdf(z)
 
     @staticmethod
     def _poi(gp, likelihood, x, y_max, xi):
         output = likelihood(gp.forward(x))
-        mean, std = output.mean, torch.sqrt(output.var)
+        mean, std = output.mean, torch.sqrt(output.variance)
         z = (mean - y_max - xi)/std
+        norm = Normal(torch.tensor([0.0]), torch.tensor([1.0]))
         return norm.cdf(z)
 
 
