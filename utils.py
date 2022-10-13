@@ -1,8 +1,6 @@
 import math
-import numpy
 import torch
 from torch.distributions import Normal
-from multipledispatch.dispatcher import Dispatcher
 from os.path import isfile
 import time
 import pandas as pd
@@ -10,16 +8,6 @@ import pandas as pd
 max_normal = 1e+307
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 dtype = torch.double
-
-def validate_output(output, new_max):
-    if numpy.isposinf(output):
-        output = new_max
-    elif numpy.isneginf(output):
-        output = -new_max
-    elif numpy.isnan(output):
-        output = new_max
-    return output
-
 
 def bounds(split, num_input, input_type="fp"):
     b = []
@@ -85,33 +73,6 @@ def bounds(split, num_input, input_type="fp"):
         # b = torch.split(b, 10)
     return b
 
-
-def is_inf_pos(val):
-    if math.isinf(val):
-        return val > 0.0
-    return False
-
-
-def is_inf_neg(val):
-    if math.isinf(val):
-        return val < 0.0
-    return False
-
-
-def is_under_pos(val):
-    if numpy.isfinite(val):
-        if val > 0.0 and val < 2.22e-308:
-            return True
-    return False
-
-
-def is_under_neg(val):
-    if numpy.isfinite(val):
-        if val < 0.0 and val > -2.22e-308:
-            return True
-    return False
-
-
 class ResultLogger:
     def __init__(self):
         self.results = {}
@@ -169,9 +130,6 @@ class ResultLogger:
         else:
             data.to_csv(file_name, index=False)
 
-
-
-
 """
 This code is inspired by this github: https://github.com/fmfn/BayesianOptimization
 """
@@ -222,6 +180,8 @@ class UtilityFunction(object):
     def _ei(gp, likelihood, x, y_max, xi):
         output = likelihood(gp.forward(x))
         mean, std = output.mean, torch.sqrt(output.variance)
+        if not torch.isfinite(mean):
+            return mean
         a = (mean - y_max - xi)
         z = a / std
         norm = Normal(torch.tensor([0.0]).to(device=device, dtype=dtype), torch.tensor([1.0]).to(device=device, dtype=dtype))

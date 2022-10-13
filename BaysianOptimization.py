@@ -1,4 +1,5 @@
 import gpytorch
+import torch
 from gpytorch.likelihoods import GaussianLikelihood
 from torch.optim import Adam
 from gpytorch.mlls import ExactMarginalLogLikelihood
@@ -72,23 +73,27 @@ class BaysianOptimization():
         self.device = device
         self.likelihood = likelihood_func.to(device=self.device)
 
+        self.results = {}
+        self.exception_induced_params = {}
+        self.error_types = ["max_inf", "min_inf", "max_under", "min_under", "nan"]
+        for type in self.error_types:
+            self.results[type] = 0
+            self.exception_induced_params[type] = []
+
         # initialize training data and model
         self.train_x, self.train_y = self.initialize_data(initial_sample)
         self.y_max = self.train_y.max()
-        self.GP = ExactGPModel(self.train_x, self.train_y, self.likelihood).to(device=self.device)
+        self.GP = ExactGPModel(self.train_x, self.train_y, self.likelihood).to(device=self.device, dtype=dtype)
 
         self.acq = UtilityFunction(self.acquisition_function, kappa=2.5, xi=0.1e-1)
 
         self.optim = Adam(self.GP.parameters(), lr=0.1)
         self.mll = ExactMarginalLogLikelihood(self.GP.likelihood, self.GP)
 
+        self.sampler = torch.distributions.uniform.Uniform(self.bounds[0], self.bounds[1])
+
         # Result report
-        self.results = {}
-        self.exception_induced_params = {}
-        error_types = ["max_inf", "min_inf", "max_under", "min_under", "nan"]
-        for type in error_types:
-            self.results[type] = 0
-            self.exception_induced_params[type] = []
+
 
     def initialize_data(self, num_sample=10):
         """
@@ -100,11 +105,15 @@ class BaysianOptimization():
         :return: Tuple
             A tuple containing the training data
         """
-        initial_X = torch.distributions.uniform.Uniform(self.bounds[0], self.bounds[1])
-        initial_X = initial_X.sample((num_sample,)).to(device=device, dtype=dtype)
+        initial_X = self.sampler.sample((num_sample,)).to(device=device, dtype=dtype)
         initial_Y = torch.zeros(num_sample).to(device=device, dtype=dtype)
         for index, x in enumerate(initial_X):
-            initial_Y[index] = self.eval_func(x)
+            new_cadidate_target = self.eval_func(x)
+            new_cadidate_target = torch.as_tensor(new_cadidate_target, device=self.device, dtype=dtype)
+            if self.check_exception(x, new_cadidate_target):
+                logger.info("parameter {} caused floating point error {}".format(x, new_cadidate_target))
+                continue
+
         return initial_X, initial_Y
 
     def suggest_new_candidate(self, n_warmup=10000, n_iter=10):
@@ -125,8 +134,7 @@ class BaysianOptimization():
             """
 
         # Warm up with random points
-        x_sampler = torch.distributions.uniform.Uniform(self.bounds[0], self.bounds[1])
-        x_tries = x_sampler.sample((n_warmup,)).to(device=device, dtype=dtype)
+        x_tries = self.sampler.sample((n_warmup,)).to(device=device, dtype=dtype)
         self.likelihood.eval()
         self.GP.eval()
         ys = self.GP.likelihood(self.GP.forward(x_tries)).mean
@@ -134,7 +142,7 @@ class BaysianOptimization():
         max_acq = ys.max()
 
         # Explore the parameter space more throughly
-        x_seeds = x_sampler.sample((n_iter,)).to(device=device, dtype=dtype)
+        x_seeds = self.sampler.sample((n_iter,)).to(device=device, dtype=dtype)
 
         to_minimize = lambda x: -self.acq.forward(self.GP, self.GP.likelihood, x.reshape(1, -1),  y_max=self.y_max)
 
@@ -151,6 +159,8 @@ class BaysianOptimization():
                         loss[:] = loss.clamp(self.bounds[0], self.bounds[1])
                     return loss
                 loss = closure()
+                if not torch.isfinite(loss):
+                    continue
                 optimizer.step(closure)
                 if max_acq is None or -torch.squeeze(loss) >= max_acq:
                     x_max = x_try
@@ -162,15 +172,20 @@ class BaysianOptimization():
 
     def check_exception(self, param, val):
         # Infinity
-        if torch.isinf(val):
-            if val < 0.0:
-                self.results["min_inf"] += 1
-                self.exception_induced_params["min_inf"].append(param)
-                # self.save_trials_to_trigger(exp_name)
-            else:
-                self.results["max_inf"] += 1
-                self.exception_induced_params["max_inf"].append(param)
-                # self.save_trials_to_trigger(exp_name)
+        posinf = torch.isposinf(val)
+        neginf = torch.isneginf(val)
+        nan = torch.isnan(val)
+        if posinf.any():
+            inf_indices = torch.nonzero(val)
+            inf_induced_param = torch.index_select(param, 0, inf_indices)
+            self.results["min_inf"] += len(inf_indices)
+            self.exception_induced_params["min_inf"].append(inf_induced_param)
+            return True
+        if neginf:
+            inf_indices = torch.nonzero(val)
+            inf_induced_param = torch.index_select(param, 0, inf_indices)
+            self.results["max_inf"] += len(inf_indices)
+            self.exception_induced_params["max_inf"].append(inf_induced_param)
             return True
 
         # Subnormals
@@ -185,9 +200,11 @@ class BaysianOptimization():
                         self.exception_induced_params["max_under"].append(param)
                     return True
 
-        if torch.isnan(val):
-            self.results["nan"] += 1
-            self.exception_induced_params["nan"].append(param)
+        if nan:
+            nan_indices = torch.nonzero(val)
+            nan_induced_param = torch.index_select(param, 0, nan_indices)
+            self.results["nan"] += len(nan_indices)
+            self.exception_induced_params["nan"].append(nan_induced_param)
             return True
         return False
 
@@ -200,16 +217,10 @@ class BaysianOptimization():
             if i%self.batch_size==0 and i!=0:
                 new_train_x = torch.stack(new_train_x)
                 new_train_y = torch.stack(new_train_y).unsqueeze(-1)
-                # self.optim.zero_grad()
-                # Output from model
-                self.mll.model.get_fantasy_model(new_train_x, new_train_y)
+                self.mll.model.set_train_data(new_train_x, new_train_y, strict=False)
                 self.mll, _ = fit_gpytorch_torch(self.mll)
                 new_train_x = []
                 new_train_y = []
-                # Compute loss and backprop gradients
-                # loss = -self.mll(output, self.train_y)
-                # loss.backward()
-                # self.optim.step()
 
             new_candidate = self.suggest_new_candidate()
             new_cadidate_target = self.eval_func(new_candidate)
@@ -219,3 +230,6 @@ class BaysianOptimization():
                 break
             new_train_x.append(new_candidate)
             new_train_y.append(new_cadidate_target)
+
+        for type in self.error_types:
+            self.exception_induced_params[type] = torch.cat(self.exception_induced_params[type]).flatten()
