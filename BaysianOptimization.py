@@ -1,5 +1,9 @@
+from functools import partial
+
 import gpytorch
-import torch
+from botorch.generation.gen import gen_candidates_torch
+from botorch.optim import ExpMAStoppingCriterion
+from botorch.optim.utils import columnwise_clamp
 from gpytorch.likelihoods import GaussianLikelihood
 from torch.optim import Adam
 from gpytorch.mlls import ExactMarginalLogLikelihood
@@ -116,7 +120,8 @@ class BaysianOptimization():
 
         return initial_X, initial_Y
 
-    def suggest_new_candidate(self, n_warmup=10000, n_iter=10):
+    def suggest_new_candidate(self,n_warmup=10000, n_samples=10):
+        # TODO: add sampling around best point.
         """
             A function to find the maximum of the acquisition function
             It uses a combination of random sampling (cheap) and the 'L-BFGS-B'
@@ -126,8 +131,8 @@ class BaysianOptimization():
             ----------
             :param n_warmup:
                 number of times to randomly sample the acquisition function
-            :param n_iter:
-                number of times to run scipy.minimize
+            :param n_samples:
+                number of samples to try
             Returns
             -------
             :return: x_max, The arg max of the acquisition function.
@@ -142,50 +147,96 @@ class BaysianOptimization():
         max_acq = ys.max()
 
         # Explore the parameter space more throughly
-        x_seeds = self.sampler.sample((n_iter,)).to(device=device, dtype=dtype)
 
-        to_minimize = lambda x: -self.acq.forward(self.GP, self.GP.likelihood, x.reshape(1, -1),  y_max=self.y_max)
+        _clamp = partial(columnwise_clamp, lower=self.bounds[0], upper=self.bounds[1])
+        x_seeds = self.sampler.sample((n_samples,)).to(device=device, dtype=dtype)
+        clamped_candidates = _clamp(x_seeds).requires_grad_(True)
 
-        for x_try in x_seeds:
-            # Find the minimum of minus the acquisition function
-            x_try.require_grad = True
-            optimizer = torch.optim.LBFGS([x_try], lr=1e-5)
-            for _ in range(10):
-                def closure():
-                    loss = to_minimize(x_try)
-                    optimizer.zero_grad()
-                    loss.backward()
-                    with torch.no_grad():
-                        loss[:] = loss.clamp(self.bounds[0], self.bounds[1])
-                    return loss
-                loss = closure()
-                if not torch.isfinite(loss):
-                    continue
-                optimizer.step(closure)
-                if max_acq is None or -torch.squeeze(loss) >= max_acq:
-                    x_max = x_try
-                    max_acq = -torch.squeeze(loss)
+        to_minimize = lambda x: -self.acq.forward(self.GP, self.GP.likelihood, x.reshape(1, -1), y_max=self.y_max)
 
-        # Clip output to make sure it lies within the bounds. Due to floating
-        # point technicalities this is not always the case.
-        return torch.clip(x_max, self.bounds[0], self.bounds[1])
+        optimizer = torch.optim.LBFGS([clamped_candidates], lr=0.025)
+
+        i = 0
+        stop = False
+        stopping_criterion = ExpMAStoppingCriterion()
+
+        while not stop:
+            i += 1
+            with torch.no_grad():
+                X = _clamp(clamped_candidates).requires_grad_(True)
+
+            loss = to_minimize(X).sum()
+            if not torch.isfinite(loss):
+                continue
+            grad = torch.autograd.grad(loss, X)[0]
+
+            def assign_grad():
+                optimizer.zero_grad()
+                clamped_candidates.grad = grad
+                return loss
+
+            optimizer.step(assign_grad)
+            stop = stopping_criterion.evaluate(fvals=loss.detach())
+
+        clamped_candidates = _clamp(clamped_candidates)
+        with torch.no_grad():
+            batch_acquisition = -to_minimize(clamped_candidates)
+
+        best = torch.argmax(batch_acquisition.view(-1), dim=0)
+        if batch_acquisition[best] < max_acq:
+            best_candidate = x_max
+        else:
+            best_candidate = clamped_candidates[best]
+        return best_candidate
+        #
+        # for x_try in x_seeds:
+        #     # Find the minimum of minus the acquisition function
+        #     x_try.require_grad = True
+        #     optimizer = torch.optim.LBFGS([x_try], lr=1e-5)
+        #     for _ in range(10):
+        #         def closure():
+        #             loss = to_minimize(x_try)
+        #             optimizer.zero_grad()
+        #             loss.backward()
+        #             with torch.no_grad():
+        #                 loss[:] = loss.clamp(self.bounds[0], self.bounds[1])
+        #             return loss
+        #         loss = closure()
+        #         if not torch.isfinite(loss):
+        #             continue
+        #         optimizer.step(closure)
+        #         if max_acq is None or -torch.squeeze(loss) >= max_acq:
+        #             x_max = x_try
+        #             max_acq = -torch.squeeze(loss)
+        #
+        # # Clip output to make sure it lies within the bounds. Due to floating
+        # # point technicalities this is not always the case.
+        # return torch.clip(x_max, self.bounds[0], self.bounds[1])
 
     def check_exception(self, param, val):
+        # TODO: check exceptions in batch.
+        """
+            A function to check if the value returned by the GPU function is an FP exception. It also updates the result
+            table if an exception is caught
+            ----------
+            :param param:
+                The input parameter to the evaluation function
+            :param val:
+                The return value of the evaluation function
+            Returns
+            -------
+            :return: a boolean indicating if the value is an FP exception or not
+            """
         # Infinity
-        posinf = torch.isposinf(val)
-        neginf = torch.isneginf(val)
-        nan = torch.isnan(val)
-        if posinf.any():
-            inf_indices = torch.nonzero(val)
-            inf_induced_param = torch.index_select(param, 0, inf_indices)
-            self.results["min_inf"] += len(inf_indices)
-            self.exception_induced_params["min_inf"].append(inf_induced_param)
-            return True
-        if neginf:
-            inf_indices = torch.nonzero(val)
-            inf_induced_param = torch.index_select(param, 0, inf_indices)
-            self.results["max_inf"] += len(inf_indices)
-            self.exception_induced_params["max_inf"].append(inf_induced_param)
+        if torch.isinf(val):
+            if val < 0.0:
+                self.results["min_inf"] += 1
+                self.exception_induced_params["min_inf"].append(param)
+                # self.save_trials_to_trigger(exp_name)
+            else:
+                self.results["max_inf"] += 1
+                self.exception_induced_params["max_inf"].append(param)
+                # self.save_trials_to_trigger(exp_name)
             return True
 
         # Subnormals
@@ -200,11 +251,9 @@ class BaysianOptimization():
                         self.exception_induced_params["max_under"].append(param)
                     return True
 
-        if nan:
-            nan_indices = torch.nonzero(val)
-            nan_induced_param = torch.index_select(param, 0, nan_indices)
-            self.results["nan"] += len(nan_indices)
-            self.exception_induced_params["nan"].append(nan_induced_param)
+        if torch.isnan(val):
+            self.results["nan"] += 1
+            self.exception_induced_params["nan"].append(param)
             return True
         return False
 
@@ -231,5 +280,5 @@ class BaysianOptimization():
             new_train_x.append(new_candidate)
             new_train_y.append(new_cadidate_target)
 
-        for type in self.error_types:
-            self.exception_induced_params[type] = torch.cat(self.exception_induced_params[type]).flatten()
+        # for type in self.error_types:
+        #     self.exception_induced_params[type] = torch.cat(self.exception_induced_params[type]).flatten()
