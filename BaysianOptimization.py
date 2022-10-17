@@ -1,7 +1,6 @@
 from functools import partial
 
 import gpytorch
-from botorch.generation.gen import gen_candidates_torch
 from botorch.optim import ExpMAStoppingCriterion
 from botorch.optim.utils import columnwise_clamp
 from gpytorch.likelihoods import GaussianLikelihood
@@ -84,20 +83,20 @@ class BaysianOptimization():
             self.results[type] = 0
             self.exception_induced_params[type] = []
 
+        self.sampler = torch.distributions.uniform.Uniform(self.bounds[0], self.bounds[1])
+
         # initialize training data and model
         self.train_x, self.train_y = self.initialize_data(initial_sample)
         self.y_max = self.train_y.max()
-        self.GP = ExactGPModel(self.train_x, self.train_y, self.likelihood).to(device=self.device, dtype=dtype)
-
+        self.initialize_model()
         self.acq = UtilityFunction(self.acquisition_function, kappa=2.5, xi=0.1e-1)
-
         self.optim = Adam(self.GP.parameters(), lr=0.1)
+
+    def initialize_model(self, state_dict=None):
+        self.GP = ExactGPModel(self.train_x, self.train_y, self.likelihood).to(device=self.device, dtype=dtype)
         self.mll = ExactMarginalLogLikelihood(self.GP.likelihood, self.GP)
-
-        self.sampler = torch.distributions.uniform.Uniform(self.bounds[0], self.bounds[1])
-
-        # Result report
-
+        if state_dict is not None:
+            self.GP.load_state_dict(state_dict)
 
     def initialize_data(self, num_sample=10):
         """
@@ -258,18 +257,13 @@ class BaysianOptimization():
         return False
 
     def train(self):
-        new_train_x = []
-        new_train_y = []
-        self.mll, _ = fit_gpytorch_torch(self.mll)
+        options = {"disp": False}
+        self.mll, _ = fit_gpytorch_torch(self.mll, options=options)
         for i in range(self.iteration):
             # Set the gradients from previous iteration to zero
             if i%self.batch_size==0 and i!=0:
-                new_train_x = torch.stack(new_train_x)
-                new_train_y = torch.stack(new_train_y).unsqueeze(-1)
-                self.mll.model.set_train_data(new_train_x, new_train_y, strict=False)
-                self.mll, _ = fit_gpytorch_torch(self.mll)
-                new_train_x = []
-                new_train_y = []
+                self.initialize_model()
+                self.mll, _ = fit_gpytorch_torch(self.mll, options=options)
 
             new_candidate = self.suggest_new_candidate()
             new_cadidate_target = self.eval_func(new_candidate)
@@ -277,8 +271,8 @@ class BaysianOptimization():
             if self.check_exception(new_candidate, new_cadidate_target):
                 logger.info("parameter {} caused floating point error {}".format(new_candidate, new_cadidate_target))
                 break
-            new_train_x.append(new_candidate)
-            new_train_y.append(new_cadidate_target)
+            self.train_x = torch.cat([self.train_x, new_candidate])
+            self.train_y = torch.cat([self.train_y, new_cadidate_target])
 
         # for type in self.error_types:
         #     self.exception_induced_params[type] = torch.cat(self.exception_induced_params[type]).flatten()
