@@ -7,6 +7,7 @@ from gpytorch.likelihoods import GaussianLikelihood
 from torch.optim import Adam
 from gpytorch.mlls import ExactMarginalLogLikelihood
 from utils import *
+import time
 import logging
 from botorch.optim.fit import fit_gpytorch_torch
 logging.basicConfig(filename='Xscope.log', level=logging.INFO)
@@ -159,17 +160,12 @@ class BaysianOptimization():
         stop = False
         stopping_criterion = ExpMAStoppingCriterion()
 
-        def ucb(x):
-            output = self.GP.likelihood(self.GP(x))
-            mean, std = output.mean, torch.sqrt(output.variance)
-            return mean + 2.5 * std
-
         while not stop:
             i += 1
             with torch.no_grad():
                 X = _clamp(clamped_candidates).requires_grad_(True)
 
-            loss = -ucb(X).sum()
+            loss = to_minimize(X).sum()
             if not torch.isfinite(loss):
                 continue
             grad = torch.autograd.grad(loss, X)[0]
@@ -184,14 +180,14 @@ class BaysianOptimization():
 
         clamped_candidates = _clamp(clamped_candidates)
         with torch.no_grad():
-            batch_acquisition = ucb(clamped_candidates)
+            batch_acquisition = -to_minimize(clamped_candidates)
 
         best = torch.argmax(batch_acquisition.view(-1), dim=0)
         if batch_acquisition[best] < max_acq:
             best_candidate = x_max
         else:
             best_candidate = clamped_candidates[best]
-        return best_candidate
+        return best_candidate.unsqueeze(0)
         #
         # for x_try in x_seeds:
         #     # Find the minimum of minus the acquisition function
@@ -270,7 +266,9 @@ class BaysianOptimization():
                 self.initialize_model()
                 self.mll, _ = fit_gpytorch_torch(self.mll, options=options)
 
+            start = time.time()
             new_candidate = self.suggest_new_candidate()
+            print("new candidate time: ", time.time()-start)
             new_cadidate_target = self.eval_func(new_candidate)
             new_cadidate_target = torch.as_tensor(new_cadidate_target).to(self.train_y)
             if self.check_exception(new_candidate, new_cadidate_target):
