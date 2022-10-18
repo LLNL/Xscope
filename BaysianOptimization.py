@@ -68,7 +68,7 @@ class BaysianOptimization():
     """
 
     def __init__(self, eval_func, iteration=25, batch_size=10, acquisition_function='ei',
-                 likelihood_func=GaussianLikelihood(), bounds=None, initial_sample=1024, device=torch.device("cuda")):
+                 likelihood_func=GaussianLikelihood(), bounds=None, initial_sample=256, device=torch.device("cuda")):
         self.eval_func = eval_func
         self.iteration = iteration
         self.batch_size = batch_size
@@ -99,7 +99,7 @@ class BaysianOptimization():
         if state_dict is not None:
             self.GP.load_state_dict(state_dict)
 
-    def initialize_data(self, num_sample=10):
+    def initialize_data(self, num_sample=5):
         """
         :param
         eval_func: GPU function
@@ -120,7 +120,7 @@ class BaysianOptimization():
 
         return initial_X, initial_Y
 
-    def suggest_new_candidate(self,n_warmup=10000, n_samples=10):
+    def suggest_new_candidate(self,n_warmup=10000, n_samples=75):
         # TODO: add sampling around best point.
         """
             A function to find the maximum of the acquisition function
@@ -142,9 +142,10 @@ class BaysianOptimization():
         x_tries = self.sampler.sample((n_warmup,)).to(device=device, dtype=dtype)
         self.likelihood.eval()
         self.GP.eval()
-        ys = self.GP.likelihood(self.GP.forward(x_tries)).mean
-        x_max = x_tries[ys.argmax()]
-        max_acq = ys.max()
+        with torch.no_grad():
+            ys = self.acq.forward(self.GP, self.GP.likelihood, x_tries, self.y_max)
+            x_max = x_tries[ys.argmax()]
+            max_acq = ys.max()
 
         # Explore the parameter space more throughly
 
@@ -158,7 +159,7 @@ class BaysianOptimization():
 
         i = 0
         stop = False
-        stopping_criterion = ExpMAStoppingCriterion()
+        stopping_criterion = ExpMAStoppingCriterion(maxiter=1000)
 
         while not stop:
             i += 1
@@ -187,7 +188,7 @@ class BaysianOptimization():
             best_candidate = x_max
         else:
             best_candidate = clamped_candidates[best]
-        return best_candidate.unsqueeze(0)
+        return best_candidate.unsqueeze(0).detach()
         #
         # for x_try in x_seeds:
         #     # Find the minimum of minus the acquisition function
@@ -258,24 +259,24 @@ class BaysianOptimization():
         return False
 
     def train(self):
+        print("Begin BO for bound {}".format(self.bounds))
         options = {"disp": False}
         self.mll, _ = fit_gpytorch_torch(self.mll, options=options)
         for i in range(self.iteration):
             # Set the gradients from previous iteration to zero
             if i%self.batch_size==0 and i!=0:
-                self.initialize_model()
+                self.initialize_model(state_dict=self.mll.model.state_dict())
                 self.mll, _ = fit_gpytorch_torch(self.mll, options=options)
 
-            start = time.time()
             new_candidate = self.suggest_new_candidate()
-            print("new candidate time: ", time.time()-start)
-            new_cadidate_target = self.eval_func(new_candidate)
-            new_cadidate_target = torch.as_tensor(new_cadidate_target).to(self.train_y)
-            if self.check_exception(new_candidate, new_cadidate_target):
-                logger.info("parameter {} caused floating point error {}".format(new_candidate, new_cadidate_target))
+            new_candidate_target = self.eval_func(new_candidate)
+            new_candidate_target = torch.as_tensor([new_candidate_target]).to(self.train_y)
+            print("new target: ", new_candidate_target)
+            if self.check_exception(new_candidate, new_candidate_target):
+                logger.info("parameter {} caused floating point error {}".format(new_candidate, new_candidate_target))
                 break
             self.train_x = torch.cat([self.train_x, new_candidate])
-            self.train_y = torch.cat([self.train_y, new_cadidate_target])
+            self.train_y = torch.cat([self.train_y, new_candidate_target])
 
         # for type in self.error_types:
         #     self.exception_induced_params[type] = torch.cat(self.exception_induced_params[type]).flatten()

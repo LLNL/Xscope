@@ -245,5 +245,5 @@ if __name__ == "__main__":
                            num_inputs, 
                            args.range_splitting,
                            new_max)
-      bo_analysis.print_results(shared_lib, args.number_sampling, args.range_splitting)
+      #bo_analysis.print_results(shared_lib, args.number_sampling, args.range_splitting)
 

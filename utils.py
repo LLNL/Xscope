@@ -172,25 +172,25 @@ class UtilityFunction(object):
 
     @staticmethod
     def _ucb(gp, likelihood, x, kappa):
-        output = likelihood(gp.forward(x))
+        output = likelihood(gp(x))
         mean, std = output.mean, torch.sqrt(output.variance)
         return mean + kappa * std
 
     @staticmethod
     def _ei(gp, likelihood, x, y_max, xi):
-        output = likelihood(gp.forward(x))
+        output = likelihood(gp(x))
         mean, std = output.mean, torch.sqrt(output.variance)
-        if not torch.isfinite(mean):
-            return mean
         a = (mean - y_max - xi)
         z = a / std
+        if not torch.isfinite(z).all():
+            return a + std
         norm = Normal(torch.tensor([0.0]).to(device=device, dtype=dtype), torch.tensor([1.0]).to(device=device, dtype=dtype))
         pdf = 1/torch.sqrt(torch.tensor(2.0*math.pi).to(device=device, dtype=dtype)) * torch.exp(-z**2/2)
         return a * norm.cdf(z) + std * pdf
 
     @staticmethod
     def _poi(gp, likelihood, x, y_max, xi):
-        output = likelihood(gp.forward(x))
+        output = likelihood(gp(x))
         mean, std = output.mean, torch.sqrt(output.variance)
         z = (mean - y_max - xi)/std
         norm = Normal(torch.tensor([0.0]).to(device=device, dtype=dtype), torch.tensor([1.0]).to(device=device, dtype=dtype))
