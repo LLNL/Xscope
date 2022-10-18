@@ -169,7 +169,7 @@ class BaysianOptimization():
             with torch.no_grad():
                 X = _clamp(clamped_candidates).requires_grad_(True)
 
-            loss = ucb(X).sum()
+            loss = -ucb(X).sum()
             if not torch.isfinite(loss):
                 continue
             grad = torch.autograd.grad(loss, X)[0]
@@ -184,7 +184,7 @@ class BaysianOptimization():
 
         clamped_candidates = _clamp(clamped_candidates)
         with torch.no_grad():
-            batch_acquisition = -to_minimize(clamped_candidates)
+            batch_acquisition = ucb(clamped_candidates)
 
         best = torch.argmax(batch_acquisition.view(-1), dim=0)
         if batch_acquisition[best] < max_acq:
@@ -272,7 +272,7 @@ class BaysianOptimization():
 
             new_candidate = self.suggest_new_candidate()
             new_cadidate_target = self.eval_func(new_candidate)
-            new_cadidate_target = torch.as_tensor(new_cadidate_target).to(dtype=dtype)
+            new_cadidate_target = torch.as_tensor(new_cadidate_target).to(self.train_y)
             if self.check_exception(new_candidate, new_cadidate_target):
                 logger.info("parameter {} caused floating point error {}".format(new_candidate, new_cadidate_target))
                 break
