@@ -151,7 +151,7 @@ class BaysianOptimization():
         x_seeds = self.sampler.sample((n_samples,)).to(device=device, dtype=dtype)
         clamped_candidates = _clamp(x_seeds).requires_grad_(True)
 
-        to_minimize = lambda x: -self.acq.forward(self.GP, self.GP.likelihood, x.reshape(1, -1), y_max=self.y_max)
+        to_minimize = lambda x: -self.acq.forward(self.GP, self.GP.likelihood, x, y_max=self.y_max)
 
         optimizer = torch.optim.LBFGS([clamped_candidates], lr=0.025)
 
@@ -159,12 +159,17 @@ class BaysianOptimization():
         stop = False
         stopping_criterion = ExpMAStoppingCriterion()
 
+        def ucb(x):
+            output = self.GP.likelihood(self.GP(x))
+            mean, std = output.mean, torch.sqrt(output.variance)
+            return mean + 2.5 * std
+
         while not stop:
             i += 1
             with torch.no_grad():
                 X = _clamp(clamped_candidates).requires_grad_(True)
 
-            loss = to_minimize(X).sum()
+            loss = ucb(X).sum()
             if not torch.isfinite(loss):
                 continue
             grad = torch.autograd.grad(loss, X)[0]
