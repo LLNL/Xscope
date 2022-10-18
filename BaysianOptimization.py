@@ -166,8 +166,8 @@ class BaysianOptimization():
                 X = _clamp(clamped_candidates).requires_grad_(True)
 
             loss = to_minimize(X).sum()
-            if not torch.isfinite(loss):
-                continue
+            # if not torch.isfinite(loss).all():
+            #     continue
             grad = torch.autograd.grad(loss, X)[0]
 
             def assign_grad():
