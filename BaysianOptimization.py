@@ -1,3 +1,4 @@
+import time
 from functools import partial
 
 import gpytorch
@@ -7,7 +8,7 @@ from gpytorch.likelihoods import GaussianLikelihood
 from torch.optim import Adam
 from gpytorch.mlls import ExactMarginalLogLikelihood
 from utils import *
-import time
+from torch.cuda.amp import GradScaler, autocast
 import logging
 from botorch.optim.fit import fit_gpytorch_torch
 logging.basicConfig(filename='Xscope.log', level=logging.INFO)
@@ -120,7 +121,7 @@ class BaysianOptimization():
 
         return initial_X, initial_Y
 
-    def suggest_new_candidate(self,n_warmup=10000, n_samples=75):
+    def suggest_new_candidate(self,n_warmup=10000, n_samples=25):
         # TODO: add sampling around best point.
         """
             A function to find the maximum of the acquisition function
@@ -155,28 +156,32 @@ class BaysianOptimization():
 
         to_minimize = lambda x: -self.acq.forward(self.GP, self.GP.likelihood, x, y_max=self.y_max)
 
-        optimizer = torch.optim.LBFGS([clamped_candidates], lr=0.025)
+        optimizer = torch.optim.Adam([clamped_candidates], lr=0.025)
+
+        scaler = GradScaler()
 
         i = 0
         stop = False
-        stopping_criterion = ExpMAStoppingCriterion(maxiter=1000)
+        stopping_criterion = ExpMAStoppingCriterion(maxiter=10000)
 
         while not stop:
             i += 1
             with torch.no_grad():
                 X = _clamp(clamped_candidates).requires_grad_(True)
 
-            loss = to_minimize(X).sum()
+            with autocast():
+                loss = to_minimize(X).sum()
             # if not torch.isfinite(loss).all():
             #     continue
-            grad = torch.autograd.grad(loss, X)[0]
+            scaled_grad = torch.autograd.grad(outputs=scaler.scale(loss),
+                                              inputs=X,
+                                              create_graph=True)
 
-            def assign_grad():
-                optimizer.zero_grad()
-                clamped_candidates.grad = grad
-                return loss
+            optimizer.zero_grad()
+            clamped_candidates.grad = scaled_grad
 
-            optimizer.step(assign_grad)
+            scaler.step(optimizer)
+            scaler.update()
             stop = stopping_criterion.evaluate(fvals=loss.detach())
 
         clamped_candidates = _clamp(clamped_candidates)
@@ -189,30 +194,6 @@ class BaysianOptimization():
         else:
             best_candidate = clamped_candidates[best]
         return best_candidate.unsqueeze(0).detach()
-        #
-        # for x_try in x_seeds:
-        #     # Find the minimum of minus the acquisition function
-        #     x_try.require_grad = True
-        #     optimizer = torch.optim.LBFGS([x_try], lr=1e-5)
-        #     for _ in range(10):
-        #         def closure():
-        #             loss = to_minimize(x_try)
-        #             optimizer.zero_grad()
-        #             loss.backward()
-        #             with torch.no_grad():
-        #                 loss[:] = loss.clamp(self.bounds[0], self.bounds[1])
-        #             return loss
-        #         loss = closure()
-        #         if not torch.isfinite(loss):
-        #             continue
-        #         optimizer.step(closure)
-        #         if max_acq is None or -torch.squeeze(loss) >= max_acq:
-        #             x_max = x_try
-        #             max_acq = -torch.squeeze(loss)
-        #
-        # # Clip output to make sure it lies within the bounds. Due to floating
-        # # point technicalities this is not always the case.
-        # return torch.clip(x_max, self.bounds[0], self.bounds[1])
 
     def check_exception(self, param, val):
         # TODO: check exceptions in batch.
@@ -268,7 +249,9 @@ class BaysianOptimization():
                 self.initialize_model(state_dict=self.mll.model.state_dict())
                 self.mll, _ = fit_gpytorch_torch(self.mll, options=options)
 
+            start_candidate_suggest = time.time()
             new_candidate = self.suggest_new_candidate()
+            print("Time used to find new candidate: ", time.time() - start_candidate_suggest)
             new_candidate_target = self.eval_func(new_candidate)
             new_candidate_target = torch.as_tensor([new_candidate_target]).to(self.train_y)
             print("new target: ", new_candidate_target)
