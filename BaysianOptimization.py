@@ -1,16 +1,21 @@
-import time
 from functools import partial
+import logging
 
 import gpytorch
-from botorch.optim import ExpMAStoppingCriterion
-from botorch.optim.utils import columnwise_clamp
 from gpytorch.likelihoods import GaussianLikelihood
-from torch.optim import Adam
 from gpytorch.mlls import ExactMarginalLogLikelihood
-from utils import *
+from gpytorch import settings as gpt_settings
+
+from botorch.optim import ExpMAStoppingCriterion
+from botorch.optim.utils import columnwise_clamp, _get_extra_mll_args
+from botorch.optim.fit import fit_gpytorch_torch, ParameterBounds
+
+from torch.optim import AdamW
 from torch.cuda.amp import GradScaler, autocast
-import logging
-from botorch.optim.fit import fit_gpytorch_torch
+
+from utils import *
+
+
 logging.basicConfig(filename='Xscope.log', level=logging.INFO)
 logger = logging.getLogger(__name__)
 max_normal = 1e+307
@@ -68,8 +73,8 @@ class BaysianOptimization():
     initialize_data
     """
 
-    def __init__(self, eval_func, iteration=25, batch_size=10, acquisition_function='ei',
-                 likelihood_func=GaussianLikelihood(), bounds=None, initial_sample=256, device=torch.device("cuda")):
+    def __init__(self, eval_func, iteration=25, batch_size=5, acquisition_function='ucb',
+                 likelihood_func=GaussianLikelihood(), bounds=None, initial_sample=10, device=torch.device("cuda")):
         self.eval_func = eval_func
         self.iteration = iteration
         self.batch_size = batch_size
@@ -92,7 +97,7 @@ class BaysianOptimization():
         self.y_max = self.train_y.max()
         self.initialize_model()
         self.acq = UtilityFunction(self.acquisition_function, kappa=2.5, xi=0.1e-1)
-        self.optim = Adam(self.GP.parameters(), lr=0.1)
+        self.optim = AdamW
 
     def initialize_model(self, state_dict=None):
         self.GP = ExactGPModel(self.train_x, self.train_y, self.likelihood).to(device=self.device, dtype=dtype)
@@ -123,6 +128,7 @@ class BaysianOptimization():
 
     def suggest_new_candidate(self,n_warmup=10000, n_samples=25):
         # TODO: add sampling around best point.
+        # TODO: autocast during warm up.
         """
             A function to find the maximum of the acquisition function
             It uses a combination of random sampling (cheap) and the 'L-BFGS-B'
@@ -156,13 +162,13 @@ class BaysianOptimization():
 
         to_minimize = lambda x: -self.acq.forward(self.GP, self.GP.likelihood, x, y_max=self.y_max)
 
-        optimizer = torch.optim.Adam([clamped_candidates], lr=0.025)
+        optimizer = torch.optim.AdamW([clamped_candidates], lr=0.025)
 
         scaler = GradScaler()
 
         i = 0
         stop = False
-        stopping_criterion = ExpMAStoppingCriterion(maxiter=10000)
+        stopping_criterion = ExpMAStoppingCriterion(maxiter=150)
 
         while not stop:
             i += 1
@@ -175,10 +181,13 @@ class BaysianOptimization():
             #     continue
             scaled_grad = torch.autograd.grad(outputs=scaler.scale(loss),
                                               inputs=X,
-                                              create_graph=True)
+                                              create_graph=True)[0]
+
+            inv_scale = 1. / scaler.get_scale() if scaler.get_scale() != 0 else 1
+            grad_params = scaled_grad * inv_scale
 
             optimizer.zero_grad()
-            clamped_candidates.grad = scaled_grad
+            clamped_candidates.grad = grad_params
 
             scaler.step(optimizer)
             scaler.update()
@@ -239,15 +248,85 @@ class BaysianOptimization():
             return True
         return False
 
+    def fit_mll(self, iters_to_accumulate = 5):
+        r"""Fit a gpytorch model by maximizing MLL with a torch optimizer.
+
+            The model and likelihood in mll must already be in train mode.
+            Note: this method requires that the model has `train_inputs` and `train_targets`.
+
+            Args:
+                mll: MarginalLogLikelihood to be maximized.
+                bounds: A ParameterBounds dictionary mapping parameter names to tuples
+                    of lower and upper bounds. Bounds specified here take precedence
+                    over bounds on the same parameters specified in the constraints
+                    registered with the module.
+                optimizer_cls: Torch optimizer to use. Must not require a closure.
+                options: options for model fitting. Relevant options will be passed to
+                    the `optimizer_cls`. Additionally, options can include: "disp"
+                    to specify whether to display model fitting diagnostics and "maxiter"
+                    to specify the maximum number of iterations.
+                track_iterations: Track the function values and wall time for each
+                    iteration.
+                approx_mll: If True, use gpytorch's approximate MLL computation (
+                    according to the gpytorch defaults based on the training at size).
+                    Unlike for the deterministic algorithms used in fit_gpytorch_scipy,
+                    this is not an issue for stochastic optimizers.
+
+            Returns:
+                2-element tuple containing
+                - mll with parameters optimized in-place.
+                - Dictionary with the following key/values:
+                "fopt": Best mll value.
+                "wall_time": Wall time of fitting.
+                "iterations": List of OptimizationIteration objects with information on each
+                iteration. If track_iterations is False, will be empty.
+            """
+        mll_params = list(self.mll.parameters())
+        optimizer = self.optim(
+            params=[{"params": mll_params}], lr=0.05
+        )
+
+        # get bounds specified in model (if any)
+        bounds_: ParameterBounds = {}
+        if hasattr(self.mll, "named_parameters_and_constraints"):
+            for param_name, _, constraint in self.mll.named_parameters_and_constraints():
+                if constraint is not None and not constraint.enforced:
+                    bounds_[param_name] = constraint.lower_bound, constraint.upper_bound
+
+        stop = False
+        stopping_criterion = ExpMAStoppingCriterion()
+        train_inputs, train_targets = self.mll.model.train_inputs, self.mll.model.train_targets
+
+        scaler = GradScaler()
+        i = 0
+
+        while not stop:
+            optimizer.zero_grad()
+            with gpt_settings.fast_computations(log_prob=True), autocast():
+                output = self.mll.model(*train_inputs)
+                # we sum here to support batch mode
+                args = [output, train_targets] + _get_extra_mll_args(self.mll)
+                loss = -self.mll(*args).sum()/iters_to_accumulate
+
+            scaler.scale(loss).backward()
+            if (i + 1) % iters_to_accumulate == 0:
+                # may unscale_ here if desired (e.g., to allow clipping unscaled gradients)
+                scaler.step(optimizer)
+                scaler.update()
+                optimizer.zero_grad()
+
+            stop = stopping_criterion.evaluate(fvals=loss.detach())
+            i += 1
+
     def train(self):
+        # TODO: reimpliment fit function in mixed precision and scaler.
         print("Begin BO for bound {}".format(self.bounds))
-        options = {"disp": False}
-        self.mll, _ = fit_gpytorch_torch(self.mll, options=options)
+        self.fit_mll()
         for i in range(self.iteration):
             # Set the gradients from previous iteration to zero
             if i%self.batch_size==0 and i!=0:
                 self.initialize_model(state_dict=self.mll.model.state_dict())
-                self.mll, _ = fit_gpytorch_torch(self.mll, options=options)
+                self.fit_mll()
 
             start_candidate_suggest = time.time()
             new_candidate = self.suggest_new_candidate()
