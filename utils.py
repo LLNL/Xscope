@@ -1,4 +1,6 @@
 import math
+
+import gpytorch
 import torch
 from torch.distributions import Normal
 from os.path import isfile
@@ -70,7 +72,7 @@ def bounds(split, num_input, input_type="fp"):
                     bound = torch.transpose(torch.tensor([r1,r2,r2], dtype=dtype, device=device).squeeze(),0,1)
                     b.append(bound)
         b = torch.stack(b, dim=0)
-        # b = torch.split(b, 10)
+    print("number of bounds to test: ", b.shape)
     return b
 
 class ResultLogger:
@@ -172,13 +174,15 @@ class UtilityFunction(object):
 
     @staticmethod
     def _ucb(gp, likelihood, x, kappa):
-        output = likelihood(gp(x))
+        with gpytorch.settings.fast_pred_var():
+            output = likelihood(gp(x))
         mean, std = output.mean, torch.sqrt(output.variance)
         return mean + kappa * std
 
     @staticmethod
     def _ei(gp, likelihood, x, y_max, xi):
-        output = likelihood(gp(x))
+        with gpytorch.settings.fast_pred_var():
+            output = likelihood(gp(x))
         mean, std = output.mean, torch.sqrt(output.variance)
         a = (mean - y_max - xi)
         z = a / std
@@ -190,7 +194,8 @@ class UtilityFunction(object):
 
     @staticmethod
     def _poi(gp, likelihood, x, y_max, xi):
-        output = likelihood(gp(x))
+        with gpytorch.settings.fast_pred_var():
+            output = likelihood(gp(x))
         mean, std = output.mean, torch.sqrt(output.variance)
         z = (mean - y_max - xi)/std
         norm = Normal(torch.tensor([0.0]).to(device=device, dtype=dtype), torch.tensor([1.0]).to(device=device, dtype=dtype))

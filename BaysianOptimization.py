@@ -73,8 +73,8 @@ class BaysianOptimization():
     initialize_data
     """
 
-    def __init__(self, eval_func, iteration=25, batch_size=5, acquisition_function='ucb',
-                 likelihood_func=GaussianLikelihood(), bounds=None, initial_sample=10, device=torch.device("cuda")):
+    def __init__(self, eval_func, iteration=25, batch_size=3, acquisition_function='ucb',
+                 likelihood_func=GaussianLikelihood(), bounds=None, initial_sample=2, device=torch.device("cuda")):
         self.eval_func = eval_func
         self.iteration = iteration
         self.batch_size = batch_size
@@ -126,9 +126,8 @@ class BaysianOptimization():
 
         return initial_X, initial_Y
 
-    def suggest_new_candidate(self,n_warmup=10000, n_samples=25):
+    def suggest_new_candidate(self,n_warmup=10000, n_samples=10):
         # TODO: add sampling around best point.
-        # TODO: autocast during warm up.
         """
             A function to find the maximum of the acquisition function
             It uses a combination of random sampling (cheap) and the 'L-BFGS-B'
@@ -149,8 +148,9 @@ class BaysianOptimization():
         x_tries = self.sampler.sample((n_warmup,)).to(device=device, dtype=dtype)
         self.likelihood.eval()
         self.GP.eval()
-        with torch.no_grad():
+        with torch.no_grad(), autocast(), gpytorch.settings.fast_pred_var():
             ys = self.acq.forward(self.GP, self.GP.likelihood, x_tries, self.y_max)
+            ys = torch.nan_to_num(ys)
             x_max = x_tries[ys.argmax()]
             max_acq = ys.max()
 
@@ -164,8 +164,6 @@ class BaysianOptimization():
 
         optimizer = torch.optim.AdamW([clamped_candidates], lr=0.025)
 
-        scaler = GradScaler()
-
         i = 0
         stop = False
         stopping_criterion = ExpMAStoppingCriterion(maxiter=150)
@@ -177,29 +175,24 @@ class BaysianOptimization():
 
             with autocast():
                 loss = to_minimize(X).sum()
-            # if not torch.isfinite(loss).all():
-            #     continue
-            scaled_grad = torch.autograd.grad(outputs=scaler.scale(loss),
-                                              inputs=X,
-                                              create_graph=True)[0]
 
-            inv_scale = 1. / scaler.get_scale() if scaler.get_scale() != 0 else 1
-            grad_params = scaled_grad * inv_scale
-
+            grad_params = torch.autograd.grad(loss, X)[0]
             optimizer.zero_grad()
             clamped_candidates.grad = grad_params
-
-            scaler.step(optimizer)
-            scaler.update()
+            optimizer.step()
+            if clamped_candidates.isnan().sum() > 0:
+                clamped_candidates = torch.nan_to_num(clamped_candidates)
+                break
             stop = stopping_criterion.evaluate(fvals=loss.detach())
 
         clamped_candidates = _clamp(clamped_candidates)
         with torch.no_grad():
             batch_acquisition = -to_minimize(clamped_candidates)
+            best = torch.argmax(batch_acquisition.view(-1), dim=0)
 
-        best = torch.argmax(batch_acquisition.view(-1), dim=0)
         if batch_acquisition[best] < max_acq:
             best_candidate = x_max
+
         else:
             best_candidate = clamped_candidates[best]
         return best_candidate.unsqueeze(0).detach()
@@ -248,95 +241,22 @@ class BaysianOptimization():
             return True
         return False
 
-    def fit_mll(self, iters_to_accumulate = 5):
-        r"""Fit a gpytorch model by maximizing MLL with a torch optimizer.
-
-            The model and likelihood in mll must already be in train mode.
-            Note: this method requires that the model has `train_inputs` and `train_targets`.
-
-            Args:
-                mll: MarginalLogLikelihood to be maximized.
-                bounds: A ParameterBounds dictionary mapping parameter names to tuples
-                    of lower and upper bounds. Bounds specified here take precedence
-                    over bounds on the same parameters specified in the constraints
-                    registered with the module.
-                optimizer_cls: Torch optimizer to use. Must not require a closure.
-                options: options for model fitting. Relevant options will be passed to
-                    the `optimizer_cls`. Additionally, options can include: "disp"
-                    to specify whether to display model fitting diagnostics and "maxiter"
-                    to specify the maximum number of iterations.
-                track_iterations: Track the function values and wall time for each
-                    iteration.
-                approx_mll: If True, use gpytorch's approximate MLL computation (
-                    according to the gpytorch defaults based on the training at size).
-                    Unlike for the deterministic algorithms used in fit_gpytorch_scipy,
-                    this is not an issue for stochastic optimizers.
-
-            Returns:
-                2-element tuple containing
-                - mll with parameters optimized in-place.
-                - Dictionary with the following key/values:
-                "fopt": Best mll value.
-                "wall_time": Wall time of fitting.
-                "iterations": List of OptimizationIteration objects with information on each
-                iteration. If track_iterations is False, will be empty.
-            """
-        mll_params = list(self.mll.parameters())
-        optimizer = self.optim(
-            params=[{"params": mll_params}], lr=0.05
-        )
-
-        # get bounds specified in model (if any)
-        bounds_: ParameterBounds = {}
-        if hasattr(self.mll, "named_parameters_and_constraints"):
-            for param_name, _, constraint in self.mll.named_parameters_and_constraints():
-                if constraint is not None and not constraint.enforced:
-                    bounds_[param_name] = constraint.lower_bound, constraint.upper_bound
-
-        stop = False
-        stopping_criterion = ExpMAStoppingCriterion()
-        train_inputs, train_targets = self.mll.model.train_inputs, self.mll.model.train_targets
-
-        scaler = GradScaler()
-        i = 0
-
-        while not stop:
-            optimizer.zero_grad()
-            with gpt_settings.fast_computations(log_prob=True), autocast():
-                output = self.mll.model(*train_inputs)
-                # we sum here to support batch mode
-                args = [output, train_targets] + _get_extra_mll_args(self.mll)
-                loss = -self.mll(*args).sum()/iters_to_accumulate
-
-            scaler.scale(loss).backward()
-            if (i + 1) % iters_to_accumulate == 0:
-                # may unscale_ here if desired (e.g., to allow clipping unscaled gradients)
-                scaler.step(optimizer)
-                scaler.update()
-                optimizer.zero_grad()
-
-            stop = stopping_criterion.evaluate(fvals=loss.detach())
-            i += 1
-
     def train(self):
-        # TODO: reimpliment fit function in mixed precision and scaler.
         print("Begin BO for bound {}".format(self.bounds))
-        self.fit_mll()
+        fit_gpytorch_torch(self.mll, options={"disp": False})
         for i in range(self.iteration):
             # Set the gradients from previous iteration to zero
             if i%self.batch_size==0 and i!=0:
                 self.initialize_model(state_dict=self.mll.model.state_dict())
-                self.fit_mll()
-
+                fit_gpytorch_torch(self.mll, options={"disp": False})
             start_candidate_suggest = time.time()
             new_candidate = self.suggest_new_candidate()
-            print("Time used to find new candidate: ", time.time() - start_candidate_suggest)
-            new_candidate_target = self.eval_func(new_candidate)
+            print("Candidate suggest time: ", time.time() - start_candidate_suggest)
+            new_candidate_target = self.eval_func(new_candidate[0])
             new_candidate_target = torch.as_tensor([new_candidate_target]).to(self.train_y)
-            print("new target: ", new_candidate_target)
             if self.check_exception(new_candidate, new_candidate_target):
                 logger.info("parameter {} caused floating point error {}".format(new_candidate, new_candidate_target))
-                break
+                return
             self.train_x = torch.cat([self.train_x, new_candidate])
             self.train_y = torch.cat([self.train_y, new_candidate_target])
 
