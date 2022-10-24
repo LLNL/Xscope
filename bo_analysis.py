@@ -34,35 +34,35 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str, 
     exp_name = [shared_lib, input_type, splitting]
     logging.info('|'.join(exp_name))
 
-    bgrt_bo_compare = "bgrt_bo_compare.csv"
+    # bgrt_bo_compare = "bgrt_bo_compare.csv"
 
     funcs = ["max_inf", "min_inf", "max_under", "min_under"]
 
     result_logger.start_time()
     for f in funcs:
         g = partial(test_func.function_to_optimize, num_input=num_inputs, func_type=f, mode=input_type)
-        for b in bounds(split=splitting, num_input=num_inputs, input_type=input_type):
-            bound_string = " "
-            for i in range(len(b[0])):
-                bound_string += "" + str(b[0][i]) + "-" + str(b[1][i])
-            result_logger.bounds_list.append(bound_string)
-            bo = BaysianOptimization(g, bounds=b)
-            bo.train()
-            result_logger.log_result(bo.results)
-            del bo
+        BO_bounds = bounds(split=splitting, num_input=num_inputs, input_type=input_type)
+            # bound_string = " "
+            # for i in range(len(b[0])):
+            #     bound_string += "" + str(b[0][i]) + "-" + str(b[1][i])
+            # result_logger.bounds_list.append(bound_string)
+        bo = BaysianOptimization(g, bounds=BO_bounds)
+        bo.train()
+        # result_logger.log_result(bo.results)
+        del bo
     result_logger.log_time()
     print("execution time: ", result_logger.execution_time)
-    bgrt_bo_df, bgrt_interval_df = result_logger.summarize_result(shared_lib)
-
-    if num_inputs==1:
-        bgrt_interval_density = "bgrt_interval_density_1.csv"
-    elif num_inputs==2:
-        bgrt_interval_density = "bgrt_interval_density_2.csv"
-    else:
-        bgrt_interval_density = "bgrt_interval_density_3.csv"
-
-    result_logger.write_result_to_file(bgrt_bo_compare, bgrt_bo_df)
-    result_logger.write_result_to_file(bgrt_interval_density, bgrt_interval_df)
+    # bgrt_bo_df, bgrt_interval_df = result_logger.summarize_result(shared_lib)
+    #
+    # if num_inputs==1:
+    #     bgrt_interval_density = "bgrt_interval_density_1.csv"
+    # elif num_inputs==2:
+    #     bgrt_interval_density = "bgrt_interval_density_2.csv"
+    # else:
+    #     bgrt_interval_density = "bgrt_interval_density_3.csv"
+    #
+    # result_logger.write_result_to_file(bgrt_bo_compare, bgrt_bo_df)
+    # result_logger.write_result_to_file(bgrt_interval_density, bgrt_interval_df)
 
     del result_logger
 

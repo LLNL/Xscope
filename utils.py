@@ -164,7 +164,7 @@ class UtilityFunction(object):
         if self._kappa_decay < 1 and self._iters_counter > self._kappa_decay_delay:
             self.kappa *= self._kappa_decay
 
-    def forward(self,gp, likelihood, x, y_max):
+    def forward(self,gp, likelihood, x, y_max= None):
         if self.kind == 'ucb':
             return self._ucb(gp, likelihood, x, self.kappa)
         if self.kind == 'ei':
