@@ -248,7 +248,6 @@ if __name__ == "__main__":
       else: # CPU code
         f = generate_CPU_code(i.fun_name, i.input_types, d)
         shared_lib = compile_CPU_code(f, d)
-        exit()
       num_inputs = len(i.input_types)
     elif type(i) is SharedLib:
       shared_lib = i.path

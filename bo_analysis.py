@@ -28,6 +28,10 @@ found_inf_pos = False
 found_inf_neg = False
 found_under_pos = False
 found_under_neg = False
+
+# Last values used as inputs and seen as returned
+last_return_val = 0.0
+last_input_set = ()
 # -----------------------------
 
 def initialize():
@@ -36,6 +40,8 @@ def initialize():
   found_inf_neg = False
   found_under_pos = False
   found_under_neg = False
+  last_return_val = 0.0
+  last_input_set = ()
 
 def set_max_iterations(n: int):
   global bo_iterations
@@ -45,56 +51,53 @@ def set_max_iterations(n: int):
 # Ctype Wrappers
 #----------------------------------------------------------------------------
 def call_GPU_kernel_1(x0):
+  global last_return_val, last_input_set
   script_dir = os.path.abspath(os.path.dirname(__file__))
   lib_path = os.path.join(script_dir, CUDA_LIB)
   E = ctypes.cdll.LoadLibrary(lib_path)
   E.kernel_wrapper_1.restype = ctypes.c_double
   res = E.kernel_wrapper_1(ctypes.c_double(x0))
+  last_return_val = res
+  last_input_set = (x0)
   return res
 
 def call_GPU_kernel_2(x0, x1):
+  global last_return_val, last_input_set
   script_dir = os.path.abspath(os.path.dirname(__file__))
   lib_path = os.path.join(script_dir, CUDA_LIB)
   E = ctypes.cdll.LoadLibrary(lib_path)
   E.kernel_wrapper_1.restype = ctypes.c_double
   res = E.kernel_wrapper_1(ctypes.c_double(x0), ctypes.c_double(x1))
+  last_return_val = res
+  last_input_set = (x0, x1)
   return res
 
 def call_GPU_kernel_3(x0, x1, x2):
+  global last_return_val, last_input_set
   script_dir = os.path.abspath(os.path.dirname(__file__))
   lib_path = os.path.join(script_dir, CUDA_LIB)
   E = ctypes.cdll.LoadLibrary(lib_path)
   E.kernel_wrapper_1.restype = ctypes.c_double
   res = E.kernel_wrapper_1(ctypes.c_double(x0), ctypes.c_double(x1), ctypes.c_double(x2))
+  last_return_val = res
+  last_input_set = (x0, x1, x2)
   return res
 
 def call_GPU_kernel_4(x0, x1, x2, x3):
+  global last_return_val, last_input_set
   script_dir = os.path.abspath(os.path.dirname(__file__))
   lib_path = os.path.join(script_dir, CUDA_LIB)
   E = ctypes.cdll.LoadLibrary(lib_path)
   E.kernel_wrapper_1.restype = ctypes.c_double
   res = E.kernel_wrapper_1(ctypes.c_double(x0), ctypes.c_double(x1), ctypes.c_double(x2), ctypes.c_double(x3))
+  last_return_val = res
+  last_input_set = (x0, x1, x2, x3)
   return res
 
 
 #----------------------------------------------------------------------------
 # Black box functions
 #----------------------------------------------------------------------------
-
-#def black_box_function(x0, x1, x2):
-#  x0_fp = 1.0 * math.pow(10, x0)
-#  x1_fp = 1.0 * math.pow(10, x1)
-#  x2_fp = 1.0 * math.pow(10, x2)
-
-  #return -call_GPU_kernel(x0, x1, x2)
-  #r = call_GPU_kernel(x0, x1, x2)
-#  r = call_GPU_kernel(x0_fp, x1_fp, x2_fp)
-#  smallest_subnormal = -4.94e-323
-#  if r==0.0 or r==-0.0:
-#    return -1.0;
-#  elif r > smallest_subnormal:
-#    return -r
-#  return r
 
 #****************************** 1 Input ***********************************
 # --------- Based on FP inputs --------
@@ -547,10 +550,6 @@ def bounds_exp_many_3():
 
   return b
 
-# -------------- 4 Inputs ----------------------
-#
-# ----------------------------------------------
-
 #----------------------------------------------------------------------------
 # Results Checking
 #----------------------------------------------------------------------------
@@ -583,45 +582,56 @@ def is_under_neg(val):
       return True
   return False
 
-def save_results(val: float, exp_name: str):
+def save_results(return_val: float, exp_name: str):
+  global last_input_set, last_return_val
+  # We need to modify the sign of the return value 
+  # from the function if we are minimizing.
+  # We assume the difference will be only on the sign
+  if last_return_val == -return_val:
+    val = -return_val
+  else:
+    val = return_val
+
   # Infinity
   if math.isinf(val):
     if exp_name not in results.keys():
-      if val < 0.0:
-        results[exp_name] = [1, 0, 0, 0, 0]
+      if val < 0.0: ######## Negative Infinity ########
+        #results[exp_name] = [1, 0, 0, 0, 0]
+        results[exp_name] = [set([last_input_set]), set(), set(), set(), set()]
         save_trials_to_trigger(exp_name)
-      else:
-        results[exp_name] = [0, 1, 0, 0, 0]
+      else:         ######## Positive Infinity ########
+        results[exp_name] = [set(), set([last_input_set]), set(), set(), set()]
         save_trials_to_trigger(exp_name)
-    else:
-      if val < 0.0:
-        results[exp_name][0] += 1
-      else:
-        results[exp_name][1] += 1
+    else: 
+      if val < 0.0: ######## Negative Infinity ########
+        #results[exp_name][0] += 1
+        results[exp_name][0].add(last_input_set)
+      else:         ######## Positive Infinity ########
+        results[exp_name][1].add(last_input_set)
 
   # Subnormals
   if numpy.isfinite(val):
     if val > -2.22e-308 and val < 2.22e-308:
       if val != 0.0 and val !=-0.0:
         if exp_name not in results.keys():
-          if val < 0.0:
-            results[exp_name] = [0, 0, 1, 0, 0]
+          if val < 0.0: ######## Negative Infinity ########
+            results[exp_name] = [set(), set(), set([last_input_set]), set(), set()]
             save_trials_to_trigger(exp_name)
-          else:
-            results[exp_name] = [0, 0, 0, 1, 0]
+          else:         ######## Positive Infinity ########
+            results[exp_name] = [set(), set(), set(), set([last_input_set]), set()]
             save_trials_to_trigger(exp_name)
         else:
-          if val < 0.0:
-            results[exp_name][2] += 1
-          else:
-            results[exp_name][3] += 1
+          if val < 0.0: ######## Negative Infinity ########
+            results[exp_name][2].add(last_input_set)
+          else:         ######## Positive Infinity ########
+            results[exp_name][3].add(last_input_set)
 
   if math.isnan(val):
     if exp_name not in results.keys():
-      results[exp_name] = [0, 0, 0, 0, 1]
+      results[exp_name] = [set(), set(), set(), set(), set([last_input_set])]
       save_trials_to_trigger(exp_name)
     else:
-      results[exp_name][4] += 1
+      results[exp_name][4].add(last_input_set)
 
 def are_we_done(func, recent_val, exp_name):
   global found_inf_pos, found_inf_neg, found_under_pos, found_under_neg
@@ -853,16 +863,16 @@ def print_results(shared_lib: str, number_sampling, range_splitting):
   print('-------------- Results --------------')
   print(fun_name)
   if key in results.keys():
-    print('\tINF+:', results[key][0])
-    print('\tINF-:', results[key][1])
-    print('\tSUB-:', results[key][2])
-    print('\tSUB-:', results[key][3])
-    print('\tNaN :', results[key][4])
+    print('\tINF-:', len(results[key][0]))
+    print('\tINF+:', len(results[key][1]))
+    print('\tSUB-:', len(results[key][2]))
+    print('\tSUB+:', len(results[key][3]))
+    print('\tNaN :', len(results[key][4]))
   else:
-    print('\tINF+:', 0)
     print('\tINF-:', 0)
+    print('\tINF+:', 0)
     print('\tSUB-:', 0)
-    print('\tSUB-:', 0)
+    print('\tSUB+:', 0)
     print('\tNaN :', 0) 
 
   print('\tRuns:', runs_results[key])
@@ -871,6 +881,16 @@ def print_results(shared_lib: str, number_sampling, range_splitting):
   #  print(k, runs_results[k])
 
   print('')
+
+  # Print inputs found
+  print ('\n--------------- Inputs Found --------------')
+  for key in results.keys():
+    print(key+":")
+    print('\tINF-: '+str(list(results[key][0])))
+    print('\tINF+: '+str(list(results[key][1])))
+    print('\tSUB-: '+str(list(results[key][2])))
+    print('\tSUB+: '+str(list(results[key][3])))
+    print('\tNaN: '+str(list(results[key][4])))
 
 # --------------- Random Sampling Optimizer -------------
 def save_results_random(val: float, exp_name: str, unbounded: bool):
