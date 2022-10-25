@@ -13,6 +13,7 @@ import shutil
 # Globals
 #------------------------------------------------------------------------------
 compute_cap = 'sm_35'
+cpu_compiler = 'icc'
 
 #------------------------------------------------------------------------------
 # Code generation functions
@@ -48,6 +49,28 @@ def generate_CUDA_code(fun_name: str, params: list, directory: str) -> str:
     fd.write(' }\n\n\n')
   return file_name
 
+# Generates CPU (C) code for a given math function
+def generate_CPU_code(fun_name: str, params: list, directory: str) -> str:
+  file_name = 'cpu_code_'+fun_name+'.c'
+  with open(directory+'/'+file_name, 'w') as fd:
+    fd.write('// Atomatically generated - do not modify\n\n')
+    fd.write('#include <stdio.h>\n\n')
+    signature = ""
+    param_names = ""
+    for i in range(len(params)):
+      if params[i] == 'double':
+        signature += 'double x'+str(i)+','
+        param_names += 'x'+str(i)+','
+
+    #fd.write('extern "C" {\n')
+    fd.write('double kernel_wrapper_1('+signature[:-1]+') {\n')
+    fd.write('  double ret;\n')
+    fd.write('  ret = '+fun_name+'('+param_names[:-1]+');\n')
+    fd.write('  return ret;\n')
+    fd.write('}\n')
+    #fd.write(' }\n\n\n')
+  return file_name
+
 # Generates C++ code for a given math function
 def generate_CPP_code(fun_name: str, params: list, directory: str) -> str:
   file_name = 'cpp_code_'+fun_name+'.cpp'
@@ -77,6 +100,7 @@ def run_command(cmd: str):
     print(e.output)
     exit()
 
+# CUDA version
 def compile_CUDA_code(file_name: str, d: str):
   global compute_cap 
   shared_lib = d+'/'+file_name+'.so'
@@ -85,10 +109,13 @@ def compile_CUDA_code(file_name: str, d: str):
   run_command(cmd)
   return shared_lib
 
-def compile_CPP_code(file_name: str, d: str):
-  cmd = 'g++ '+d+'/'+file_name+' -o '+d+'/'+file_name+'.so -shared -fPIC'
+# C version
+def compile_CPU_code(file_name: str, d: str):
+  shared_lib = d+'/'+file_name+'.so'
+  cmd = cpu_compiler+' '+d+'/'+file_name+' -o '+shared_lib+' -shared -fPIC'
   print('Running:', cmd)
   run_command(cmd)
+  return shared_lib
 
 #------------------------------------------------------------------------------
 # File and directory creation 
@@ -180,6 +207,7 @@ if __name__ == "__main__":
   parser.add_argument('--random_sampling', action='store_true', help='Use random sampling')
   parser.add_argument('--random_sampling_unb', action='store_true', help='Use random sampling unbounded')
   parser.add_argument('-c', '--clean', action='store_true', help='Remove temporal directories (begin with _tmp_)')
+  parser.add_argument('--cpu', action='store_true', help='Generate CPU (C) version of the function')
   args = parser.parse_args()
 
   # --------- Cleaning -------------
@@ -211,11 +239,16 @@ if __name__ == "__main__":
   # Set BO  max iterations
   bo_analysis.set_max_iterations(args.samples)
 
-  # Generate CUDA and compile them
+  # Generate CUDA or CPU (C) code. Then compile it.
   for i in functions_to_test:
     if type(i) is FunctionSignature:
-      f = generate_CUDA_code(i.fun_name, i.input_types, d)
-      shared_lib = compile_CUDA_code(f, d)
+      if not args.cpu: # CUDA code
+        f = generate_CUDA_code(i.fun_name, i.input_types, d)
+        shared_lib = compile_CUDA_code(f, d)
+      else: # CPU code
+        f = generate_CPU_code(i.fun_name, i.input_types, d)
+        shared_lib = compile_CPU_code(f, d)
+        exit()
       num_inputs = len(i.input_types)
     elif type(i) is SharedLib:
       shared_lib = i.path
