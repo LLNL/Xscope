@@ -877,28 +877,35 @@ def print_results(shared_lib: str, number_sampling, range_splitting, fd):
     print('\tNaN :', 0) 
 
   print('\tRuns:', runs_results[key])
-  #print('\n**** Runs ****')
-  #for k in runs_results.keys():
-  #  print(k, runs_results[k])
 
   # Print inputs found
   print ('\n--------------- Inputs Found --------------')
-  #for key in results.keys():
   print(key+":")
-  print('\tINF-: '+str(list(results[key][0])))
-  print('\tINF+: '+str(list(results[key][1])))
-  print('\tSUB-: '+str(list(results[key][2])))
-  print('\tSUB+: '+str(list(results[key][3])))
-  print('\tNaN: '+str(list(results[key][4])))
+  if key in results.keys():
+    print('\tINF-: '+str(list(results[key][0])))
+    print('\tINF+: '+str(list(results[key][1])))
+    print('\tSUB-: '+str(list(results[key][2])))
+    print('\tSUB+: '+str(list(results[key][3])))
+    print('\tNaN: '+str(list(results[key][4])))
+  else:
+    print('\tINF-: []')
+    print('\tINF+: []')
+    print('\tSUB-: []')
+    print('\tSUB+: []')
+    print('\tNaN : []') 
+
 
   # Write results to file
   if fd != None:
-    fd.write(key+','+
-      str(len(results[key][0]))+','+
-      str(len(results[key][1]))+','+
-      str(len(results[key][2]))+','+
-      str(len(results[key][3]))+','+
-      str(len(results[key][4]))+'\n')
+    if key in results.keys():
+      fd.write(key+','+
+        str(len(results[key][0]))+','+
+        str(len(results[key][1]))+','+
+        str(len(results[key][2]))+','+
+        str(len(results[key][3]))+','+
+        str(len(results[key][4]))+'\n')
+    else:
+      fd.write(key+',0,0,0,0,0')
 
 # --------------- Random Sampling Optimizer -------------
 def save_results_random(val: float, exp_name: str, unbounded: bool):
