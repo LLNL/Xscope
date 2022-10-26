@@ -1,5 +1,5 @@
 #FUNCTION:acos (double)
-#FUNCTION:acosh (double)
+FUNCTION:acosh (double)
 #FUNCTION:asin (double)
 #FUNCTION:asinh (double)
 #FUNCTION:atan (double)

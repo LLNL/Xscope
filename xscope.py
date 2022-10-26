@@ -9,6 +9,10 @@ import bo_analysis
 import sys
 import shutil
 
+# Disable warnings
+import warnings
+warnings.filterwarnings("ignore", category=RuntimeWarning) 
+
 #------------------------------------------------------------------------------
 # Globals
 #------------------------------------------------------------------------------
@@ -208,6 +212,7 @@ if __name__ == "__main__":
   parser.add_argument('--random_sampling_unb', action='store_true', help='Use random sampling unbounded')
   parser.add_argument('-c', '--clean', action='store_true', help='Remove temporal directories (begin with _tmp_)')
   parser.add_argument('--cpu', action='store_true', help='Generate CPU (C) version of the function')
+  parser.add_argument('--save', action='store_true', help='Save results in a results.txt file')
   args = parser.parse_args()
 
   # --------- Cleaning -------------
@@ -234,6 +239,12 @@ if __name__ == "__main__":
 
   # Create directory to save experiments
   d = create_experiments_dir()
+
+  # Open file to save results
+  if args.save:
+    fd = open('results.txt', 'a')
+  else:
+    fd = None
 
   # --------------- BO approach -----------------
   # Set BO  max iterations
@@ -267,10 +278,11 @@ if __name__ == "__main__":
       bo_analysis.print_results_random(shared_lib)
 
     # Run BO optimization
-    print('*** Running BO on:', shared_lib)
+    print('\n*** Running BO on:', shared_lib)
     bo_analysis.optimize(shared_lib,
                         args.number_sampling, 
                         num_inputs, 
                         args.range_splitting)
-    bo_analysis.print_results(shared_lib, args.number_sampling, args.range_splitting)
+    bo_analysis.print_results(shared_lib, args.number_sampling, args.range_splitting, fd)
+  if fd: fd.close()
 

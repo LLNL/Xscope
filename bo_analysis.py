@@ -857,9 +857,10 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
 #-------------- Results --------------
 #lassen60_26904/cuda_code_acos.cu.so|fp|b_many :    [0, 0, 0, 0, 32]
 #lassen60_26904/cuda_code_hypot.cu.so|fp|b_many :     [0, 0, 5, 0, 0]
-def print_results(shared_lib: str, number_sampling, range_splitting):
+def print_results(shared_lib: str, number_sampling, range_splitting, fd):
   key = shared_lib+'|'+number_sampling+'|b_'+range_splitting
   fun_name = os.path.basename(shared_lib)
+
   print('-------------- Results --------------')
   print(fun_name)
   if key in results.keys():
@@ -880,17 +881,24 @@ def print_results(shared_lib: str, number_sampling, range_splitting):
   #for k in runs_results.keys():
   #  print(k, runs_results[k])
 
-  print('')
-
   # Print inputs found
   print ('\n--------------- Inputs Found --------------')
-  for key in results.keys():
-    print(key+":")
-    print('\tINF-: '+str(list(results[key][0])))
-    print('\tINF+: '+str(list(results[key][1])))
-    print('\tSUB-: '+str(list(results[key][2])))
-    print('\tSUB+: '+str(list(results[key][3])))
-    print('\tNaN: '+str(list(results[key][4])))
+  #for key in results.keys():
+  print(key+":")
+  print('\tINF-: '+str(list(results[key][0])))
+  print('\tINF+: '+str(list(results[key][1])))
+  print('\tSUB-: '+str(list(results[key][2])))
+  print('\tSUB+: '+str(list(results[key][3])))
+  print('\tNaN: '+str(list(results[key][4])))
+
+  # Write results to file
+  if fd != None:
+    fd.write(key+','+
+      str(len(results[key][0]))+','+
+      str(len(results[key][1]))+','+
+      str(len(results[key][2]))+','+
+      str(len(results[key][3]))+','+
+      str(len(results[key][4]))+'\n')
 
 # --------------- Random Sampling Optimizer -------------
 def save_results_random(val: float, exp_name: str, unbounded: bool):
