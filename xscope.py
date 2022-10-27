@@ -213,6 +213,7 @@ if __name__ == "__main__":
   parser.add_argument('-c', '--clean', action='store_true', help='Remove temporal directories (begin with _tmp_)')
   parser.add_argument('--cpu', action='store_true', help='Generate CPU (C) version of the function')
   parser.add_argument('--save', action='store_true', help='Save results in a results.txt file')
+  parser.add_argument('--no_twisting', action='store_true', help='Disable function twisting')
   args = parser.parse_args()
 
   # --------- Cleaning -------------
@@ -282,7 +283,8 @@ if __name__ == "__main__":
     bo_analysis.optimize(shared_lib,
                         args.number_sampling, 
                         num_inputs, 
-                        args.range_splitting)
+                        args.range_splitting,
+                        args.no_twisting)
     bo_analysis.print_results(shared_lib, args.number_sampling, args.range_splitting, fd)
   if fd: fd.close()
 

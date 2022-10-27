@@ -11,6 +11,7 @@ from bayes_opt import UtilityFunction
 
 verbose = False
 #verbose = True
+disable_twisting = False
 CUDA_LIB = ''
 #MU = 1e-307
 MU = 1.0
@@ -111,6 +112,7 @@ def function_min_inf_fp_1(x0):
 
 # Function goals: (1) maximize (2) find Underflows (3) use fp inputs
 def function_max_under_fp_1(x0):
+  if disable_twisting: return function_max_inf_fp_1(x0)
   r = call_GPU_kernel_1(x0)
   if r==0.0 or r==-0.0:
     return -MU
@@ -120,6 +122,7 @@ def function_max_under_fp_1(x0):
 
 # Function goals: (1) minimize (2) find Underflows (3) use fp inputs
 def function_min_under_fp_1(x0):
+  if disable_twisting: return function_min_inf_fp_1(x0)
   r = call_GPU_kernel_1(x0)
   if r==0.0 or r==-0.0:
     return MU
@@ -140,6 +143,7 @@ def function_min_inf_exp_1(x0):
 
 # Function goals: (1) maximize (2) find Underflows (3) use exp inputs
 def function_max_under_exp_1(x0):
+  if disable_twisting: return function_max_inf_exp_1(x0)
   x0_fp = 1.0 * math.pow(10, x0)
   r = call_GPU_kernel_1(x0_fp)
   if r==0.0 or r==-0.0:
@@ -150,6 +154,7 @@ def function_max_under_exp_1(x0):
 
 # Function goals: (1) minimize (2) find Underflows (3) use exp inputs
 def function_min_under_exp_1(x0):
+  if disable_twisting: return function_min_inf_exp_1(x0)
   x0_fp = 1.0 * math.pow(10, x0)
   r = call_GPU_kernel_1(x0_fp)
   if r==0.0 or r==-0.0:
@@ -171,6 +176,7 @@ def function_min_inf_fp_2(x0, x1):
 
 # Function goals: (1) maximize (2) find Underflows (3) use fp inputs
 def function_max_under_fp_2(x0, x1):
+  if disable_twisting: return function_max_inf_fp_2(x0, x1)
   r = call_GPU_kernel_2(x0, x1)
   if r==0.0 or r==-0.0:
     return -MU
@@ -180,6 +186,7 @@ def function_max_under_fp_2(x0, x1):
 
 # Function goals: (1) minimize (2) find Underflows (3) use fp inputs
 def function_min_under_fp_2(x0, x1):
+  if disable_twisting: return function_min_inf_fp_2(x0, x1)
   r = -call_GPU_kernel_2(x0, x1)
   if r==0.0 or r==-0.0:
     return MU
@@ -202,6 +209,7 @@ def function_min_inf_exp_2(x0, x1):
 
 # Function goals: (1) maximize (2) find Underflows (3) use exp inputs
 def function_max_under_exp_2(x0, x1):
+  if disable_twisting: return function_max_inf_exp_2(x0, x1)
   x0_fp = 1.0 * math.pow(10, x0)
   x1_fp = 1.0 * math.pow(10, x1)
   r = call_GPU_kernel_2(x0_fp, x1_fp)
@@ -213,6 +221,7 @@ def function_max_under_exp_2(x0, x1):
 
 # Function goals: (1) minimize (2) find Underflows (3) use exp inputs
 def function_min_under_exp_2(x0, x1):
+  if disable_twisting: return function_min_inf_exp_2(x0, x1)
   x0_fp = 1.0 * math.pow(10, x0)
   x1_fp = 1.0 * math.pow(10, x1)
   r = -call_GPU_kernel_2(x0_fp, x1_fp)
@@ -235,6 +244,7 @@ def function_min_inf_fp_3(x0, x1, x2):
 
 # Function goals: (1) maximize (2) find Underflows (3) use fp inputs
 def function_max_under_fp_3(x0, x1, x2):
+  if disable_twisting: return function_max_inf_fp_3(x0, x1, x2)
   r = call_GPU_kernel_3(x0, x1, x2)
   if r==0.0 or r==-0.0:
     return -MU
@@ -244,6 +254,7 @@ def function_max_under_fp_3(x0, x1, x2):
 
 # Function goals: (1) minimize (2) find Underflows (3) use fp inputs
 def function_min_under_fp_3(x0, x1, x2):
+  if disable_twisting: return function_min_inf_fp_3(x0, x1, x2)
   r = call_GPU_kernel_3(x0, x1, x2)
   if r==0.0 or r==-0.0:
     return MU
@@ -268,6 +279,7 @@ def function_min_inf_exp_3(x0, x1, x2):
 
 # Function goals: (1) maximize (2) find Underflows (3) use exp inputs
 def function_max_under_exp_3(x0, x1, x2):
+  if disable_twisting: return function_max_inf_exp_3(x0, x1, x2)
   x0_fp = 1.0 * math.pow(10, x0)
   x1_fp = 1.0 * math.pow(10, x1)
   x2_fp = 1.0 * math.pow(10, x2)
@@ -280,6 +292,7 @@ def function_max_under_exp_3(x0, x1, x2):
 
 # Function goals: (1) minimize (2) find Underflows (3) use exp inputs
 def function_min_under_exp_3(x0, x1, x2):
+  if disable_twisting: return function_min_inf_exp_3(x0, x1, x2)
   x0_fp = 1.0 * math.pow(10, x0)
   x1_fp = 1.0 * math.pow(10, x1)
   x2_fp = 1.0 * math.pow(10, x2)
@@ -302,6 +315,7 @@ def function_min_inf_fp_4(x0, x1, x2, x3):
 
 # Function goals: (1) maximize (2) find Underflows (3) use fp inputs
 def function_max_under_fp_4(x0, x1, x2, x3):
+  if disable_twisting: return function_max_inf_fp_4(x0, x1, x2, x3)
   r = call_GPU_kernel_4(x0, x1, x2, x3)
   if r==0.0 or r==-0.0:
     return -MU
@@ -311,6 +325,7 @@ def function_max_under_fp_4(x0, x1, x2, x3):
 
 # Function goals: (1) minimize (2) find Underflows (3) use fp inputs
 def function_min_under_fp_4(x0, x1, x2, x3):
+  if disable_twisting: return function_min_inf_fp_4(x0, x1, x2, x3)
   r = call_GPU_kernel_4(x0, x1, x2, x3)
   if r==0.0 or r==-0.0:
     return MU
@@ -337,6 +352,7 @@ def function_min_inf_exp_4(x0, x1, x2, x3):
 
 # Function goals: (1) maximize (2) find Underflows (3) use exp inputs
 def function_max_under_exp_3(x0, x1, x2, x3):
+  if disable_twisting: return function_max_inf_exp_4(x0, x1, x2, x3)
   x0_fp = 1.0 * math.pow(10, x0)
   x1_fp = 1.0 * math.pow(10, x1)
   x2_fp = 1.0 * math.pow(10, x2)
@@ -350,6 +366,7 @@ def function_max_under_exp_3(x0, x1, x2, x3):
 
 # Function goals: (1) minimize (2) find Underflows (3) use exp inputs
 def function_min_under_exp_3(x0, x1, x2, x3):
+  if disable_twisting: return function_min_inf_exp_4(x0, x1, x2, x3)
   x0_fp = 1.0 * math.pow(10, x0)
   x1_fp = 1.0 * math.pow(10, x1)
   x2_fp = 1.0 * math.pow(10, x2)
@@ -716,9 +733,11 @@ def run_optimizer(bounds, func, exp_name):
   save_results(val, exp_name)
 
 # input types: {"fp", "exp"}
-def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str):
-  global CUDA_LIB
+def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str, no_twist: bool):
+  global CUDA_LIB, disable_twisting
+
   CUDA_LIB = shared_lib
+  disable_twisting = no_twist
 
   assert num_inputs >= 1 and num_inputs <= 3
 
@@ -905,7 +924,7 @@ def print_results(shared_lib: str, number_sampling, range_splitting, fd):
         str(len(results[key][3]))+','+
         str(len(results[key][4]))+'\n')
     else:
-      fd.write(key+',0,0,0,0,0')
+      fd.write(key+',0,0,0,0,0\n')
 
 # --------------- Random Sampling Optimizer -------------
 def save_results_random(val: float, exp_name: str, unbounded: bool):
