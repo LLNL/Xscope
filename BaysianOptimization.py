@@ -2,16 +2,17 @@ from functools import partial
 import logging
 
 import gpytorch
-from gpytorch.likelihoods import GaussianLikelihood, GaussianLikelihoodWithMissingObs
-from gpytorch.mlls import ExactMarginalLogLikelihood, SumMarginalLogLikelihood
+from gpytorch.likelihoods import GaussianLikelihood
+from gpytorch.mlls import ExactMarginalLogLikelihood
 from gpytorch import settings as gpt_settings
 
 from botorch.optim import ExpMAStoppingCriterion
 from botorch.optim.utils import columnwise_clamp, _get_extra_mll_args, _expand_bounds
 from botorch.optim.fit import fit_gpytorch_torch, ParameterBounds
+from pyro import param
 
 from torch.optim import AdamW
-from torch.cuda.amp import GradScaler, autocast
+from torch.cuda.amp import autocast
 
 from utils import *
 
@@ -91,7 +92,7 @@ class BaysianOptimization():
     """
 
     def __init__(self, eval_func, iteration=25, batch_size=5, acquisition_function='ucb',
-                 likelihood_func=GaussianLikelihoodWithMissingObs(), bounds=None, initial_sample=1, device=torch.device("cuda")):
+                 likelihood_func=GaussianLikelihood(), bounds=None, initial_sample=2, device=torch.device("cuda")):
         self.eval_func = eval_func
         self.iteration = iteration
         self.batch_size = batch_size
@@ -110,16 +111,13 @@ class BaysianOptimization():
             self.exception_induced_params[type] = []
 
         # initialize training data and model
+        self.model_params_bounds = {}
         self.train_x, self.train_y = self.initialize_data(initial_sample)
         self.initialize_model()
-        self.model_params_bounds = {}
-        for param_name, param in self.mll.model.named_parameters():
-           self.model_params_bounds[param_name] = (-10.0, 10.0)
-           print(f'Parameter name: {param_name:42} value = {param.item()}')
         self.acq = UtilityFunction(self.acquisition_function, kappa=2.5, xi=0.1e-1)
         self.optim = AdamW
 
-    def initialize_data(self, num_sample=5):
+    def initialize_data(self, num_sample=5, normalize=False):
         """
         :param
         num_sample: int
@@ -130,15 +128,17 @@ class BaysianOptimization():
         init_sampler = self.bounds_sampler(num_sample)
         initial_X = init_sampler.sample()
         initial_X = initial_X.flatten(0,1)
-        mean, std = initial_X.mean(), initial_X.std()
-        initial_X = (initial_X - mean)/std
+        if normalize:
+            x_min, x_max = initial_X.min(), initial_X.max()
+            new_min, new_max = -1e+100, 1e+100
+            initial_X = (initial_X - x_min)/(x_max - x_min)*(new_max - new_min) + new_min
         train_y = []
         train_x = []
         for x in initial_X:
             new_candidate_target = self.eval_func(x)
-            new_candidate_target = torch.as_tensor(new_candidate_target)
+            new_candidate_target = torch.as_tensor(new_candidate_target, device=self.device, dtype=dtype)
             if self.check_exception(x, new_candidate_target.detach()):
-                logger.info( "parameter {} caused floating point error {}".format(x, new_candidate_target.detach()))
+                logger.info( "parameter {} caused floating point error {}".format(x.detach(), new_candidate_target.detach()))
                 # if we detect error at initialization stage, we log the error and try again
                 continue
             train_y.append(new_candidate_target)
@@ -146,28 +146,31 @@ class BaysianOptimization():
         train_x = torch.stack(train_x).to(device=self.device, dtype=dtype)
         train_y = torch.stack(train_y).to(device=self.device, dtype=dtype)
         assert train_y.isnan().sum()==0, "training data result in nan"
+
         return train_x, train_y
 
     def initialize_model(self, state_dict=None):
-        self.likelihood = GaussianLikelihoodWithMissingObs().to(device=self.device, dtype=dtype)
+        self.likelihood = GaussianLikelihood().to(device=self.device, dtype=dtype)
         self.GP = ExactGPModel(self.train_x, self.train_y, self.likelihood).to(device=self.device, dtype=dtype)
-        self.mll = gpytorch.mlls.ExactMarginalLogLikelihood(self.likelihood, self.GP)
+        self.mll = ExactMarginalLogLikelihood(self.likelihood, self.GP)
+        for param_name, param in self.mll.model.named_parameters():
+            self.model_params_bounds[param_name] = (-10.0, 10.0)
         if state_dict is not None:
             self.GP.load_state_dict(state_dict)
+        fit_mll(self.mll, bounds=self.model_params_bounds, options={"disp": True, "lr": 0.5}, approx_mll=True)
 
     def bounds_sampler(self, num_sample):
         lbound = self.lower_bounds.expand(-1, num_sample, -1)
         ubound = self.upper_bounds.expand(-1, num_sample, -1)
         return torch.distributions.uniform.Uniform(lbound, ubound)
 
-    def suggest_new_candidate(self, n_warmup=750, n_samples=5):
+    def suggest_new_candidate(self, n_warmup=500, n_samples=5):
         # TODO: add sampling around best point.
-        # TODO: autocast during warm up.
         """
             A function to find the maximum of the acquisition function
-            It uses a combination of random sampling (cheap) and the 'L-BFGS-B'
-            optimization method. First by sampling `n_warmup` (1e5) points at random,
-            and then running L-BFGS-B from `n_iter` (250) random starting points.
+            It uses a combination of random sampling (cheap) and the 'AdamW'
+            optimization method. First by sampling `n_warmup` (500) points per bound at random,
+            and then running AdamW from `n_samples` (5) random starting points per bound.
             Parameters
             ----------
             :param n_warmup:
@@ -206,7 +209,7 @@ class BaysianOptimization():
 
         to_minimize = lambda x: -self.acq.forward(self.GP, self.GP.likelihood, x)
 
-        optimizer = torch.optim.AdamW([clamped_candidates], lr=0.025)
+        optimizer = torch.optim.AdamW([clamped_candidates], lr=1e-5)
         i = 0
         stop = False
         stopping_criterion = ExpMAStoppingCriterion(maxiter=150)
@@ -231,7 +234,6 @@ class BaysianOptimization():
                 clamped_candidates = X
                 break
             stop = stopping_criterion.evaluate(fvals=loss.detach())
-
         clamped_candidates = _clamp(clamped_candidates)
         with torch.no_grad(), autocast(), gpytorch.settings.fast_pred_var():
             batch_acquisition = -to_minimize(clamped_candidates)
@@ -299,17 +301,17 @@ class BaysianOptimization():
         # TODO: reimpliment fit function in mixed precision.
         print("Begin BO")
         start_fitting = time.time()
-        fit_gpytorch_torch(self.mll, bounds=self.model_params_bounds, options={"disp": False}, approx_mll=True)
         for i in range(self.iteration):
             if i % self.batch_size == 0 and i != 0:
                 old_state_dict = self.mll.model.state_dict()
                 self.initialize_model(state_dict=old_state_dict)
-                fit_gpytorch_torch(self.mll, bounds=self.model_params_bounds, options={"disp": False}, approx_mll=True)
                 for param_name, param in self.mll.model.named_parameters():
                     if param.isnan():
                         self.initialize_model(state_dict=old_state_dict)
                         break
             new_candidates = self.suggest_new_candidate()
+            best_target = -1e+307
+            best_candidate = 0
             remove_bounds_indices = torch.zeros(self.lower_bounds.shape[0])
             for i, candidate in enumerate(new_candidates):
                 new_candidate_target = self.eval_func(candidate.detach())
@@ -319,10 +321,15 @@ class BaysianOptimization():
                         "parameter {} caused floating point error {}".format(candidate, new_candidate_target.detach()))
                     remove_bounds_indices[i] = 1
                     continue
-                self.train_x = torch.cat([self.train_x, candidate.unsqueeze(0)], dim=0)
-                self.train_y = torch.cat([self.train_y, new_candidate_target], dim=0)
-            self.lower_bounds = self.lower_bounds[remove_bounds_indices!=0]
-            self.upper_bounds = self.upper_bounds[remove_bounds_indices!=0]
+                # self.GP(candidate.unsqueeze(0))
+                if new_candidate_target > best_target:
+                    best_target = new_candidate_target
+                    best_candidate = candidate
+            self.train_x = torch.cat([self.train_x, best_candidate.unsqueeze(0)], dim=0)
+            self.train_y = torch.cat([self.train_y, best_target], dim=0)
+                #self.GP = self.GP.get_fantasy_model(candidate.unsqueeze(0), new_candidate_target)
+            self.lower_bounds = self.lower_bounds[remove_bounds_indices==0]
+            self.upper_bounds = self.upper_bounds[remove_bounds_indices==0]
             assert self.train_x.shape[0] == self.train_y.shape[0], f"shape mismatch, got {self.train_x.shape[0]} for training data but {self.train_y.shape[0]} for testing data"
 
         print("Fitting time: ", time.time() - start_fitting)
