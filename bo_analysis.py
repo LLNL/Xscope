@@ -9,8 +9,8 @@ import ctypes
 from bayes_opt import BayesianOptimization
 from bayes_opt import UtilityFunction
 
-verbose = False
-#verbose = True
+#verbose = False
+verbose = True
 disable_twisting = False
 CUDA_LIB = ''
 #MU = 1e-307

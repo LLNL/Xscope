@@ -1,0 +1,23 @@
+#!/bin/bash
+#BSUB -nnodes 1
+#BSUB -q pbatch
+#BSUB -G asccasc
+#BSUB -N
+#BSUB -B
+#BSUB -W 04:00
+
+date
+
+module load python/3.7.2
+
+#./driver.py 0 15 30
+#./driver.py 15 30 30
+#./driver.py 30 45 30
+./driver.py 45 59 30
+
+#./driver.py 0 30 30
+#./driver.py 30 59 30
+
+wait
+
+date
