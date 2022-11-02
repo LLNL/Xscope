@@ -250,6 +250,7 @@ if __name__ == "__main__":
   # --------------- BO approach -----------------
   # Set BO  max iterations
   bo_analysis.set_max_iterations(args.samples)
+  bo_analysis.set_af(args.af)
 
   # Generate CUDA or CPU (C) code. Then compile it.
   for i in functions_to_test:

@@ -9,13 +9,14 @@ import ctypes
 from bayes_opt import BayesianOptimization
 from bayes_opt import UtilityFunction
 
-#verbose = False
-verbose = True
+verbose = False
+#verbose = True
 disable_twisting = False
 CUDA_LIB = ''
 #MU = 1e-307
 MU = 1.0
 bo_iterations = 25 # number of iterations
+acquisition_fun = 'ei'
 smallest_subnormal = 4e-323
 results = {}
 runs_results = {}
@@ -47,6 +48,10 @@ def initialize():
 def set_max_iterations(n: int):
   global bo_iterations
   bo_iterations = n
+
+def set_af(af: str):
+  global acquisition_fun
+  acquisition_fun = af
 
 #----------------------------------------------------------------------------
 # Ctype Wrappers
@@ -710,9 +715,9 @@ def run_optimizer(bounds, func, exp_name):
   optimizer = BayesianOptimization(f=func, pbounds=bounds, verbose=2, random_state=1)
   try:
     if verbose: print('BO opt...')
-    utility = UtilityFunction(kind="ei", kappa=2.5, xi=0.1e-1)
-    #utility = UtilityFunction(kind="ucb", kappa=10, xi=0.1e-1)
-    #utility = UtilityFunction(kind="poi", kappa=10, xi=1e-1)
+    if acquisition_fun == 'ei': utility = UtilityFunction(kind="ei", kappa=2.5, xi=0.1e-1)
+    elif acquisition_fun == 'ucb': utility = UtilityFunction(kind="ucb", kappa=10, xi=0.1e-1)
+    elif acquisition_fun == 'poi': utility = UtilityFunction(kind="poi", kappa=10, xi=1e-1)
     for _ in range(bo_iterations):
       trials_so_far += 1
       next_point = optimizer.suggest(utility)

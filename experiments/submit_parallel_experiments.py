@@ -6,7 +6,10 @@ import sys
 # ================ Globals =================
 # function tests will be divided by _nodes_
 _nodes_ = 20 
-_time_per_node_ = '01:30'
+_time_per_node_ = '01:00'
+_af_ = 'ucb'
+_number_sampling_ = 'exp'
+_splitting_ = 'whole'
 # ==========================================
 
 def create_input_files(f: str):
@@ -42,7 +45,8 @@ def create_job_scipts():
       fd.write('\n')
       fd.write('date \n')
       fd.write('\n')
-      fd.write('../xscope.py _inputs_'+str(i+1)+'.txt'+'\n')
+      fd.write('cd ..\n')
+      fd.write('./xscope.py '+'-a '+_af_+' -n '+_number_sampling_+' -r '+_splitting_+' --save experiments/_inputs_'+str(i+1)+'.txt'+'\n')
       fd.write('\n')
       fd.write('date \n')
       
