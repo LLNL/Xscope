@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import os
+import stat
 import math
 import sys
 
@@ -7,9 +9,10 @@ import sys
 # function tests will be divided by _nodes_
 _nodes_ = 20 
 _time_per_node_ = '01:00'
-_af_ = 'ucb'
-_number_sampling_ = 'exp'
+_af_ = 'ei'
+_number_sampling_ = 'fp'
 _splitting_ = 'whole'
+_samples_ = '30'
 # ==========================================
 
 def create_input_files(f: str):
@@ -21,7 +24,7 @@ def create_input_files(f: str):
         functions.append(signature)
 
   n = math.ceil(len(functions) / _nodes_)
-  print('Nodes:', n)
+  print('Funcs / Nodes:', n)
   for i in range(_nodes_):
     block = functions[i*n:i*n+n]
     print('Block', i+1, block)
@@ -46,10 +49,18 @@ def create_job_scipts():
       fd.write('date \n')
       fd.write('\n')
       fd.write('cd ..\n')
-      fd.write('./xscope.py '+'-a '+_af_+' -n '+_number_sampling_+' -r '+_splitting_+' --save experiments/_inputs_'+str(i+1)+'.txt'+'\n')
+      fd.write('./xscope.py '+'-s '+_samples_+' -a '+_af_+' -n '+_number_sampling_+' -r '+_splitting_+' --save experiments/_inputs_'+str(i+1)+'.txt'+'\n')
       fd.write('\n')
       fd.write('date \n')
-      
+     
+def create_submission_script():
+  f = 'submit.sh'
+  with open(f, 'w') as fd:
+    fd.write('#!/bin/bash -x\n\n')
+    for i in range(_nodes_):
+      fd.write('bsub '+'script_'+str(i+1)+'.cmd\n')
+  st = os.stat(f)
+  os.chmod(f, st.st_mode | stat.S_IEXEC)
 
 if __name__ == '__main__':
   input_file = sys.argv[1]
@@ -57,3 +68,4 @@ if __name__ == '__main__':
 
   create_input_files(input_file)
   create_job_scipts()
+  create_submission_script()
