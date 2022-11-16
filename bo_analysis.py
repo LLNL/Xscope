@@ -2,6 +2,8 @@
 from functools import partial
 from test_function import *
 from BaysianOptimization import *
+from BO_JAX import *
+from utils import Input_bound
 
 # verbose = False
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -41,17 +43,14 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: str, 
     result_logger.start_time()
     for f in funcs:
         g = partial(test_func.function_to_optimize, num_input=num_inputs, func_type=f, mode=input_type)
-        BO_bounds = bounds(split=splitting, num_input=num_inputs, input_type=input_type)
-            # bound_string = " "
-            # for i in range(len(b[0])):
-            #     bound_string += "" + str(b[0][i]) + "-" + str(b[1][i])
-            # result_logger.bounds_list.append(bound_string)
+        BO_bounds = Input_bound(split=splitting, num_input=num_inputs, input_type=input_type)
         bo = BaysianOptimization(g, bounds=BO_bounds)
         bo.train()
-        # result_logger.log_result(bo.results)
+        result_logger.log_result(bo.results)
         del bo
     result_logger.log_time()
     print("execution time: ", result_logger.execution_time)
+    print(result_logger.results)
     # bgrt_bo_df, bgrt_interval_df = result_logger.summarize_result(shared_lib)
     #
     # if num_inputs==1:

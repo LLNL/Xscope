@@ -11,8 +11,8 @@ from gpytorch.mlls.marginal_log_likelihood import MarginalLogLikelihood
 from gpytorch import settings as gpt_settings
 
 from botorch.optim import ExpMAStoppingCriterion
-from botorch.optim.utils import columnwise_clamp, _get_extra_mll_args, _expand_bounds
-from botorch.optim.fit import fit_gpytorch_torch, ParameterBounds
+from botorch.optim.utils import  _get_extra_mll_args
+from botorch.optim.fit import ParameterBounds
 from botorch.optim.utils import (
     _filter_kwargs,
     _get_extra_mll_args,
@@ -20,22 +20,21 @@ from botorch.optim.utils import (
 )
 
 from torch.optim import AdamW
-from torch.cuda.amp import GradScaler, autocast
+from torch.cuda.amp import autocast
 from torch.optim.optimizer import Optimizer
 from torch import Tensor
-from torch.nn import Module
 from torch.cuda.amp import autocast
+
+import jax.numpy as jnp
+
 
 
 from typing import (
     Any,
-    Callable,
     Dict,
-    Iterator,
     List,
     NamedTuple,
     Optional,
-    Set,
     Tuple,
     Union,
 )
@@ -48,8 +47,167 @@ class OptimizationIteration(NamedTuple):
 
 max_normal = 1e+307
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-dtype = torch.double
+dtype = torch.float64
 
+from jax.config import config
+config.update("jax_enable_x64", True)
+
+class Input_bound():
+    def __init__(self, split="many", num_input=1, input_type="fp", device = torch.device("cuda")) -> None:
+        self.device = device
+        self.bounds = self.generate_bounds(split, num_input, input_type)
+        self.num_bounds, _, self.dim = self.bounds.shape
+        self.padded_value = torch.ones(self.dim, dtype=dtype, device=self.device)
+
+    def generate_bounds(self, split, num_input, input_type="fp"):
+        b = []
+        upper_lim = max_normal
+        lower_lim = -max_normal
+        if input_type == "exp":
+            upper_lim = 307
+            lower_lim = -307
+        if split == "whole":
+            if num_input == 1:
+                b.append([[lower_lim], [upper_lim]])
+            elif num_input == 2:
+                b.append([[lower_lim, lower_lim], [upper_lim, upper_lim]])
+            else:
+                b.append([[lower_lim, lower_lim, lower_lim], [upper_lim, upper_lim, upper_lim]])
+            b = torch.as_tensor(b, dtype=dtype, device=self.device)
+
+        elif split == "two":
+            if num_input == 1:
+                b.append([[lower_lim], [0]])
+                b.append([[0], [upper_lim]])
+            elif num_input == 2:
+                b.append([[lower_lim, lower_lim], [0, 0]])
+                b.append([[0, 0],[upper_lim, upper_lim]])
+            else:
+                b.append([[lower_lim, lower_lim, lower_lim], [0, 0, 0]])
+                b.append([[0, 0,0], [upper_lim, upper_lim, upper_lim]])
+            b = torch.as_tensor(b, dtype=dtype, device=self.device)
+
+        else:
+            limits = [0.0, 1e-307, 1e-100, 1e-10, 1e-1, 1e0, 1e+1, 1e+10, 1e+100, 1e+307]
+            ranges = []
+            if input_type == "exp":
+                for i in range(len(limits) - 1):
+                    x = limits[i]
+                    y = limits[i + 1]
+                    t = (min(x, y), max(x, y))
+                    ranges.append(t)
+            else:
+                for i in range(len(limits) - 1):
+                    x = limits[i]
+                    y = limits[i + 1]
+                    t = [[min(x, y)], [max(x, y)]]
+                    ranges.append(t)
+                    x = -limits[i]
+                    y = -limits[i + 1]
+                    t = [[min(x, y)], [max(x, y)]]
+                    ranges.append(t)
+            if num_input == 1:
+                for r1 in ranges:
+                    b.append(torch.tensor([r1], dtype=dtype, device=self.device).squeeze(0))
+            elif num_input == 2:
+                for r1 in ranges:
+                    for r2 in ranges:
+                        bound = torch.transpose(torch.tensor([r1,r2], dtype=dtype, device=self.device).squeeze(),0,1)
+                        b.append(bound)
+            else:
+                for r1 in ranges:
+                    for r2 in ranges:
+                        bound = torch.transpose(torch.tensor([r1,r2,r2], dtype=dtype, device=self.device).squeeze(),0,1)
+                        b.append(bound)
+            b = torch.stack(b, dim=0)
+        print("number of bounds to test: ", b.shape)
+        return b
+
+    def generate_bounds_np(self, split, num_input, input_type="fp"):
+        b = []
+        upper_lim = max_normal
+        lower_lim = -max_normal
+        if input_type == "exp":
+            upper_lim = 307
+            lower_lim = -307
+        if split == "whole":
+            if num_input == 1:
+                b.append([[lower_lim], [upper_lim]])
+            elif num_input == 2:
+                b.append([[lower_lim, lower_lim], [upper_lim, upper_lim]])
+            else:
+                b.append([[lower_lim, lower_lim, lower_lim], [upper_lim, upper_lim, upper_lim]])
+            b = jnp.asarray(b, dtype=jnp.float64)
+
+        elif split == "two":
+            if num_input == 1:
+                b.append([[lower_lim], [0]])
+                b.append([[0], [upper_lim]])
+            elif num_input == 2:
+                b.append([[lower_lim, lower_lim], [0, 0]])
+                b.append([[0, 0],[upper_lim, upper_lim]])
+            else:
+                b.append([[lower_lim, lower_lim, lower_lim], [0, 0, 0]])
+                b.append([[0, 0,0], [upper_lim, upper_lim, upper_lim]])
+            b = jnp.asarray(b, dtype=jnp.float64)
+
+        else:
+            limits = jnp.array([0.0, 1e-307, 1e-100, 1e-10, 1e-1, 1e0, 1e+1, 1e+10, 1e+100, 1e+307])
+            ranges = []
+            if input_type == "exp":
+                for i in range(len(limits) - 1):
+                    x = limits[i]
+                    y = limits[i + 1]
+                    t = (min(x, y), max(x, y))
+                    ranges.append(t)
+            else:
+                for i in range(len(limits) - 1):
+                    x = limits[i]
+                    y = limits[i + 1]
+                    t = [[min(x, y)], [max(x, y)]]
+                    ranges.append(t)
+                    x = -limits[i]
+                    y = -limits[i + 1]
+                    t = [[min(x, y)], [max(x, y)]]
+                    ranges.append(t)
+            if num_input == 1:
+                for r1 in ranges:
+                    b.append(jnp.array(r1, dtype=jnp.float64))
+            elif num_input == 2:
+                for r1 in ranges:
+                    for r2 in ranges:
+                        bound = jnp.transpose(jnp.array([r1,r2], dtype=jnp.float64).squeeze(),(1,0))
+                        b.append(bound)
+            else:
+                for r1 in ranges:
+                    for r2 in ranges:
+                        bound = jnp.transpose(jnp.array([r1,r2, r2], dtype=jnp.float64).squeeze(),(1,0))
+                        b.append(bound)
+            b = jnp.stack(b, axis=0)
+        print("number of bounds to test: ", b.shape)
+        return b
+    
+    def bounds_sampler(self, num_sample, padding=False):
+        lb, ub = self.get_active_bounds()
+        num_bounds = lb.shape[0]
+        sampler = torch.distributions.uniform.Uniform(lb, ub)
+        samples = sampler.rsample((num_sample,)).to(dtype=dtype, device=self.device).view(num_bounds, num_sample, self.dim)
+        if padding:
+            padding_shape = torch.empty(self.num_bounds, num_sample, self.dim)
+            samples = self.add_padding(samples, padding_shape)
+        return samples
+
+    def add_padding(self, candidates, padding_shape):
+        i = 0
+        padded_candidates = torch.empty_like(padding_shape, dtype=dtype, device=self.device)
+        for index in range(len(padded_candidates)):
+            if self.remove_bounds[index] == 1:
+                padded_candidates[index] = self.padded_value
+            else:
+                padded_candidates[index] = candidates[i]
+                i += 1
+        return padded_candidates
+        
 def fit_mll(
     mll: MarginalLogLikelihood,
     bounds: Optional[ParameterBounds] = None,
@@ -166,71 +324,6 @@ def fit_mll(
         "iterations": iterations,
     }
     return mll, info_dict
-
-
-def bounds(split, num_input, input_type="fp"):
-    b = []
-    upper_lim = max_normal
-    lower_lim = -max_normal
-    if input_type == "exp":
-        upper_lim = 307
-        lower_lim = -307
-    if split == "whole":
-        if num_input == 1:
-            b.append([[lower_lim], [upper_lim]])
-        elif num_input == 2:
-            b.append([[lower_lim, lower_lim], [upper_lim, upper_lim]])
-        else:
-            b.append([[lower_lim, lower_lim, lower_lim], [upper_lim, upper_lim, upper_lim]])
-        b = torch.as_tensor(b, dtype=dtype, device=device)
-
-    elif split == "two":
-        if num_input == 1:
-            b.append([[lower_lim], [0]])
-            b.append([[0], [upper_lim]])
-        elif num_input == 2:
-            b.append([[lower_lim, lower_lim], [0, 0]])
-            b.append([[0, 0],[upper_lim, upper_lim]])
-        else:
-            b.append([[lower_lim, lower_lim, lower_lim], [0, 0, 0]])
-            b.append([[0, 0,0], [upper_lim, upper_lim, upper_lim]])
-        b = torch.as_tensor(b, dtype=dtype, device=device)
-
-    else:
-        limits = [0.0, 1e-307, 1e-100, 1e-10, 1e-1, 1e0, 1e+1, 1e+10, 1e+100, 1e+307]
-        ranges = []
-        if input_type == "exp":
-            for i in range(len(limits) - 1):
-                x = limits[i]
-                y = limits[i + 1]
-                t = (min(x, y), max(x, y))
-                ranges.append(t)
-        else:
-            for i in range(len(limits) - 1):
-                x = limits[i]
-                y = limits[i + 1]
-                t = [[min(x, y)], [max(x, y)]]
-                ranges.append(t)
-                x = -limits[i]
-                y = -limits[i + 1]
-                t = [[min(x, y)], [max(x, y)]]
-                ranges.append(t)
-        if num_input == 1:
-            for r1 in ranges:
-                b.append(torch.tensor([r1], dtype=dtype, device=device).squeeze(0))
-        elif num_input == 2:
-            for r1 in ranges:
-                for r2 in ranges:
-                    bound = torch.transpose(torch.tensor([r1,r2], dtype=dtype, device=device).squeeze(),0,1)
-                    b.append(bound)
-        else:
-            for r1 in ranges:
-                for r2 in ranges:
-                    bound = torch.transpose(torch.tensor([r1,r2,r2], dtype=dtype, device=device).squeeze(),0,1)
-                    b.append(bound)
-        b = torch.stack(b, dim=0)
-    print("number of bounds to test: ", b.shape)
-    return b
 
 class ResultLogger:
     def __init__(self):
@@ -357,5 +450,3 @@ class UtilityFunction(object):
         z = (mean - y_max - xi)/std
         norm = Normal(torch.tensor([0.0]).to(device=device, dtype=dtype), torch.tensor([1.0]).to(device=device, dtype=dtype))
         return norm.cdf(z)
-
-
