@@ -47,7 +47,7 @@ class BaysianOptimization():
     """
 
     def __init__(self, eval_func, iteration=25, batch_size=5, acquisition_function='ucb',
-                 likelihood_func=GaussianLikelihood(), bounds: Input_bound=None, device=torch.device("cpu")):
+                 likelihood_func=GaussianLikelihood(), bounds: Input_bound=None, device=torch.device("cuda")):
         self.eval_func = eval_func
         self.iteration = iteration
         self.batch_size = batch_size
@@ -89,7 +89,6 @@ class BaysianOptimization():
             initial_x = (initial_x - x_min)/(x_max - x_min)*(new_max - new_min) + new_min
         
         self.train_x, self.train_y = self.evaluate_candidates(initial_x)
-
         if len(self.train_x.shape) == 2:
             self.train_x = self.train_x.unsqueeze(-1)
         assert self.train_y.isnan().sum()==0, "training data result in nan"
@@ -130,12 +129,12 @@ class BaysianOptimization():
     def evaluate_candidates(self, candidates, padding=False):
         if padding:
             candidates = self.add_padding(candidates)
-        targets = torch.empty(self.num_bounds,1)
+        targets = torch.empty((self.num_bounds,1), dtype=dtype, device=self.device)
         for i,x in enumerate(candidates):
             new_candidate_target = self.eval_func(x[0])
             new_candidate_target = torch.as_tensor(new_candidate_target, device=self.device, dtype=dtype)
-            if self.check_exception(x, new_candidate_target.detach()):
-                logger.info( "parameter {} caused floating point error {}".format(x, new_candidate_target.detach()))
+            if self.check_exception(x, new_candidate_target):
+                logger.info( "parameter {} caused floating point error {}".format(x, new_candidate_target))
                 x = self.padded_x
                 new_candidate_target = self.padded_y
                 self.remove_bounds[i] = 1
@@ -272,10 +271,6 @@ class BaysianOptimization():
             if i % self.batch_size == 0 and i != 0:
                 old_state_dict = self.mll.model.state_dict()
                 self.initialize_model(state_dict=old_state_dict)
-                for param_name, param in self.mll.model.named_parameters():
-                    if param.isnan():
-                        self.GP.load_state_dict(old_state_dict)
-
             new_candidates = self.suggest_new_candidate()
             new_candidates, new_targets = self.evaluate_candidates(new_candidates, padding=True)
             self.train_x = torch.cat([self.train_x, new_candidates], dim=1)

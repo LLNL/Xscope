@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
-
+from utils import get_gpu_memory
 import argparse
 import math
 import subprocess
 import socket
 import os
 import bo_analysis
-import sys
 import shutil
 import random_optimizer
+
+
+
 
 #------------------------------------------------------------------------------
 # Globals
@@ -165,8 +167,6 @@ def areguments_are_valid(args):
     return False
   if args.samples < 1:
     return False
-  if args.range_splitting != 'whole' and args.range_splitting != 'two' and args.range_splitting != 'many':
-    return False
   if args.number_sampling != 'fp' and args.number_sampling != 'exp':
     return False
   return True
@@ -176,7 +176,7 @@ if __name__ == "__main__":
   parser.add_argument('function', metavar='FUNCTION_TO_TEST', nargs=1, help='Function to test (file or shared library .so)')
   parser.add_argument('-a', '--af', default='ei', help='Acquisition function: ei, ucb, pi')
   parser.add_argument('-n', '--number-sampling', default='fp', help='Number sampling method: fp, exp')
-  parser.add_argument('-r', '--range-splitting', default='many', help='Range splitting method: whole, two, many')
+  parser.add_argument('-r', '--range-splitting',type=int, default=10, help='Range splitting method: whole, two, many')
   parser.add_argument('-s', '--samples', type=int, default=30, help='Number of BO samples (default: 30)')
   parser.add_argument('--random_sampling', action='store_true', help='Use random sampling')
   parser.add_argument('--random_sampling_unb', action='store_true', help='Use random sampling unbounded')

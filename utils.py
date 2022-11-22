@@ -27,7 +27,7 @@ from torch.cuda.amp import autocast
 
 import jax.numpy as jnp
 
-
+import subprocess as sp
 
 from typing import (
     Any,
@@ -53,20 +53,27 @@ from jax.config import config
 config.update("jax_enable_x64", True)
 
 class Input_bound():
-    def __init__(self, split="many", num_input=1, input_type="fp", device = torch.device("cuda")) -> None:
+    def __init__(self, split="many", num_input=1, input_type="fp", device = torch.device("cuda"), input_range = None, f_type=None) -> None:
         self.device = device
-        self.bounds = self.generate_bounds(split, num_input, input_type)
+        self.input_range = input_range
+        self.bounds = self.generate_bounds(split, num_input, input_type, f_type)
         self.num_bounds, _, self.dim = self.bounds.shape
         self.padded_value = torch.ones(self.dim, dtype=dtype, device=self.device)
 
-    def generate_bounds(self, split, num_input, input_type="fp"):
+
+    def generate_bounds(self, split, num_input, input_type="fp", f_type=None):
         b = []
-        upper_lim = max_normal
-        lower_lim = -max_normal
+        if self.input_range == None:
+            upper_lim = max_normal
+            lower_lim = -max_normal
+        else:
+            upper_lim = self.input_range[1]
+            lower_lim = self.input_range[0]
+            assert upper_lim >= lower_lim, f"upper bound{upper_lim} must be greater than lower bound {lower_lim}"
         if input_type == "exp":
             upper_lim = 307
             lower_lim = -307
-        if split == "whole":
+        if split == 1:
             if num_input == 1:
                 b.append([[lower_lim], [upper_lim]])
             elif num_input == 2:
@@ -75,7 +82,7 @@ class Input_bound():
                 b.append([[lower_lim, lower_lim, lower_lim], [upper_lim, upper_lim, upper_lim]])
             b = torch.as_tensor(b, dtype=dtype, device=self.device)
 
-        elif split == "two":
+        elif split == 2:
             if num_input == 1:
                 b.append([[lower_lim], [0]])
                 b.append([[0], [upper_lim]])
@@ -88,7 +95,11 @@ class Input_bound():
             b = torch.as_tensor(b, dtype=dtype, device=self.device)
 
         else:
-            limits = [0.0, 1e-307, 1e-100, 1e-10, 1e-1, 1e0, 1e+1, 1e+10, 1e+100, 1e+307]
+            limits = torch.linspace(lower_lim,upper_lim,split,dtype=torch.float64)
+            if f_type=="max_under" or f_type=="min_under":
+                extra_range = torch.tensor([1e-307, 1e-100, 0.0, -1e-307, -1e-100], dtype=torch.float64)
+                limits = torch.cat([limits, extra_range])
+                limits, _ = torch.sort(limits)
             ranges = []
             if input_type == "exp":
                 for i in range(len(limits) - 1):
@@ -100,10 +111,6 @@ class Input_bound():
                 for i in range(len(limits) - 1):
                     x = limits[i]
                     y = limits[i + 1]
-                    t = [[min(x, y)], [max(x, y)]]
-                    ranges.append(t)
-                    x = -limits[i]
-                    y = -limits[i + 1]
                     t = [[min(x, y)], [max(x, y)]]
                     ranges.append(t)
             if num_input == 1:
@@ -120,71 +127,6 @@ class Input_bound():
                         bound = torch.transpose(torch.tensor([r1,r2,r2], dtype=dtype, device=self.device).squeeze(),0,1)
                         b.append(bound)
             b = torch.stack(b, dim=0)
-        print("number of bounds to test: ", b.shape)
-        return b
-
-    def generate_bounds_np(self, split, num_input, input_type="fp"):
-        b = []
-        upper_lim = max_normal
-        lower_lim = -max_normal
-        if input_type == "exp":
-            upper_lim = 307
-            lower_lim = -307
-        if split == "whole":
-            if num_input == 1:
-                b.append([[lower_lim], [upper_lim]])
-            elif num_input == 2:
-                b.append([[lower_lim, lower_lim], [upper_lim, upper_lim]])
-            else:
-                b.append([[lower_lim, lower_lim, lower_lim], [upper_lim, upper_lim, upper_lim]])
-            b = jnp.asarray(b, dtype=jnp.float64)
-
-        elif split == "two":
-            if num_input == 1:
-                b.append([[lower_lim], [0]])
-                b.append([[0], [upper_lim]])
-            elif num_input == 2:
-                b.append([[lower_lim, lower_lim], [0, 0]])
-                b.append([[0, 0],[upper_lim, upper_lim]])
-            else:
-                b.append([[lower_lim, lower_lim, lower_lim], [0, 0, 0]])
-                b.append([[0, 0,0], [upper_lim, upper_lim, upper_lim]])
-            b = jnp.asarray(b, dtype=jnp.float64)
-
-        else:
-            limits = jnp.array([0.0, 1e-307, 1e-100, 1e-10, 1e-1, 1e0, 1e+1, 1e+10, 1e+100, 1e+307])
-            ranges = []
-            if input_type == "exp":
-                for i in range(len(limits) - 1):
-                    x = limits[i]
-                    y = limits[i + 1]
-                    t = (min(x, y), max(x, y))
-                    ranges.append(t)
-            else:
-                for i in range(len(limits) - 1):
-                    x = limits[i]
-                    y = limits[i + 1]
-                    t = [[min(x, y)], [max(x, y)]]
-                    ranges.append(t)
-                    x = -limits[i]
-                    y = -limits[i + 1]
-                    t = [[min(x, y)], [max(x, y)]]
-                    ranges.append(t)
-            if num_input == 1:
-                for r1 in ranges:
-                    b.append(jnp.array(r1, dtype=jnp.float64))
-            elif num_input == 2:
-                for r1 in ranges:
-                    for r2 in ranges:
-                        bound = jnp.transpose(jnp.array([r1,r2], dtype=jnp.float64).squeeze(),(1,0))
-                        b.append(bound)
-            else:
-                for r1 in ranges:
-                    for r2 in ranges:
-                        bound = jnp.transpose(jnp.array([r1,r2, r2], dtype=jnp.float64).squeeze(),(1,0))
-                        b.append(bound)
-            b = jnp.stack(b, axis=0)
-        print("number of bounds to test: ", b.shape)
         return b
     
     def bounds_sampler(self, num_sample, padding=False):
@@ -450,3 +392,14 @@ class UtilityFunction(object):
         z = (mean - y_max - xi)/std
         norm = Normal(torch.tensor([0.0]).to(device=device, dtype=dtype), torch.tensor([1.0]).to(device=device, dtype=dtype))
         return norm.cdf(z)
+
+
+def get_gpu_memory():
+    output_to_list = lambda x: x.decode('ascii').split('\n')[:-1]
+    ACCEPTABLE_AVAILABLE_MEMORY = 1024
+    COMMAND = "nvidia-smi --query-gpu=memory.used --format=csv"
+    try:
+        memory_use_info = output_to_list(sp.check_output(COMMAND.split(),stderr=sp.STDOUT))[1:]
+    except sp.CalledProcessError as e:
+        raise RuntimeError("command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
+    print(memory_use_info)
