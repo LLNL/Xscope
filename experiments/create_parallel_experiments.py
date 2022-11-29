@@ -10,7 +10,7 @@ import sys
 _nodes_ = 20 
 _time_per_node_ = '01:00'
 _af_ = 'ei'
-_number_sampling_ = 'fp'
+_number_sampling_ = 'exp'
 _splitting_ = 'many'
 _samples_ = '25'
 # ==========================================
