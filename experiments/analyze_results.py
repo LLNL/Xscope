@@ -225,16 +225,6 @@ def plot_random_results():
 # Trace example:
 # _tmp_lassen344_58707/cuda_code_acos.cu.so|fp|b_many,0,0,0,0,8
 # _tmp_lassen344_58707/cuda_code_acosh.cu.so|fp|b_many,0,0,0,0,14
-
-
-# File names format:
-#   results-[Acq. function]-[N]-samples.txt
-# Examples:
-#       results-EI-10-samples.txt
-#       results-EI-15-samples.txt
-# Trace example:
-#  lassen333_25425/cuda_code_acos.cu.so|fp|b_whole :     [0, 0, 0, 0, 4]
-#  TRIALS-lassen333_25425/cuda_code_acos.cu.so|fp|b_whole % 2
 def parse_exceptions_from_method(filename: str):
   global total_exceptions_found, trials_to_trigger, functions_where_ex_found, number_distinct_exceptions
   print('Parsing file:', filename)
@@ -262,10 +252,11 @@ def parse_exceptions_from_method(filename: str):
           total_exceptions_found[samples][exp_name] += s
     
         # functions_where_ex_found values
-        if exp_name not in functions_where_ex_found[samples]:
-          functions_where_ex_found[samples][exp_name] = set([fun_name])
-        else:
-          functions_where_ex_found[samples][exp_name].add(fun_name)
+        if s > 0:
+          if exp_name not in functions_where_ex_found[samples]:
+            functions_where_ex_found[samples][exp_name] = set([fun_name])
+          else:
+            functions_where_ex_found[samples][exp_name].add(fun_name)
           
         # number_distinct_exceptions values
         if exp_name not in number_distinct_exceptions[samples]:
