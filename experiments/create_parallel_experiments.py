@@ -11,8 +11,8 @@ _nodes_ = 20
 _time_per_node_ = '01:00'
 _af_ = 'ei'
 _number_sampling_ = 'fp'
-_splitting_ = 'whole'
-_samples_ = '5'
+_splitting_ = 'two'
+_samples_ = '20'
 # ==========================================
 
 def create_input_files(f: str):
