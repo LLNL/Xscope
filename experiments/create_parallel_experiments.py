@@ -10,9 +10,9 @@ import sys
 _nodes_ = 20 
 _time_per_node_ = '01:00'
 _af_ = 'ei'
-_number_sampling_ = 'exp'
-_splitting_ = 'many'
-_samples_ = '25'
+_number_sampling_ = 'fp'
+_splitting_ = 'whole'
+_samples_ = '5'
 # ==========================================
 
 def create_input_files(f: str):
@@ -41,7 +41,7 @@ def create_job_scipts():
       fd.write('#BSUB -q pbatch\n')
       fd.write('#BSUB -G asccasc\n')
       fd.write('#BSUB -N\n')
-      fd.write('#BSUB -B\n')
+      #fd.write('#BSUB -B\n')
       fd.write('#BSUB -W '+_time_per_node_+'\n')
       fd.write('#BSUB -e job_'+str(i+1)+'\n')
       fd.write('#BSUB -o job_'+str(i+1)+'\n')
