@@ -119,13 +119,20 @@ def parse_runs(filename: str):
         exp_name = exp_name.split('cuda_code_')[1]
         runs_per_exp[exp_name] = runs
 
+
+# ====== Trace format ======
+#_tmp_lassen257_171193/cuda_code_acos.cu.so|fp|b_many,0,0,0,0,8
+#_tmp_lassen257_171193/cuda_code_acosh.cu.so|fp|b_many,0,0,0,0,14
+#_tmp_lassen257_171193/cuda_code_asin.cu.so|fp|b_many,0,0,2,1,8
 def parse_exceptions(filename: str):
   with open(filename, 'r') as fd:
     for l in fd:
-      if "cuda_code_" in l and ":" in l:
-        exp_name = l.split()[0]
+      if "cuda_code_" in l:
+        exp_name = l.split(',')[0]
         exp_name = exp_name.split('cuda_code_')[1]
-        values = json.loads(l.split(':')[1])
+        v = l.split(',')[1:]
+        values = [eval(i) for i in v] # convert from string to int: '0' -> 0
+        #values = json.loads(l.split(':')[1])
         excpetions_per_exp[exp_name] = values
 
 # Convert lists to ones: [2,4,0] => [1,1,0]        
@@ -229,7 +236,7 @@ def parse_exceptions_from_method(filename: str):
   global total_exceptions_found, trials_to_trigger, functions_where_ex_found, number_distinct_exceptions
   print('Parsing file:', filename)
   ac_function = filename.split('-')[1]
-  samples = filename.split('-')[2]
+  samples = int(filename.split('-')[2])
   with open(filename, 'r') as fd:
     for l in fd:
       if "cuda_code_" in l:
@@ -323,14 +330,20 @@ def plot_multi_files():
         exp_b_two_EI.append(v/get_max_runs()['two'])
       if 'exp|b_many-EI' == j:
         exp_b_many_EI.append(v/get_max_runs()['exp_many'])
-
+        
   fig, ax = plt.subplots(1,2)
-  fig1 = ax[0].plot(x, fp_b_whole_EI, 'o--',label='fp_whole')
-  fig2 = ax[0].plot(x, fp_b_two_EI, '-^', label='fp_two')
-  fig3 = ax[0].plot(x, fp_b_many_EI, 's-.', label='fp_many')
-  fig4 = ax[0].plot(x, exp_b_whole_EI, '^:', label='exp_whole')
-  fig5 = ax[0].plot(x, exp_b_two_EI, 'o-', label='exp_two')
-  fig6 = ax[0].plot(x, exp_b_many_EI, 's:', label='exp_many')
+  xs, ys = zip(*sorted(zip(x, fp_b_whole_EI))) # sorting
+  fig1 = ax[0].plot(xs, ys, 'o--',label='fp_whole')
+  xs, ys = zip(*sorted(zip(x, fp_b_two_EI)))
+  fig2 = ax[0].plot(xs, ys, '-^', label='fp_two')
+  xs, ys = zip(*sorted(zip(x, fp_b_many_EI)))
+  fig3 = ax[0].plot(xs, ys, 's-.', label='fp_many')
+  xs, ys = zip(*sorted(zip(x, exp_b_whole_EI)))
+  fig4 = ax[0].plot(xs, ys, '^:', label='exp_whole')
+  xs, ys = zip(*sorted(zip(x, exp_b_two_EI)))
+  fig5 = ax[0].plot(xs, ys, 'o-', label='exp_two')
+  xs, ys = zip(*sorted(zip(x, exp_b_many_EI)))
+  fig6 = ax[0].plot(xs, ys, 's:', label='exp_many')
   ax[0].set_ylabel('Total Inputs Found (Normalized)')
   ax[0].set_xlabel('Max Iterations')
   ax[0].legend()
@@ -407,19 +420,25 @@ def plot_multi_files():
         exp_b_many_EI.append(v)
         
   #fig, ax = plt.subplots()
-  fig1 = ax[1].plot(x, fp_b_whole_EI, 'o--', label='fp_whole')
-  fig2 = ax[1].plot(x, fp_b_two_EI, '-^', label='fp_two')
-  fig3 = ax[1].plot(x, fp_b_many_EI, 's-.', label='fp_many')
-  fig4 = ax[1].plot(x, exp_b_whole_EI, '^:', label='exp_whole')
-  fig5 = ax[1].plot(x, exp_b_two_EI, 'o-', label='exp_two')
-  fig6 = ax[1].plot(x, exp_b_many_EI, 's:', label='exp_many')
+  xs, ys = zip(*sorted(zip(x, fp_b_whole_EI))) # sorting
+  fig1 = ax[1].plot(xs, ys, 'o--', label='fp_whole')
+  xs, ys = zip(*sorted(zip(x, fp_b_two_EI))) # sorting
+  fig2 = ax[1].plot(xs, ys, '-^', label='fp_two')
+  xs, ys = zip(*sorted(zip(x, fp_b_many_EI))) # sorting
+  fig3 = ax[1].plot(xs, ys, 's-.', label='fp_many')
+  xs, ys = zip(*sorted(zip(x, exp_b_whole_EI))) # sorting
+  fig4 = ax[1].plot(xs, ys, '^:', label='exp_whole')
+  xs, ys = zip(*sorted(zip(x, exp_b_two_EI))) # sorting
+  fig5 = ax[1].plot(xs, ys, 'o-', label='exp_two')
+  xs, ys = zip(*sorted(zip(x, exp_b_many_EI))) # sorting
+  fig6 = ax[1].plot(xs, ys, 's:', label='exp_many')
   ax[1].set_ylabel('Exception-Triggering Functions')
   ax[1].set_xlabel('Max Iterations')
   ax[1].set_title('(b)')
   ax[1].legend(loc='center')
   fig.tight_layout()
-  plt.show()
-  #fig.savefig('max_iterations_evaluation.pdf')
+  #plt.show()
+  fig.savefig('max_iterations_evaluation.pdf')
   
   """
   # -------- Plot Distinct Exceptions Found ------------------
@@ -649,17 +668,79 @@ def parse_multi_results_file(argv):
     print(filename)
     parse_exceptions_from_method(filename)
     #parse_exceptions_random_comparison(filename)
+    
+def plot_main_experiments_results(argv):
+  global excpetions_per_exp
+  
+  fig, ax = plt.subplots(4,1)
+  fig.tight_layout()
+  fig = plt.gcf()
+  fig.set_size_inches(14, 12)
 
+  for i in range(1,len(argv)):
+    filename = argv[i]
+    print('Parsing...',filename)
+    parse_exceptions(filename)
+    excpetions_per_exp = dict(sorted(excpetions_per_exp.items()))
+    
+    x = [] # functions
+    inf_neg_list = []
+    inf_pos_list = []
+    sub_neg_list = []
+    sub_pos_list = []
+    nan_list = []
+    for experiment in excpetions_per_exp:
+      values = excpetions_per_exp[experiment]
+      inf_neg_list.append(values[0])
+      inf_pos_list.append(values[1])
+      sub_neg_list.append(values[2])
+      sub_pos_list.append(values[3])
+      nan_list.append(values[4])
+      fun = experiment.split('|')[0].split('.')[0]
+      x.append(fun)
+      num_sampling = experiment.split('|')[1]
+      input_splitting = experiment.split('|')[2]
+      
+    # --- plot ----
+    width = 0.35
+    #fig, ax = plt.subplots()
+    fig1 = ax[i-1].bar(x, inf_neg_list, width, label='INF-', hatch="||")
+    fig2 = ax[i-1].bar(x, inf_pos_list, width, label='INF+', hatch="+")
+    fig3 = ax[i-1].bar(x, sub_neg_list, width, label='SUB-', hatch="*")
+    fig4 = ax[i-1].bar(x, sub_pos_list, width, label='SUB+', hatch="o")
+    fig5 = ax[i-1].bar(x, nan_list, width, label='NaN', hatch="xx")
+
+    sampling_method = experiment.split('|')[1]
+    input_splitting = experiment.split('|')[2].split('_')[1]
+    ax[i-1].set_title(sampling_method+' method / '+input_splitting+'-range')
+    ax[i-1].legend()
+    ax[i-1].set_ylabel('Inputs Found')
+    ax[i-1].set_yscale('log')
+    #ax[i-1].set_xticks(x)
+    ax[i-1].set_xticklabels(x, rotation='vertical', fontsize=10)
+    ax[i-1].set_ylim([-1, 200])
+      
+    # Clean up
+    excpetions_per_exp = {}
+  #plt.show()
+  fig.savefig('gpu_results.pdf', bbox_inches = "tight")
+  
 if __name__ == '__main__':
   #results = sys.argv[1]
   #parse_single_result_file(results)
-  #print_results()
   
+  # ---- Plot main results with all execptions -----
+  # Input: multiple files
+  plot_main_experiments_results(sys.argv)
+
+  #print_results()
   #print(get_max_runs())
   #exit()
 
-  parse_multi_results_file(sys.argv)
-  plot_multi_files()
+  # ---- Plots Figure with normalized results (from all runs) ----
+  #parse_multi_results_file(sys.argv)
+  #plot_multi_files()
+    
   #plot_random_results()
   #print_AC_function_comparison()
   
