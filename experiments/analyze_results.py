@@ -127,9 +127,9 @@ def parse_runs(filename: str):
 def parse_exceptions(filename: str):
   with open(filename, 'r') as fd:
     for l in fd:
-      if "cuda_code_" in l:
+      if "cuda_code_" in l or "cpu_code_" in l:
         exp_name = l.split(',')[0]
-        exp_name = exp_name.split('cuda_code_')[1]
+        exp_name = exp_name.split('_code_')[1]
         v = l.split(',')[1:]
         values = [eval(i) for i in v] # convert from string to int: '0' -> 0
         #values = json.loads(l.split(':')[1])
@@ -725,13 +725,71 @@ def plot_main_experiments_results(argv):
   #plt.show()
   fig.savefig('gpu_results.pdf', bbox_inches = "tight")
   
+def plot_CPU_experiments_results(filename):
+  global excpetions_per_exp
+  fig, ax = plt.subplots(1,1)
+  fig.tight_layout()
+  fig = plt.gcf()
+  fig.set_size_inches(12, 4)
+
+  #for i in range(1,len(argv)):
+  #filename = argv[i]
+  print('Parsing...',filename)
+  parse_exceptions(filename)  
+  excpetions_per_exp = dict(sorted(excpetions_per_exp.items()))
+    
+  x = [] # functions
+  inf_neg_list = []
+  inf_pos_list = []
+  sub_neg_list = []
+  sub_pos_list = []
+  nan_list = []
+  for experiment in excpetions_per_exp:
+    values = excpetions_per_exp[experiment]
+    inf_neg_list.append(values[0])
+    inf_pos_list.append(values[1])
+    sub_neg_list.append(values[2])
+    sub_pos_list.append(values[3])
+    nan_list.append(values[4])
+    fun = experiment.split('|')[0].split('.')[0]
+    x.append(fun)
+    num_sampling = experiment.split('|')[1]
+    input_splitting = experiment.split('|')[2]
+    exp_name = experiment
+    
+  # --- plot ----
+  width = 0.35
+  #fig, ax = plt.subplots()
+  fig1 = ax.bar(x, inf_neg_list, width, label='INF-', hatch="||")
+  fig2 = ax.bar(x, inf_pos_list, width, label='INF+', hatch="+")
+  fig3 = ax.bar(x, sub_neg_list, width, label='SUB-', hatch="*")
+  fig4 = ax.bar(x, sub_pos_list, width, label='SUB+', hatch="o")
+  fig5 = ax.bar(x, nan_list, width, label='NaN', hatch="xx")
+  sampling_method = experiment.split('|')[1]
+  input_splitting = experiment.split('|')[2].split('_')[1]
+  ax.set_title(sampling_method+' method / '+input_splitting+'-range')
+  ax.legend()
+  ax.set_ylabel('Inputs Found')
+  ax.set_yscale('log')
+  #ax[i-1].set_xticks(x)
+  ax.set_xticklabels(x, rotation='vertical', fontsize=10)
+  ax.set_ylim([-1, 200])
+
+  #plt.show()
+  fig.savefig('cpu_results.pdf', bbox_inches = "tight")
+  
 if __name__ == '__main__':
   #results = sys.argv[1]
   #parse_single_result_file(results)
   
   # ---- Plot main results with all execptions -----
   # Input: multiple files
-  plot_main_experiments_results(sys.argv)
+  #plot_main_experiments_results(sys.argv)
+  
+  # ----- Plot CPU experiments from Quarts (Intel) ---
+  # Input: 1 file
+  filename = sys.argv[1]
+  plot_CPU_experiments_results(filename)
 
   #print_results()
   #print(get_max_runs())
