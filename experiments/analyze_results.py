@@ -778,26 +778,84 @@ def plot_CPU_experiments_results(filename):
   #plt.show()
   fig.savefig('cpu_results.pdf', bbox_inches = "tight")
   
-if __name__ == '__main__':
-  #results = sys.argv[1]
-  #parse_single_result_file(results)
+def print_CPU_GPU_comparison(file_CPU, file_GPU):
+  global excpetions_per_exp
   
+  # Parse and get results
+  CPU_results = {}
+  GPU_results = {}
+  
+  parse_exceptions(file_CPU)
+  # Rename keys
+  for k in excpetions_per_exp:
+    new_k = k.split('.')[0]
+    CPU_results[new_k] = excpetions_per_exp[k]
+
+  # Clean up
+  excpetions_per_exp = {}
+  
+  parse_exceptions(file_GPU)
+  # Rename keys
+  for k in excpetions_per_exp:
+    new_k = k.split('.')[0]
+    GPU_results[new_k] = excpetions_per_exp[k]
+    
+  # Latex table
+  print("\\begin{table*}")
+  print("\\caption{Comparison of CPU and GPU results}")
+  print("\\begin{center}")
+  print("\\begin{tabular}{ c | c c c c c | c c c c c }")
+  print("\\hline")
+  print(" \multirow{2}{4em}{Fun} & \\multicolumn{5}{|c|}{CPU} & \\multicolumn{5}{c}{GPU} \\\\")
+  print("\\cline{2-11}")
+  print(" & INF- & INF+ & SUB- & SUB+ & NaN & INF- & INF+ & SUB- & SUB+ & NaN \\\\ \\hline")
+    
+  # Compare results
+  for k in CPU_results:
+    if k in GPU_results:
+      same = ""
+      if CPU_results[k] != GPU_results[k]:
+        # Convert from int-list to str-list
+        CPU_results[k] = [str(x) for x in CPU_results[k]]
+        GPU_results[k] = [str(x) for x in GPU_results[k]]
+        print('\\rowcolor{light-gray}')
+        print(k+" &", " & ".join(CPU_results[k]), "& ", " & ".join(GPU_results[k]), '\\\\')
+      else:
+        # Convert from int-list to str-list
+        CPU_results[k] = [str(x) for x in CPU_results[k]]
+        GPU_results[k] = [str(x) for x in GPU_results[k]]
+        print(k+" &", " & ".join(CPU_results[k]), "& ", " & ".join(GPU_results[k]), '\\\\')
+      
+  # Latex END of table
+  print("\\end{tabular}")
+  print("\\end{center}")
+  print("\\end{table*}")
+  
+if __name__ == '__main__':
   # ---- Plot main results with all execptions -----
   # Input: multiple files
   #plot_main_experiments_results(sys.argv)
   
   # ----- Plot CPU experiments from Quarts (Intel) ---
   # Input: 1 file
-  filename = sys.argv[1]
-  plot_CPU_experiments_results(filename)
-
-  #print_results()
-  #print(get_max_runs())
-  #exit()
+  #filename = sys.argv[1]
+  #plot_CPU_experiments_results(filename)
 
   # ---- Plots Figure with normalized results (from all runs) ----
   #parse_multi_results_file(sys.argv)
   #plot_multi_files()
+  
+  # ----- Plot table with comparison between CPU and GPU
+  # Input: file_CPU_results file_GPU_results
+  print_CPU_GPU_comparison(sys.argv[1], sys.argv[2])
+  
+  # ------- OLD Analysis --------------
+  #results = sys.argv[1]
+  #parse_single_result_file(results)
+  
+  #print_results()
+  #print(get_max_runs())
+  #exit()
     
   #plot_random_results()
   #print_AC_function_comparison()
