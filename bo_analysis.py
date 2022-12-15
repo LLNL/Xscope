@@ -1,5 +1,6 @@
 #!//usr/bin/env python3
 
+import fcntl
 import random_fp_generator
 import logging
 import math
@@ -988,7 +989,9 @@ def save_results_random(val: float, exp_name: str, unbounded: bool):
   #return False
 
 #_tmp_lassen593_3682/cuda_code_acos.cu.so|RANDOM :    [0, 0, 0, 0, 271]
-def print_results_random(shared_lib):
+def print_results_random(shared_lib: str, fd):
+  fcntl.flock(fd, fcntl.LOCK_EX)
+
   key = shared_lib+'|RANDOM'
   fun_name = os.path.basename(shared_lib)
   print('-------------- Results --------------')
@@ -1006,6 +1009,21 @@ def print_results_random(shared_lib):
     print('\tSUB-:', 0)
     print('\tNaN :', 0) 
   print('')
+
+  # Write results to file
+  if fd != None:
+    if key in random_results.keys():
+      fd.write(key+','+
+        str(random_results[key][0])+','+
+        str(random_results[key][1])+','+
+        str(random_results[key][2])+','+
+        str(random_results[key][3])+','+
+        str(random_results[key][4])+'\n')
+    else:
+      fd.write(key+',0,0,0,0,0\n')
+    
+  fcntl.flock(fd, fcntl.LOCK_UN)
+
 
 # Calls to wrappers:
 # call_GPU_kernel_1(x0)

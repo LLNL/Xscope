@@ -277,7 +277,8 @@ if __name__ == "__main__":
       if args.random_sampling_unb:
         unbounded = True
       bo_analysis.optimize_randomly(shared_lib, inputs, max_iters, unbounded)
-      bo_analysis.print_results_random(shared_lib)
+      bo_analysis.print_results_random(shared_lib, fd)
+      continue
 
     # Run BO optimization
     print('\n*** Running BO on:', shared_lib)

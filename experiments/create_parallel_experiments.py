@@ -49,7 +49,8 @@ def create_job_scipts():
       fd.write('date \n')
       fd.write('\n')
       fd.write('cd ..\n')
-      fd.write('./xscope.py '+'-s '+_samples_+' -a '+_af_+' -n '+_number_sampling_+' -r '+_splitting_+' --save experiments/_inputs_'+str(i+1)+'.txt'+'\n')
+      #fd.write('./xscope.py '+'-s '+_samples_+' -a '+_af_+' -n '+_number_sampling_+' -r '+_splitting_+' --save experiments/_inputs_'+str(i+1)+'.txt'+'\n')
+      fd.write('./xscope.py '+'--random_sampling_unb '+' --save experiments/_inputs_'+str(i+1)+'.txt'+'\n')
       fd.write('\n')
       fd.write('date \n')
      
