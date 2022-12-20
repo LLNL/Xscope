@@ -157,14 +157,17 @@ def mask_lists(list_a, list_b):
   
 def parse_exceptions_random_comparison(filename: str):
   global random_exceptions_per_function
+  print('... In parse_exceptions_random_comparison')
+  
   with open(filename, 'r') as fd:
     for l in fd:
-      if "cuda_code_" in l and ":" in l:
-        exp_name = l.split()[0]
-        fun_name = exp_name.split('cuda_code_')[1].split('|')[0]
-        exp_name = exp_name.split('cuda_code_')[1]
-        exp_name = exp_name.split('.so|')[1]
-        values = json.loads(l.split(':')[1])
+      if "cuda_code_" in l:
+        exp_name = l.split(',')[0]
+        exp_name = exp_name.split('_code_')[1]
+        fun_name = exp_name.split('|')[0].split('.')[0]
+        exp_name = '|'.join(exp_name.split('|')[1:])
+        v = l.split(',')[1:]
+        values = [eval(i) for i in v] # convert from string to int: '0' -> 0
         
         if exp_name == 'fp|b_many' or exp_name == 'RANDOM' or exp_name == 'RANDOM_stop':
           random_exceptions_per_function[exp_name][fun_name] = values
@@ -182,6 +185,10 @@ def get_distinct_exepctions(values: list):
 
 def plot_random_results():
   global random_exceptions_per_function
+  
+  for key in random_exceptions_per_function:
+    random_exceptions_per_function[key] = dict(sorted(random_exceptions_per_function[key].items()))
+  
   print('In plot_random_results')
   x_random = []
   x_random_stop = []
@@ -202,9 +209,9 @@ def plot_random_results():
   x = np.arange(len(x_random))  # the label locations
   width = 0.25  # the width of the bars
   fig, ax = plt.subplots()
-  rects1 = ax.bar(x-width, x_random_stop, width, label='Random', color='cyan', hatch='.')
-  rects2 = ax.bar(x, x_random, width, color='blue', label='Random_unbounded')
-  rects3 = ax.bar(x+width, x_xscope, width, label='Xscope', color='orange', hatch='/')
+  rects1 = ax.bar(x-width, x_random_stop, width, label='Random', color='darkviolet', hatch='.')
+  rects2 = ax.bar(x, x_random, width, color='darkgray', label='Random_unbounded')
+  rects3 = ax.bar(x+width, x_xscope, width, label='Xscope', color='springgreen', hatch='/')
   
   #rects3 = ax.bar(x+width, many_r_runs, width, label='Many')
 
@@ -667,7 +674,7 @@ def parse_multi_results_file(argv):
     filename = argv[i]
     print(filename)
     parse_exceptions_from_method(filename)
-    #parse_exceptions_random_comparison(filename)
+    parse_exceptions_random_comparison(filename)
     
 def plot_main_experiments_results(argv):
   global excpetions_per_exp
@@ -847,7 +854,11 @@ if __name__ == '__main__':
   
   # ----- Plot table with comparison between CPU and GPU
   # Input: file_CPU_results file_GPU_results
-  print_CPU_GPU_comparison(sys.argv[1], sys.argv[2])
+  #print_CPU_GPU_comparison(sys.argv[1], sys.argv[2])
+  
+  # ------ Plot random comparison experiments ------
+  parse_multi_results_file(sys.argv)
+  plot_random_results()
   
   # ------- OLD Analysis --------------
   #results = sys.argv[1]
