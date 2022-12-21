@@ -1,9 +1,9 @@
-FUNCTION:acos (double)
+#FUNCTION:acos (double)
 #FUNCTION:acosh (double)
 #FUNCTION:asin (double)
 #FUNCTION:asinh (double)
 #FUNCTION:atan (double)
-FUNCTION:atan2 (double, double)
+#FUNCTION:atan2 (double, double)
 #FUNCTION:atanh (double)
 #FUNCTION:cbrt (double)
 #FUNCTION:ceil (double)
@@ -58,7 +58,7 @@ FUNCTION:atan2 (double, double)
 #FUNCTION:y0 (double)
 #FUNCTION:y1 (double)
 
-#SHARED_LIB:./app_kernels/LULESH/cuda_code_lulesh.cu.so, 3
+SHARED_LIB:./app_kernels/LULESH/cuda_code_lulesh.cu.so, 24
 #SHARED_LIB:./app_kernels/SW4Lite/cuda_code_sw4lite.cu.so, 2
 #SHARED_LIB:./app_kernels/NAS/common/cuda_code_randlc.cu.so, 2
 #SHARED_LIB:./app_kernels/NAS/SP/cuda_code_sp.cu.so, 2

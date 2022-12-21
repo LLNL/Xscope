@@ -1,16 +1,5 @@
 #!/usr/bin/env python3
-from utils import get_gpu_memory
-import argparse
-import math
-import subprocess
-import socket
-import os
-import bo_analysis
-import shutil
-import random_optimizer
-
-
-
+from global_init import *
 
 #------------------------------------------------------------------------------
 # Globals
@@ -237,13 +226,9 @@ if __name__ == "__main__":
 
     # Run BO optimization
     print('*** Running BO on:', shared_lib)
-    new_maxes = [1]
-    for new_max in new_maxes:
-      print("max use: ", new_max)
-      bo_analysis.optimize(shared_lib,
-                           args.number_sampling, 
-                           num_inputs, 
-                           args.range_splitting,
-                           new_max)
+    bo_analysis.optimize(shared_lib,
+                          args.number_sampling, 
+                          num_inputs, 
+                          args.range_splitting)
       #bo_analysis.print_results(shared_lib, args.number_sampling, args.range_splitting)
 

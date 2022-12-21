@@ -1,9 +1,10 @@
-import random_fp_generator
+from random_model import random_fp_generator
 from test_function import *
-from utils import *
+from utils.utils import *
+import math
 # --------------- Random Sampling Optimizer -------------
 
-test_func = TestFunction()
+
 result_logger = ResultLogger()
 
 def save_results_random(val: float, exp_name: str, unbounded: bool):
@@ -85,6 +86,7 @@ def print_results_random(shared_lib):
 
 def optimize_randomly(shared_lib: str, num_inputs: int, max_iters: int, unbounded: bool):
     global CUDA_LIB
+    test_func = TestFunction(num_input=num_inputs, mode="fp")
     test_func.set_kernel(shared_lib)
     exp_name = shared_lib + '|' + 'RANDOM'
     for i in range(max_iters):
