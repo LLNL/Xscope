@@ -37,6 +37,9 @@ class BaysianOptimization():
         self.bounds_object = bounds
         self.device = device
         self.likelihood = likelihood_func.to(device=self.device)
+        self.time = time.time()
+        self.best_bound = None
+        self.exception_per_bounds = torch.zeros(self.bounds_object.num_bounds)
 
         self.results = {}
         self.exception_induced_params = {}
@@ -54,8 +57,8 @@ class BaysianOptimization():
     def initialize_data(self, normalize=False):
         """
         :param
-        num_sample: int
-            The number of sample to initialize
+        normalize: bool
+            If the initial data need to be normalize
         :return: Tuple
             A tuple containing the training data
         """
@@ -84,25 +87,19 @@ class BaysianOptimization():
             self.GP.load_state_dict(state_dict)
         fit_mll(self.mll, options={"disp": False, "lr": 0.005}, approx_mll=True)
 
-    def evaluate_candidates(self, candidates, padding=False):
-        if padding:
-            candidates = self.bounds_object.add_padding(candidates)
+    def evaluate_candidates(self, candidates):
         targets = torch.empty((self.bounds_object.num_bounds,1), dtype=dtype, device=self.device)
         for i,x in enumerate(candidates):
             new_candidate_target = self.eval_func.eval(x[0])
             new_candidate_target = torch.as_tensor(new_candidate_target, device=self.device, dtype=dtype)
-            if self.check_exception(x, new_candidate_target):
-                logger.info( "parameter {} caused floating point error {}".format(x, new_candidate_target))
-                if not torch.isfinite(new_candidate_target):
-                    x = self.bounds_object.padded_x
-                    new_candidate_target = self.bounds_object.padded_y
-                    self.bounds_object.remove_bound(i)
+            new_candidate_target, exception_found = self.check_exception(x, new_candidate_target)
+            if exception_found:
+                self.exception_per_bounds[i] += 1
             candidates[i] = x
             targets[i] = new_candidate_target
         return candidates, targets
 
-    def suggest_new_candidate(self, n_warmup=5000, n_samples=10):
-        # TODO: add sampling around best point.
+    def suggest_new_candidate(self, n_warmup=5000):
         """
             A function to find the maximum of the acquisition function
             It uses a combination of random sampling (cheap) and the 'AdamW'
@@ -121,39 +118,42 @@ class BaysianOptimization():
 
         # Warm up with random points
         #x_tries has shape: B*n_warmup x D
-        # x_tries = self.bounds_object.sample_around_best(self.best_x, n_warmup, True)
         self.likelihood.eval()
         self.GP.eval()
         x_tries = []
-        for X, bound in zip(self.train_x, self.bounds_object.bounds):
-            x_tries.append(self.bounds_object.sample_points_around_best(X, self.GP, self.GP.likelihood, n_discrete_points=n_warmup, sigma=1e-3, bounds=bound))
+        
+        with torch.no_grad():
+            posterior = self.GP.likelihood(self.GP(self.train_x))
+            mean = posterior.mean
+            while mean.ndim > 2:
+                # take average over batch dims
+                mean = mean.mean(dim=0)
+            f_pred = mean
+            best_idcs = torch.topk(f_pred, 1).indices.unsqueeze(-1)
+            best_X = torch.gather(self.train_x, 1, best_idcs.repeat(1,1,self.train_x.shape[-1]))
+        for X, bound in zip(best_X, self.bounds_object.bounds):
+            x_tries.append(self.bounds_object.sample_points_around_best(X, n_discrete_points=n_warmup, sigma=1e-3, bounds=bound))
         x_tries = torch.stack(x_tries, dim=0)
-        # max_acq, x_max = self.acq.extract_best_candidate(x_tries, self.GP, self.GP.likelihood, y_max=self.best_y)
-        # new_samples = self.bounds_object.sample_around_best(x_max, n_samples, True)
 
-        # Explore the parameter space more throughly
+        # Use an optimizer to explore the input space more thoroughly
         lb, ub = self.bounds_object.bounds[:,0,:].unsqueeze(1), self.bounds_object.bounds[:,1,:].unsqueeze(1)
         _clamp = partial(columnwise_clamp, lower=lb, upper=ub)
-        # x_seeds = self.bounds_object.bounds_sampler(n_samples, padding=True)
         clamped_candidates = _clamp(x_tries).requires_grad_(True)
 
         to_minimize = lambda x: -self.acq.forward(self.GP, self.GP.likelihood, x, y_max=self.best_y)
-
         optimizer = torch.optim.AdamW([clamped_candidates], lr=1e-5)
         i = 0
         stop = False
-        stopping_criterion = ExpMAStoppingCriterion()
-
+        stopping_criterion = ExpMAStoppingCriterion(maxiter=50)
         while not stop:
+            self.time = time.time()
             i += 1
             with torch.no_grad():
                 X = _clamp(clamped_candidates).requires_grad_(True)
 
             with gpytorch.settings.fast_pred_var():
                 loss = to_minimize(X).sum()
-
             grad_params = torch.autograd.grad(loss, X)[0]
-
             def assign_grad():
                 optimizer.zero_grad()
                 clamped_candidates.grad = grad_params
@@ -164,11 +164,7 @@ class BaysianOptimization():
                 clamped_candidates = X
                 break
             stop = stopping_criterion.evaluate(fvals=loss.detach())
-
-        clamped_candidates, best_acqs = self.acq.extract_best_candidate(clamped_candidates, self.GP, self.GP.likelihood, y_max=self.best_y)
-        # condition = torch.gt(max_acq, best_acqs)
-        # best_candidate = torch.where(condition, x_max, clamped_candidates)
-        # best_candidate = self.bounds_object.add_padding(best_candidate)
+        clamped_candidates, _ = self.acq.extract_best_candidate(clamped_candidates, self.GP, self.GP.likelihood, y_max=self.best_y)
         return clamped_candidates.detach()
 
     def check_exception(self, param, val):
@@ -187,19 +183,25 @@ class BaysianOptimization():
             """
         # Infinity
         if torch.isinf(val):
+            logger.info( "parameter {} caused floating point error {}".format(param, val))
+            print("input triggered exception: ", param)
+            print("exception value: ", val)
             if val < 0.0:
                 self.results["min_inf"] += 1
                 self.exception_induced_params["min_inf"].append(param)
+                val = -1e+307
                 # self.save_trials_to_trigger(exp_name)
             else:
                 self.results["max_inf"] += 1
                 self.exception_induced_params["max_inf"].append(param)
                 # self.save_trials_to_trigger(exp_name)
-            return True
+                val = 1e+307
+            return val, True
 
         # Subnormals
         if torch.isfinite(val):
             if val > -2.22e-308 and val < 2.22e-308:
+                logger.info( "parameter {} caused subnormal floating point".format(param))
                 if val != 0.0 and val != -0.0:
                     if val < 0.0:
                         print("input triggered exception: ", param)
@@ -209,27 +211,44 @@ class BaysianOptimization():
                     else:
                         self.results["max_under"] += 1
                         self.exception_induced_params["max_under"].append(param)
-                    return True
+                    return val, True
 
         # Nan
         if torch.isnan(val):
+            logger.info( "parameter {} caused floating point error {}".format(param, val))
+            print("input triggered exception: ", param)
+            print("exception value: ", val)
             self.results["nan"] += 1
             self.exception_induced_params["nan"].append(param)
-            return True
-        return False
+            val = 2.1219957915e-314
+            return val, True
+        return val, False
+
+    def time_it(self, execution_name):
+        check_point = time.time()-self.time
+        self.time = time.time()
+        print("{} executed in {}".format(execution_name, check_point))
+
+    def best_interval(self):
+        max_index = 0
+        if torch.count_nonzero(self.exception_per_bounds) >0:
+            max_index = torch.argmax(self.exception_per_bounds)
+        else:
+            max_y = torch.argmax(self.train_y)
+            max_index = torch.div(max_y, self.train_y.shape[-1], rounding_mode="floor")
+
+        self.best_bound = self.bounds_object.bounds[max_index]
 
 
     def train(self):
         print("Begin BO")
         start_fitting = time.time()
         for i in range(self.iteration):
-            print("best y: ", self.best_y)
             if i % self.batch_size == 0 and i != 0:
                 old_state_dict = self.mll.model.state_dict()
                 self.initialize_model(state_dict=old_state_dict)
             new_candidates = self.suggest_new_candidate()
-            new_candidates, new_targets = self.evaluate_candidates(new_candidates, padding=True)
-
+            new_candidates, new_targets = self.evaluate_candidates(new_candidates)
             best_new_target, _ = new_targets.max(dim=1, keepdim=True)
             target_mask = torch.gt(best_new_target, self.best_y)
             self.best_y = torch.where(target_mask, best_new_target, self.best_y)
@@ -238,5 +257,6 @@ class BaysianOptimization():
             self.train_y = torch.cat([self.train_y, new_targets], dim=1)
             assert self.train_x.shape[0] == self.train_y.shape[0], f"shape mismatch, got {self.train_x.shape[0]} for training data but {self.train_y.shape[0]} for testing data"
             self.acq.update_params
-
+        
+        self.best_interval()
         print("Fitting time: ", time.time() - start_fitting)

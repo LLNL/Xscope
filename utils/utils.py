@@ -18,8 +18,6 @@ dtype = torch.float64
 from jax.config import config
 config.update("jax_enable_x64", True)
 
-
-        
 def fit_mll(
     mll: MarginalLogLikelihood,
     bounds: Optional[ParameterBounds] = None,

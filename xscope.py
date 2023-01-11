@@ -165,7 +165,7 @@ if __name__ == "__main__":
   parser.add_argument('function', metavar='FUNCTION_TO_TEST', nargs=1, help='Function to test (file or shared library .so)')
   parser.add_argument('-a', '--af', default='ei', help='Acquisition function: ei, ucb, pi')
   parser.add_argument('-n', '--number-sampling', default='fp', help='Number sampling method: fp, exp')
-  parser.add_argument('-r', '--range-splitting',type=int, default=10, help='Range splitting method: whole, two, many')
+  parser.add_argument('-r', '--range-splitting',type=int, default=10, help='How many intervals the range will be splitted into')
   parser.add_argument('-s', '--samples', type=int, default=30, help='Number of BO samples (default: 30)')
   parser.add_argument('--random_sampling', action='store_true', help='Use random sampling')
   parser.add_argument('--random_sampling_unb', action='store_true', help='Use random sampling unbounded')

@@ -3,12 +3,20 @@ import ctypes
 import numpy
 
 class TestFunction:
-    def __init__(self, num_input, mode="fp"):
+    def __init__(
+        self, 
+        num_input, 
+        mode="fp", 
+        input_ranges=[0.0,1.0]
+        ):
         self.lib = None
         self.MU = 1.0
         self.smallest_subnormal = 4e-323
         self.num_input = num_input
         self.mode = mode
+        self.ignore_params = []
+        self.params_list = numpy.random.default_rng(seed=123).uniform(input_ranges[0],  input_ranges[1], self.num_input)
+        self.params_list = [ctypes.c_double(x) for x in self.params_list]
 
     def set_kernel(self, CUDA_LIB):
         self.lib = CUDA_LIB
@@ -19,6 +27,9 @@ class TestFunction:
 
     def set_fn_type(self, fn_type):
         self.fn_type = fn_type
+    
+    def set_ignore_params(self, ignore_params):
+        self.ignore_params = ignore_params
 
     def call_GPU_kernel_1(self, x):
         res = self.E.kernel_wrapper_1(ctypes.c_double(x))
@@ -35,17 +46,15 @@ class TestFunction:
         return res
 
     def call_GPU_kernel_4(self, x):
-        x0, x1, x2, x3, x4, x5, x6, x7 = x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7]
-        y0, y1, y2, y3, y4, y5, y6, y7 = x[8], x[9], x[10], x[11], x[12], x[13], x[14], x[15]
-        z0, z1, z2, z3, z4, z5, z6, z7 = x[16], x[17], x[18], x[19], x[20], x[21], x[22], x[23]
-
-        res = self.E.kernel_wrapper_1(
-            ctypes.c_double(x0), ctypes.c_double(x1), ctypes.c_double(x2), ctypes.c_double(x3),
-            ctypes.c_double(x4), ctypes.c_double(x5), ctypes.c_double(x6), ctypes.c_double(x7),
-            ctypes.c_double(y0), ctypes.c_double(y1), ctypes.c_double(y2), ctypes.c_double(y3),
-            ctypes.c_double(y4), ctypes.c_double(y5), ctypes.c_double(y6), ctypes.c_double(y7),
-            ctypes.c_double(z0), ctypes.c_double(z1), ctypes.c_double(z2), ctypes.c_double(z3),
-            ctypes.c_double(z4), ctypes.c_double(z5), ctypes.c_double(z6), ctypes.c_double(z7))
+        if len(self.ignore_params) > 0:
+            param_pointer = 0
+            for i in range(self.num_input):
+                if i not in self.ignore_params:
+                    self.params_list[i] = ctypes.c_double(x[param_pointer])
+                    param_pointer += 1
+        else:
+            self.params_list = [ctypes.c_double(param) for param in x]
+        res = self.E.kernel_wrapper_1(*self.params_list)
         return res
 
     def eval(self, x0):

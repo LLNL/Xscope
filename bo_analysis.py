@@ -20,7 +20,7 @@ def set_max_iterations(n: int):
 
 def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: int):
     result_logger = ResultLogger()
-    test_func = TestFunction(num_input=num_inputs, mode=input_type)
+    test_func = TestFunction(num_input=num_inputs, mode=input_type, input_ranges=[-1e-100, 0.0])
     test_func.set_kernel(shared_lib)
     # logger.info("Max value to replace: {}".format(str(new_max)))
     if input_type != "exp" and input_type != "fp":
@@ -32,23 +32,51 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: int):
 
     # bgrt_bo_compare = "bgrt_bo_compare.csv"
 
-    # funcs = ["max_inf", "min_inf", "max_under", "min_under"]
-    funcs = ["max_under", "min_under"]
+    funcs = ["max_inf", "min_inf", "max_under", "min_under"]
+    # funcs = ["max_under", "min_under"]
 
     result_logger.start_time()
     for f in funcs:
         test_func.set_fn_type(f)
-        BO_bounds = Input_bound(split=splitting, num_input=num_inputs, input_type=input_type, input_range=[-1e-100, 0.0], f_type=f)
-        padded_y =  torch.as_tensor(test_func.eval(BO_bounds.padded_x), device=device, dtype=dtype)
-        BO_bounds.set_padded_y(padded_y)
-        bo = BaysianOptimization(test_func, bounds=BO_bounds)
-        bo.train()
-        result_logger.log_result(bo.results)
-        print(bo.train_y)
-        del bo
+        BO_bounds = Input_bound(split=splitting, num_input=num_inputs, input_type=input_type, input_range=[1e-7, 1.0e+9], f_type=f)
+        if BO_bounds.ignore_params is None:
+            bo = BaysianOptimization(test_func, bounds=BO_bounds)
+            bo.train()
+            result_logger.log_result(bo.results)
+            print(bo.train_y)
+            del bo
+        else:
+            bounds_combination = []
+            # early exploration
+            for ignore_param in BO_bounds.ignore_params:
+                start_time = time.time()
+                test_func.set_ignore_params(ignore_params=ignore_param)
+                bo = BaysianOptimization(test_func, bounds=BO_bounds)
+                bo.train()
+                result_logger.log_result(bo.results)
+                print(bo.results)
+                print("Execution time per set of params: ", time.time()-start_time)
+                bounds_combination.append(bo.best_bound)
+                del bo
+            
+            # thorough exploration
+            bounds_combination = torch.cat(bounds_combination, dim=-1).unsqueeze(0)
+            BO_bounds.update_bound(bounds_combination)
+            test_func.set_ignore_params([])
+            combine_bo = BaysianOptimization(test_func, bounds=BO_bounds)
+            combine_bo.train()
+            result_logger.log_result(combine_bo.results)
+            print(combine_bo.results)
+            print("Execution time per function: ", time.time()-start_time)
+            del combine_bo
+
     result_logger.log_time()
-    print("execution time: ", result_logger.execution_time)
+    print("Total execution time: ", result_logger.execution_time)
     print(result_logger.results)
+
+    # result_logger.log_time()
+    # print("execution time: ", result_logger.execution_time)
+    # print(result_logger.results)
     # bgrt_bo_df, bgrt_interval_df = result_logger.summarize_result(shared_lib)
     #
     # if num_inputs==1:
