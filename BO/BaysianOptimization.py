@@ -52,7 +52,7 @@ class BaysianOptimization():
         self.model_params_bounds = {}
         self.initialize_data()
         self.initialize_model()
-        self.acq = AcquisitionFunction(self.acquisition_function, kappa=3.0, xi=1.5, fn_type=self.eval_func.fn_type)
+        self.acq = AcquisitionFunction(self.acquisition_function, kappa=3.0, xi=2.5, fn_type=self.eval_func.fn_type)
 
     def initialize_data(self, normalize=False):
         """
@@ -62,7 +62,7 @@ class BaysianOptimization():
         :return: Tuple
             A tuple containing the training data
         """
-        initial_x = self.bounds_object.bounds_sampler(1000)
+        initial_x = self.bounds_object.bounds_sampler(10)
         if normalize:
             x_min, x_max = initial_x.min(), initial_x.max()
             new_min, new_max = -1e+100, 1e+100
@@ -95,11 +95,12 @@ class BaysianOptimization():
             new_candidate_target, exception_found = self.check_exception(x, new_candidate_target)
             if exception_found:
                 self.exception_per_bounds[i] += 1
+                print("Input belong to bound: ", self.bounds_object.bounds[i])
             candidates[i] = x
             targets[i] = new_candidate_target
         return candidates, targets
 
-    def suggest_new_candidate(self, n_warmup=5000):
+    def suggest_new_candidate(self, n_warmup=5000, n_samples=10):
         """
             A function to find the maximum of the acquisition function
             It uses a combination of random sampling (cheap) and the 'AdamW'
@@ -121,18 +122,20 @@ class BaysianOptimization():
         self.likelihood.eval()
         self.GP.eval()
         x_tries = []
-        
+        n_warmup = max(n_warmup, round(100000/self.bounds_object.num_bounds))
+        warmup_x = self.bounds_object.bounds_sampler(n_warmup)
         with torch.no_grad():
-            posterior = self.GP.likelihood(self.GP(self.train_x))
+            posterior = self.GP.likelihood(self.GP(warmup_x))
             mean = posterior.mean
             while mean.ndim > 2:
                 # take average over batch dims
                 mean = mean.mean(dim=0)
             f_pred = mean
-            best_idcs = torch.topk(f_pred, 1).indices.unsqueeze(-1)
-            best_X = torch.gather(self.train_x, 1, best_idcs.repeat(1,1,self.train_x.shape[-1]))
+            n_best = max(1,  round(warmup_x.shape[1] * 0.05))
+            best_idcs = torch.topk(f_pred, n_best).indices.unsqueeze(-1)
+            best_X = torch.gather(warmup_x, 1, best_idcs.repeat(1,1,warmup_x.shape[-1]))
         for X, bound in zip(best_X, self.bounds_object.bounds):
-            x_tries.append(self.bounds_object.sample_points_around_best(X, n_discrete_points=n_warmup, sigma=1e-3, bounds=bound))
+            x_tries.append(sample_points_around_best(X, n_discrete_points=n_samples, sigma=1e-3, bounds=bound))
         x_tries = torch.stack(x_tries, dim=0)
 
         # Use an optimizer to explore the input space more thoroughly

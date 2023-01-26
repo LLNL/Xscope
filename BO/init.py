@@ -14,7 +14,7 @@ from torch.cuda.amp import autocast
 from acquisitions.acquisition_functions import AcquisitionFunction
 from utils.input_bounds import Input_bound
 
-from utils.utils import fit_mll
+from utils.utils import fit_mll, sample_points_around_best
 from test_function import TestFunction
 from models.exactGP import ExactGPModel
 

@@ -1,4 +1,5 @@
 from utils.init import *
+from botorch.optim.initializers import sample_perturbed_subset_dims, sample_truncated_normal_perturbations
 from botorch.optim.utils import (
     _filter_kwargs,
     _get_extra_mll_args,
@@ -17,6 +18,58 @@ dtype = torch.float64
 
 from jax.config import config
 config.update("jax_enable_x64", True)
+
+
+def sample_points_around_best(
+    best_X: Tensor,
+    n_discrete_points: int,
+    sigma: float,
+    bounds: Tensor,
+    prob_perturb: Optional[float] = None,
+    ) -> Optional[Tensor]:
+    r"""Find best points and sample nearby points.
+
+    Args:
+        acq_function: The acquisition function.
+        n_discrete_points: The number of points to sample.
+        sigma: The standard deviation of the additive gaussian noise for
+            perturbing the best points.
+        bounds: A `2 x d`-dim tensor containing the bounds.
+        best_pct: The percentage of best points to perturb.
+        subset_sigma: The standard deviation of the additive gaussian
+            noise for perturbing a subset of dimensions of the best points.
+        prob_perturb: The probability of perturbing each dimension.
+
+    Returns:
+        An optional `n_discrete_points x d`-dim tensor containing the
+            sampled points. This is None if no baseline points are found.
+    """
+    if best_X is None:
+        return
+    use_perturbed_sampling = best_X.shape[-1] >= 20 or prob_perturb is not None
+    n_trunc_normal_points = (
+        n_discrete_points // 2 if use_perturbed_sampling else n_discrete_points
+    )
+    perturbed_X = sample_truncated_normal_perturbations(
+        X=best_X,
+        n_discrete_points=n_trunc_normal_points,
+        sigma=sigma,
+        bounds=bounds,
+    )
+    if use_perturbed_sampling:
+        perturbed_subset_dims_X = sample_perturbed_subset_dims(
+            X=best_X,
+            bounds=bounds,
+            # ensure that we return n_discrete_points
+            n_discrete_points=n_discrete_points - n_trunc_normal_points,
+            sigma=sigma,
+            prob_perturb=prob_perturb,
+        )
+        perturbed_X = torch.cat([perturbed_X, perturbed_subset_dims_X], dim=0)
+        # shuffle points
+        perm = torch.randperm(perturbed_X.shape[0], device=best_X.device)
+        perturbed_X = perturbed_X[perm]
+    return perturbed_X
 
 def fit_mll(
     mll: MarginalLogLikelihood,

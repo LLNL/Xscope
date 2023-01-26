@@ -38,7 +38,7 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: int):
     result_logger.start_time()
     for f in funcs:
         test_func.set_fn_type(f)
-        BO_bounds = Input_bound(split=splitting, num_input=num_inputs, input_type=input_type, input_range=[1e-7, 1.0e+9], f_type=f)
+        BO_bounds = Input_bound(split=splitting, num_input=num_inputs, input_type=input_type, input_range=[0, 1], f_type=f)
         if BO_bounds.ignore_params is None:
             bo = BaysianOptimization(test_func, bounds=BO_bounds)
             bo.train()
@@ -61,6 +61,7 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: int):
             
             # thorough exploration
             bounds_combination = torch.cat(bounds_combination, dim=-1).unsqueeze(0)
+            print(bounds_combination)
             BO_bounds.update_bound(bounds_combination)
             test_func.set_ignore_params([])
             combine_bo = BaysianOptimization(test_func, bounds=BO_bounds)
