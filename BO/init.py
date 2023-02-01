@@ -3,7 +3,6 @@ import logging
 import gpytorch
 
 import torch
-from gpytorch.likelihoods import GaussianLikelihood
 from gpytorch.mlls import ExactMarginalLogLikelihood
 
 from botorch.optim import ExpMAStoppingCriterion
@@ -16,7 +15,7 @@ from utils.input_bounds import Input_bound
 
 from utils.utils import fit_mll, sample_points_around_best
 from test_function import TestFunction
-from models.exactGP import ExactGPModel
+from BO.base_model import bo_base
 
 from utils.input_bounds import Input_bound
 import time

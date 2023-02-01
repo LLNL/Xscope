@@ -1,7 +1,6 @@
 import os
 import ctypes
 import numpy
-from numba import jit, cuda
 
 
 class TestFunction:
@@ -9,7 +8,8 @@ class TestFunction:
         self, 
         num_input, 
         mode="fp", 
-        input_ranges=[0.0,1.0]
+        input_ranges=[0.0,1.0],
+        num_task = 1
         ):
         self.lib = None
         self.MU = 1.0
@@ -19,13 +19,17 @@ class TestFunction:
         self.ignore_params = []
         self.params_list = numpy.random.default_rng(seed=123).uniform(input_ranges[0],  input_ranges[1], self.num_input)
         self.params_list_c = [ctypes.c_double(x) for x in self.params_list]
+        self.num_task = num_task
 
     def set_kernel(self, CUDA_LIB):
         self.lib = CUDA_LIB
         script_dir = os.path.abspath(os.path.dirname(__file__))
         lib_path = os.path.join(script_dir, self.lib)
         self.E = ctypes.cdll.LoadLibrary(lib_path)
-        self.E.kernel_wrapper_1.restype = ctypes.c_double
+        if self.num_task == 1:
+            self.E.kernel_wrapper_1.restype = ctypes.c_double
+        else:
+            self.E.kernel_wrapper_1.argtypes = [ctypes.c_double for _ in self.num_task]
 
     def set_fn_type(self, fn_type):
         self.fn_type = fn_type
@@ -88,19 +92,33 @@ class TestFunction:
             r = self.call_GPU_kernel_3(x0)
         else:
             r = self.call_GPU_kernel_4(x0)
-
-        if self.fn_type == "min_inf":
-            return -r
-        elif self.fn_type == "max_under":
-            if r == 0.0 or r == -0.0:
-                return -self.MU
-            elif r > -self.smallest_subnormal:
+        if self.num_task == 1:
+            if self.fn_type == "min_inf":
                 return -r
-        elif self.fn_type == "min_under":
-            r = -r
-            if r == 0.0 or r == -0.0:
-                return -self.MU
-            elif r > -self.smallest_subnormal:
+            elif self.fn_type == "max_under":
+                if r == 0.0 or r == -0.0:
+                    return -self.MU
+                elif r > -self.smallest_subnormal:
+                    return -r
+            elif self.fn_type == "min_under":
+                r = -r
+                if r == 0.0 or r == -0.0:
+                    return -self.MU
+                elif r > -self.smallest_subnormal:
+                    return -r
+        else:
+            r = numpy.asarray(r, dtype = numpy.float64)
+            if self.fn_type == "min_inf":
                 return -r
+            elif self.fn_type == "max_under" or self.fn_type == "min_under":
+                if self.fn_type == "min_under":
+                    r = -r
+                if r.any() == 0.0 or r.any() == -0.0:
+                    mask = numpy.full_like(r, -self.MU)
+                    condition = numpy.equal(r, 0.0)
+                    return numpy.where(condition, mask, r)
+                elif r.any() > -self.smallest_subnormal:
+                    condition = numpy.greater(r, -self.smallest_subnormal)
+                    return numpy.where(condition, -r, r)
         return r
 

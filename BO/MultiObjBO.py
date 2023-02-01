@@ -1,11 +1,13 @@
 from global_init import *
 from BO.init import *
-from models.exactGP import ExactGPModel
-from gpytorch.likelihoods import GaussianLikelihood
+from models.multiGP import MultitaskGPModel
+from gpytorch.likelihoods import MultitaskGaussianLikelihood
 
-class BaysianOptimization(bo_base):
+
+class MultiObjectiveBO(bo_base):
     """
     Class for Baysian Optimization for inputs that trigger FP-exceptions Model
+    for multi-objectives functions.
     Attributes
     ----------
     eval_func: GPU function
@@ -29,9 +31,9 @@ class BaysianOptimization(bo_base):
     -------
     initialize_data
     """
-    def __init__(self, eval_func: TestFunction, iteration=50, batch_size=5, acquisition_function='ei',
-                 bounds: Input_bound=None, device=torch.device("cuda")):
-        super(BaysianOptimization, self).__init__(eval_func, iteration, batch_size, acquisition_function, bounds, device)
+    def __init__(self, eval_func: TestFunction, num_task, iteration=50, batch_size=5, acquisition_function='ei', bounds: Input_bound=None, device=torch.device("cuda")):
+        super(MultiObjectiveBO, self).__init__(eval_func, iteration, batch_size, acquisition_function, bounds, device)
+        self.num_task = num_task
         # initialize training data and model
         self.initialize_data()
         self.initialize_model()
@@ -60,8 +62,8 @@ class BaysianOptimization(bo_base):
         self.best_x, self.best_y = self.train_x, self.train_y
 
     def initialize_model(self, state_dict=None):
-        self.likelihood = GaussianLikelihood().to(device=self.device, dtype=dtype)
-        self.GP = ExactGPModel(self.train_x, self.train_y, self.likelihood).to(device=self.device, dtype=dtype)
+        self.likelihood = MultitaskGaussianLikelihood(num_task = self.num_task).to(device=self.device, dtype=dtype)
+        self.GP = MultitaskGPModel(self.train_x, self.train_y, self.likelihood).to(device=self.device, dtype=dtype)
         self.mll = ExactMarginalLogLikelihood(self.likelihood, self.GP)
         if state_dict is not None:
             self.GP.load_state_dict(state_dict)
