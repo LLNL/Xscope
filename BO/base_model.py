@@ -82,7 +82,6 @@ class bo_base(ABC):
         pass
 
     def check_exception(self, param, val):
-        # TODO: check exceptions in batch.
         """
             A function to check if the value returned by the GPU function is an FP exception. It also updates the result
             table if an exception is caught
@@ -96,7 +95,7 @@ class bo_base(ABC):
             :return: a boolean indicating if the value is an FP exception or not
             """
         # Infinity
-        if torch.isinf(val):
+        if torch.isinf(val).any:
             logger.info( "parameter {} caused floating point error {}".format(param, val))
             print("input triggered exception: ", param)
             print("exception value: ", val)
