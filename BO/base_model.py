@@ -2,6 +2,10 @@ from global_init import *
 from BO.init import *
 from abc import ABC, abstractmethod
 
+dtype = torch.float64
+logging.basicConfig(filename='Xscope.log', level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 class bo_base(ABC):
     def __init__(self, eval_func: TestFunction, iteration=50, batch_size=5, acquisition_function='ei', bounds: Input_bound=None, device=torch.device("cuda")):
         self.eval_func = eval_func
@@ -24,6 +28,7 @@ class bo_base(ABC):
         self.likelihood = None
         self.GP = None
         self.mll = None
+        self.best_y = None
 
     @abstractmethod
     def initialize_data(self, normalize, num_samples):
@@ -80,7 +85,7 @@ class bo_base(ABC):
     @abstractmethod
     def train(self):
         pass
-
+    
     def check_exception(self, param, val):
         """
             A function to check if the value returned by the GPU function is an FP exception. It also updates the result
@@ -92,21 +97,27 @@ class bo_base(ABC):
                 The return value of the evaluation function
             Returns
             -------
-            :return: a boolean indicating if the value is an FP exception or not
-            """
+            :return: the observed target. This value will be changed if an exception occur to continue with the search.
+                     a boolean indicating if the value is an FP exception or not.
+            """ 
+        if self.eval_func.num_input >3:
+            full_param = self.get_full_params(param)
+        else:
+            full_param = param
+
         # Infinity
-        if torch.isinf(val).any:
-            logger.info( "parameter {} caused floating point error {}".format(param, val))
-            print("input triggered exception: ", param)
+        if torch.isinf(val):
+            logger.info( "parameter {} caused floating point error {}".format(full_param, val))
+            print("input triggered exception: ", full_param)
             print("exception value: ", val)
             if val < 0.0:
                 self.results["min_inf"] += 1
-                self.exception_induced_params["min_inf"].append(param)
+                self.exception_induced_params["min_inf"].append(full_param)
                 val = -1e+307
                 # self.save_trials_to_trigger(exp_name)
             else:
                 self.results["max_inf"] += 1
-                self.exception_induced_params["max_inf"].append(param)
+                self.exception_induced_params["max_inf"].append(full_param)
                 # self.save_trials_to_trigger(exp_name)
                 val = 1e+307
             return val, True
@@ -114,29 +125,29 @@ class bo_base(ABC):
         # Subnormals
         if torch.isfinite(val):
             if val > -2.22e-308 and val < 2.22e-308:
-                logger.info( "parameter {} caused subnormal floating point".format(param))
+                logger.info( "parameter {} caused subnormal floating point".format(full_param))
                 if val != 0.0 and val != -0.0:
                     if val < 0.0:
-                        print("input triggered exception: ", param)
+                        print("input triggered exception: ", full_param)
                         print("exception value: ", val)
                         self.results["min_under"] += 1
-                        self.exception_induced_params["min_under"].append(param)
+                        self.exception_induced_params["min_under"].append(full_param)
                     else:
                         self.results["max_under"] += 1
-                        self.exception_induced_params["max_under"].append(param)
+                        self.exception_induced_params["max_under"].append(full_param)
                     return val, True
 
         # Nan
         if torch.isnan(val):
-            logger.info( "parameter {} caused floating point error {}".format(param, val))
-            print("input triggered exception: ", param)
+            logger.info( "parameter {} caused floating point error {}".format(full_param, val))
+            print("input triggered exception: ", full_param)
             print("exception value: ", val)
             self.results["nan"] += 1
-            self.exception_induced_params["nan"].append(param)
+            self.exception_induced_params["nan"].append(full_param)
             val = 2.1219957915e-314
             return val, True
         return val, False
-
+    
     def thorough_space_exploration(self, candidates):
         """
         A function that uses an "AdamW" optimizer to search for better inputs.
@@ -186,3 +197,12 @@ class bo_base(ABC):
             max_index = torch.div(max_y, self.train_y.shape[-1], rounding_mode="floor")
 
         self.best_bound = self.bounds_object.bounds[max_index]
+
+    def get_full_params(self, tested_param):
+        param_pointer = 0
+        full_param = self.eval_func.params_list
+        for i in range(self.eval_func.num_input):
+            if i not in self.eval_func.ignore_params:
+                full_param[i] = tested_param[param_pointer]
+                param_pointer += 1
+        return full_param

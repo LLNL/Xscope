@@ -59,17 +59,17 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: int):
                 bounds_combination.append(bo.best_bound)
                 del bo
             
-            # thorough exploration
-            bounds_combination = torch.cat(bounds_combination, dim=-1).unsqueeze(0)
-            print(bounds_combination)
-            BO_bounds.update_bound(bounds_combination)
-            test_func.set_ignore_params([])
-            combine_bo = BaysianOptimization(test_func, bounds=BO_bounds)
-            combine_bo.train()
-            result_logger.log_result(combine_bo.results)
-            print(combine_bo.results)
-            print("Execution time per function: ", time.time()-start_time)
-            del combine_bo
+            # # thorough exploration
+            # bounds_combination = torch.cat(bounds_combination, dim=-1).unsqueeze(0)
+            # print(bounds_combination)
+            # BO_bounds.update_bound(bounds_combination)
+            # test_func.set_ignore_params([])
+            # combine_bo = BaysianOptimization(test_func, bounds=BO_bounds)
+            # combine_bo.train()
+            # result_logger.log_result(combine_bo.results)
+            # print(combine_bo.results)
+            # print("Execution time per function: ", time.time()-start_time)
+            # del combine_bo
 
     result_logger.log_time()
     print("Total execution time: ", result_logger.execution_time)

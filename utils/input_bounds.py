@@ -26,6 +26,7 @@ class Input_bound():
             b = torch.stack((lower_bound,upper_bound)).unsqueeze(dim=0).to(dtype=dtype, device=device)
         else:
             limits = torch.linspace(lower_lim,upper_lim,split+1,dtype=torch.float64)
+            print(limits)
             # ranges = torch.empty(split,2)
             # for i in range(split):
             #     ranges[i] = torch.tensor([limits[i], limits[i+1]])

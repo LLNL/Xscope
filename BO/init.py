@@ -8,6 +8,7 @@ from gpytorch.mlls import ExactMarginalLogLikelihood
 from botorch.optim import ExpMAStoppingCriterion
 from botorch.optim.utils import columnwise_clamp
 from botorch.optim.fit import ParameterBounds
+from botorch.utils.multi_objective.pareto import is_non_dominated
 
 from torch.cuda.amp import autocast
 from acquisitions.acquisition_functions import AcquisitionFunction

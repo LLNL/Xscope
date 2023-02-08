@@ -2,6 +2,8 @@ from global_init import *
 from BO.init import *
 from models.multiGP import MultitaskGPModel
 from gpytorch.likelihoods import MultitaskGaussianLikelihood
+from botorch.utils.multi_objective.hypervolume import infer_reference_point
+from botorch.utils.multi_objective.pareto import is_non_dominated
 
 
 class MultiObjectiveBO(bo_base):
@@ -31,7 +33,7 @@ class MultiObjectiveBO(bo_base):
     -------
     initialize_data
     """
-    def __init__(self, eval_func: TestFunction, num_task, iteration=50, batch_size=5, acquisition_function='ei', bounds: Input_bound=None, device=torch.device("cuda")):
+    def __init__(self, eval_func: TestFunction, num_task, iteration=50, batch_size=5, acquisition_function='qehvi', bounds: Input_bound=None, device=torch.device("cuda")):
         super(MultiObjectiveBO, self).__init__(eval_func, iteration, batch_size, acquisition_function, bounds, device)
         self.num_task = num_task
         # initialize training data and model
@@ -46,20 +48,19 @@ class MultiObjectiveBO(bo_base):
         :return: Tuple
             A tuple containing the training data
         """
-        initial_x = self.bounds_object.bounds_sampler(10)
+        initial_x = self.bounds_object.bounds_sampler(1)
         if normalize:
             x_min, x_max = initial_x.min(), initial_x.max()
             new_min, new_max = -1e+100, 1e+100
             initial_x = (initial_x - x_min)/(x_max - x_min)*(new_max - new_min) + new_min
-        
-        initial_x, initial_y = self.evaluate_candidates(initial_x)
-        self.train_y, best_indices = initial_y.unsqueeze(-1).max(dim=1, keepdim=True)
-        self.train_y = self.train_y.squeeze(-1)
-        self.train_x = torch.gather(initial_x, 1, best_indices.repeat(1,1,initial_x.shape[-1]))
-        if len(self.train_x.shape) == 2:
-            self.train_x = self.train_x.unsqueeze(-1)
-        assert self.train_y.isnan().sum()==0, "training data result in nan"
-        self.best_x, self.best_y = self.train_x, self.train_y
+        self.train_x, self.train_y = self.evaluate_candidates(initial_x)
+        self.ref_point = self.compute_reference_point
+
+    def compute_reference_point(self):
+        pareto_mask = is_non_dominated(self.train_y)
+        pareto_Y = self.train_y[pareto_mask]
+        ref_points = infer_reference_point(pareto_Y)
+        return ref_points
 
     def initialize_model(self, state_dict=None):
         self.likelihood = MultitaskGaussianLikelihood(num_task = self.num_task).to(device=self.device, dtype=dtype)
@@ -70,16 +71,17 @@ class MultiObjectiveBO(bo_base):
         fit_mll(self.mll, options={"disp": False, "lr": 0.005}, approx_mll=True)
 
     def evaluate_candidates(self, candidates):
-        targets = torch.empty((self.bounds_object.num_bounds,1), dtype=dtype, device=self.device)
+        targets = torch.empty((self.bounds_object.num_bounds,self.num_task), dtype=dtype, device=self.device)
         for i,x in enumerate(candidates):
-            new_candidate_target = self.eval_func.eval(x[0])
-            new_candidate_target = torch.as_tensor(new_candidate_target, device=self.device, dtype=dtype)
-            new_candidate_target, exception_found = self.check_exception(x, new_candidate_target)
-            if exception_found:
-                self.exception_per_bounds[i] += 1
-                print("Input belong to bound: ", self.bounds_object.bounds[i])
-            candidates[i] = x
-            targets[i] = new_candidate_target
+            new_candidate_targets = self.eval_func.eval(x[0])
+            new_candidate_targets = torch.as_tensor(new_candidate_targets, device=self.device, dtype=dtype)
+            for j,target in enumerate(new_candidate_targets):
+                target, exception_found = self.check_exception(x, target)
+                if exception_found:
+                    self.exception_per_bounds[i] += 1
+                    print("Input belong to bound: ", self.bounds_object.bounds[i])
+                new_candidate_targets[j] = target
+            targets[i] = new_candidate_targets
         return candidates, targets
 
     def suggest_new_candidate(self, n_warmup=5000, n_samples=10):
@@ -130,10 +132,6 @@ class MultiObjectiveBO(bo_base):
                 self.initialize_model(state_dict=old_state_dict)
             new_candidates = self.suggest_new_candidate()
             new_candidates, new_targets = self.evaluate_candidates(new_candidates)
-            best_new_target, _ = new_targets.max(dim=1, keepdim=True)
-            target_mask = torch.gt(best_new_target, self.best_y)
-            self.best_y = torch.where(target_mask, best_new_target, self.best_y)
-            self.best_x = torch.where(target_mask, new_candidates, self.best_x)
             self.train_x = torch.cat([self.train_x, new_candidates], dim=1)
             self.train_y = torch.cat([self.train_y, new_targets], dim=1)
             assert self.train_x.shape[0] == self.train_y.shape[0], f"shape mismatch, got {self.train_x.shape[0]} for training data but {self.train_y.shape[0]} for testing data"
