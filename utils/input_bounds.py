@@ -1,17 +1,19 @@
 from utils.init import *
+from itertools import combinations_with_replacement
 
 class Input_bound():
-    def __init__(self, split, num_input=1, input_type="fp", device = torch.device("cuda"), input_range = None, f_type=None) -> None:
+    def __init__(self, num_input=1, input_type="fp", device = torch.device("cuda"), input_range = None, f_type=None) -> None:
         self.device = device
         self.input_range = input_range
         if self.input_range is None:
             self.input_range = [-max_normal, max_normal] if input_type=="fp" else [-307,307]
         self.num_ranges = self.input_range.ndim
         self.ignore_params = None
-        self.bounds = self.generate_bounds(split, num_input)
-        self.num_bounds, _, self.dim = self.bounds.shape
+        if num_input > 3:
+            self.set_ignore_params(num_input)
+        self.num_input = num_input
 
-    def generate_bounds(self, split, num_input):
+    def generate_bounds(self, split, ignore_params):
         if self.num_ranges == 1:
             upper_lim = self.input_range[1]
             lower_lim = self.input_range[0]
@@ -19,15 +21,14 @@ class Input_bound():
             upper_lim = self.input_range[:, 1]
             lower_lim = self.input_range[:, 0]
         assert (upper_lim >= lower_lim).all(), f"upper bound{upper_lim} must be greater than lower bound {lower_lim}"
-        group_size = min(3,num_input)
+        group_size = min(3,self.num_input)
 
         #Splitting into chunk of 3 if there are more than 3 inputs
-        if num_input > 3:
-            self.set_ignore_params(num_input)
+        if self.num_input > 3:
             upper_lim_ranges = []
             lower_lim_ranges = []
-            for i in range(num_input):
-                if i not in self.ignore_params:
+            for i in range(self.num_input):
+                if i not in ignore_params:
                     upper_lim_ranges.append(upper_lim[i])
                     lower_lim_ranges.append(lower_lim[i])
             upper_lim = np.array(upper_lim_ranges)
@@ -40,20 +41,24 @@ class Input_bound():
                 upper_bound = upper_bound.repeat(group_size)
             b = torch.stack((lower_bound,upper_bound)).unsqueeze(dim=0).to(dtype=dtype, device=device)
         else:
-            limits = torch.linspace(lower_lim,upper_lim,split+1,dtype=torch.float64)
-            print(limits)
-            # ranges = torch.empty(split,2)
-            # for i in range(split):
-            #     ranges[i] = torch.tensor([limits[i], limits[i+1]])
-            ranges = torch.combinations(limits, r=2)
-            if num_input == 1:
+            limits = np.linspace(lower_lim, upper_lim, split).transpose(1,0)
+            ranges = []
+            for lim in limits:
+                single_range = []
+                for i in range(split-1):
+                    single_range.append([lim[i], lim[i+1]])
+                ranges.append(single_range)
+            ranges = np.array(ranges)
+            if self.num_input == 1:
                 b = ranges.unsqueeze(-1)
             else:
-                combinations = torch.arange(ranges.shape[0])
-                combinations_indices = torch.combinations(combinations,group_size, with_replacement=True)
-                b = torch.stack([torch.index_select(ranges,dim=0, index=index) for index in combinations_indices]).transpose(1,2)
-                
-        return b.to(dtype=dtype, device=self.device)
+                combination_index = np.array(list(combinations_with_replacement(np.arange(split-1), 3)))
+                all_combination = []
+                for comb in combination_index:
+                    all_combination.append(ranges[range(3),comb,:])
+                b = np.array(all_combination).transpose(0,2,1)
+        self.bounds = torch.tensor(b).to(dtype=dtype, device=self.device)
+        self.num_bounds, _, self.dim = self.bounds.shape
 
     def set_ignore_params(self, num_input):
         params_index = torch.arange(num_input)

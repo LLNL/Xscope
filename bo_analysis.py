@@ -22,8 +22,10 @@ def set_max_iterations(n: int):
 def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: int):
     result_logger = ResultLogger()
     input_ranges = np.array([[0.0, 20.0], [0.0, 20.0], [0.0, 20.0], [0.0, 20.0], [0.0, 20.0], [0.0, 1.0]])
-    test_func = TestFunction(num_input=num_inputs, mode=input_type, input_ranges=input_ranges, is_custom_func=True)
-    test_func.set_kernel(shared_lib)
+    is_custom_func = True
+    test_func = TestFunction(num_input=num_inputs, mode=input_type, input_ranges=input_ranges, is_custom_func=is_custom_func)
+    if not is_custom_func:
+        test_func.set_kernel(shared_lib)
     # logger.info("Max value to replace: {}".format(str(new_max)))
     if input_type != "exp" and input_type != "fp":
         print('Invalid input type!')
@@ -40,7 +42,7 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: int):
     result_logger.start_time()
     for f in funcs:
         test_func.set_fn_type(f)
-        BO_bounds = Input_bound(split=splitting, num_input=num_inputs, input_type=input_type, input_range=input_ranges, f_type=f)
+        BO_bounds = Input_bound(num_input=num_inputs, input_type=input_type, input_range=input_ranges, f_type=f)
         if BO_bounds.ignore_params is None:
             bo = BaysianOptimization(test_func, bounds=BO_bounds)
             bo.train()
@@ -52,6 +54,7 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: int):
             # early exploration
             for ignore_param in BO_bounds.ignore_params:
                 start_time = time.time()
+                BO_bounds.generate_bounds(splitting, ignore_param)
                 test_func.set_ignore_params(ignore_params=ignore_param)
                 bo = BaysianOptimization(test_func, bounds=BO_bounds)
                 bo.train()

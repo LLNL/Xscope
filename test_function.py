@@ -2,6 +2,7 @@ import os
 import ctypes
 import numpy
 import sys
+import torch
 sys.path.append("interactive-rate-tendons/")
 from cpptendon import tension_residual, tendon
 
@@ -13,7 +14,8 @@ class TestFunction:
         mode="fp", 
         input_ranges=[0.0,1.0],
         num_task = 1, 
-        is_custom_func = False
+        is_custom_func = False,
+        test_device = "cpu"
         ):
         self.lib = None
         self.MU = 1.0
@@ -29,6 +31,7 @@ class TestFunction:
         self.num_task = num_task
         self.is_custom_func = is_custom_func
         self.robot = tendon.TendonRobot.from_toml("robot_specs.toml")
+        self.test_device = torch.device(test_device)
 
     def set_kernel(self, CUDA_LIB):
         self.lib = CUDA_LIB
@@ -98,12 +101,14 @@ class TestFunction:
                     param_pointer += 1
         else:
             self.params_list = x
-        tau = self.params_list[:self.num_input]
+        tau = self.params_list[:self.num_input-1]
         s_start = self.params_list[-1]
         res = tension_residual(tau, s_start, self.robot)
+        print("res: ", res)
         return res
     
     def eval(self, x0):
+        x0 = x0.to(device=self.test_device)
         if self.mode == "exp":
             x0 = numpy.power(10, x0)
         if self.is_custom_func:

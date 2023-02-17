@@ -33,7 +33,9 @@ class BaysianOptimization(bo_base):
                  bounds: Input_bound=None, device=torch.device("cuda")):
         super(BaysianOptimization, self).__init__(eval_func, iteration, batch_size, acquisition_function, bounds, device)
         # initialize training data and model
+        print("Initialize data")
         self.initialize_data()
+        print("Initialize model")
         self.initialize_model()
 
     def initialize_data(self, normalize=False):
