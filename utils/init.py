@@ -15,6 +15,7 @@ from torch.optim.optimizer import Optimizer
 from torch import Tensor
 from torch.cuda.amp import autocast
 
+import numpy as np
 import subprocess as sp
 
 from typing import (

@@ -6,23 +6,38 @@ class Input_bound():
         self.input_range = input_range
         if self.input_range is None:
             self.input_range = [-max_normal, max_normal] if input_type=="fp" else [-307,307]
+        self.num_ranges = self.input_range.ndim
         self.ignore_params = None
         self.bounds = self.generate_bounds(split, num_input)
         self.num_bounds, _, self.dim = self.bounds.shape
 
     def generate_bounds(self, split, num_input):
-        upper_lim = self.input_range[1]
-        lower_lim = self.input_range[0]
-        assert upper_lim >= lower_lim, f"upper bound{upper_lim} must be greater than lower bound {lower_lim}"
+        if self.num_ranges == 1:
+            upper_lim = self.input_range[1]
+            lower_lim = self.input_range[0]
+        else:
+            upper_lim = self.input_range[:, 1]
+            lower_lim = self.input_range[:, 0]
+        assert (upper_lim >= lower_lim).all(), f"upper bound{upper_lim} must be greater than lower bound {lower_lim}"
         group_size = min(3,num_input)
 
         #Splitting into chunk of 3 if there are more than 3 inputs
         if num_input > 3:
             self.set_ignore_params(num_input)
-
+            upper_lim_ranges = []
+            lower_lim_ranges = []
+            for i in range(num_input):
+                if i not in self.ignore_params:
+                    upper_lim_ranges.append(upper_lim[i])
+                    lower_lim_ranges.append(lower_lim[i])
+            upper_lim = np.array(upper_lim_ranges)
+            lower_lim = np.array(lower_lim_ranges)
         if split == 1:
-            lower_bound = torch.as_tensor(lower_lim, dtype=torch.float64).repeat(group_size)
-            upper_bound = torch.as_tensor(upper_lim, dtype=torch.float64).repeat(group_size)
+            lower_bound = torch.as_tensor(lower_lim, dtype=torch.float64)
+            upper_bound = torch.as_tensor(upper_lim, dtype=torch.float64)
+            if self.num_ranges == 1:
+                lower_bound = lower_bound.repeat(group_size)
+                upper_bound = upper_bound.repeat(group_size)
             b = torch.stack((lower_bound,upper_bound)).unsqueeze(dim=0).to(dtype=dtype, device=device)
         else:
             limits = torch.linspace(lower_lim,upper_lim,split+1,dtype=torch.float64)
