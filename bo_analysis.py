@@ -46,6 +46,7 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: int):
         if BO_bounds.ignore_params is None:
             bo = BaysianOptimization(test_func, bounds=BO_bounds)
             bo.train()
+            bo.result_file.close()
             result_logger.log_result(bo.results)
             print(bo.train_y)
             del bo
@@ -62,6 +63,7 @@ def optimize(shared_lib: str, input_type: str, num_inputs: int, splitting: int):
                 print(bo.results)
                 print("Execution time per set of params: ", time.time()-start_time)
                 bounds_combination.append(bo.best_bound)
+                bo.result_file.close()
                 del bo
             
             # # thorough exploration

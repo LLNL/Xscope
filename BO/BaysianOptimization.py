@@ -46,7 +46,7 @@ class BaysianOptimization(bo_base):
         :return: Tuple
             A tuple containing the training data
         """
-        initial_x = self.bounds_object.bounds_sampler(10)
+        initial_x = self.bounds_object.bounds_sampler(5)
         if normalize:
             x_min, x_max = initial_x.min(), initial_x.max()
             new_min, new_max = -1e+100, 1e+100

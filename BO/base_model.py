@@ -29,6 +29,7 @@ class bo_base(ABC):
         self.GP = None
         self.mll = None
         self.best_y = None
+        self.result_file = open("Tendon_result", "a")
 
     @abstractmethod
     def initialize_data(self, normalize, num_samples):
@@ -108,6 +109,7 @@ class bo_base(ABC):
         # Infinity
         if torch.isinf(val):
             logger.info( "parameter {} caused floating point error {}".format(full_param, val))
+            self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
             print("input triggered exception: ", full_param)
             print("exception value: ", val)
             if val < 0.0:
@@ -126,6 +128,7 @@ class bo_base(ABC):
         if torch.isfinite(val):
             if val > -2.22e-308 and val < 2.22e-308:
                 logger.info( "parameter {} caused subnormal floating point".format(full_param))
+                self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
                 if val != 0.0 and val != -0.0:
                     if val < 0.0:
                         print("input triggered exception: ", full_param)
@@ -140,6 +143,7 @@ class bo_base(ABC):
         # Nan
         if torch.isnan(val):
             logger.info( "parameter {} caused floating point error {}".format(full_param, val))
+            self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
             print("input triggered exception: ", full_param)
             print("exception value: ", val)
             self.results["nan"] += 1
