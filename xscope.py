@@ -103,9 +103,10 @@ def create_experiments_dir() -> str:
 # Function Classes
 #------------------------------------------------------------------------------
 class SharedLib:
-  def __init__(self, path, inputs):
+  def __init__(self, path, inputs, inputs_type):
     self.path = path
     self.inputs = int(inputs)
+    self.inputs_type = inputs_type
 
 class FunctionSignature:
   def __init__(self, fun_name, input_types):
@@ -144,8 +145,9 @@ def parse_functions_to_test(fileName):
       if line.lstrip().startswith('SHARED_LIB:'):
         lib_path = line.split('SHARED_LIB:')[1].split(',')[0].strip()
         inputs = line.split('SHARED_LIB:')[1].split(',')[1].strip()
+        inputs_type = line.split('SHARED_LIB:')[1].split(',')[2].strip()
         #shared_libs.append((lib_path, inputs))
-        ret.append(SharedLib(lib_path, inputs))
+        ret.append(SharedLib(lib_path, inputs, inputs_type))
 
   #return (function_signatures, shared_libs)
   return ret
@@ -210,6 +212,7 @@ if __name__ == "__main__":
     elif type(i) is SharedLib:
       shared_lib = i.path
       num_inputs = i.inputs
+      inputs_type = i.inputs_type
 
     # Random Sampling
     if args.random_sampling or args.random_sampling_unb:
@@ -229,6 +232,7 @@ if __name__ == "__main__":
     bo_analysis.optimize(shared_lib,
                           args.number_sampling, 
                           num_inputs, 
-                          args.range_splitting)
+                          args.range_splitting, 
+                          inputs_type=inputs_type)
       #bo_analysis.print_results(shared_lib, args.number_sampling, args.range_splitting)
 

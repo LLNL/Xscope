@@ -1,4 +1,5 @@
 from utils.init import *
+import traceback
 from botorch.optim.initializers import sample_perturbed_subset_dims, sample_truncated_normal_perturbations
 from botorch.optim.utils import (
     _filter_kwargs,
@@ -30,7 +31,6 @@ def sample_points_around_best(
     r"""Find best points and sample nearby points.
 
     Args:
-        acq_function: The acquisition function.
         n_discrete_points: The number of points to sample.
         sigma: The standard deviation of the additive gaussian noise for
             perturbing the best points.
@@ -55,6 +55,7 @@ def sample_points_around_best(
         n_discrete_points=n_trunc_normal_points,
         sigma=sigma,
         bounds=bounds,
+        qmc=False
     )
     if use_perturbed_sampling:
         perturbed_subset_dims_X = sample_perturbed_subset_dims(
@@ -64,6 +65,7 @@ def sample_points_around_best(
             n_discrete_points=n_discrete_points - n_trunc_normal_points,
             sigma=sigma,
             prob_perturb=prob_perturb,
+            qmc=False
         )
         perturbed_X = torch.cat([perturbed_X, perturbed_subset_dims_X], dim=0)
         # shuffle points
@@ -134,22 +136,18 @@ def fit_mll(
     )
 
     # get bounds specified in model (if any)
-    bounds_: ParameterBounds = {}
-    if hasattr(mll, "named_parameters_and_constraints"):
-        for param_name, _, constraint in mll.named_parameters_and_constraints():
-            if constraint is not None and not constraint.enforced:
-                bounds_[param_name] = constraint.lower_bound, constraint.upper_bound
+    # bounds_: ParameterBounds = {}
+    # if hasattr(mll, "named_parameters_and_constraints"):
+    #     for param_name, _, constraint in mll.named_parameters_and_constraints():
+    #         if constraint is not None and not constraint.enforced:
+    #             bounds_[param_name] = constraint.lower_bound, constraint.upper_bound
 
     # update with user-supplied bounds (overwrites if already exists)
-    if bounds is not None:
-        bounds_.update(bounds)
+    # if bounds is not None:
+    #     bounds_.update(bounds)
 
-    iterations = []
-    t1 = monotonic()
-
-    param_trajectory: Dict[str, List[Tensor]] = {
-        name: [] for name, param in mll.named_parameters()
-    }
+    # iterations = []
+    # t1 = monotonic()
     loss_trajectory: List[float] = []
     i = 0
     stop = False
@@ -157,36 +155,39 @@ def fit_mll(
         **_filter_kwargs(ExpMAStoppingCriterion, **optim_options)
     )
     train_inputs, train_targets = mll.model.train_inputs, mll.model.train_targets
-    while not stop:
-        optimizer.zero_grad()
-        with gpt_settings.fast_computations(log_prob=approx_mll):
-            output = mll.model(*train_inputs)
-            # we sum here to support batch mode
-            args = [output, train_targets] + _get_extra_mll_args(mll)
-            loss = -mll(*args).sum()
-            loss.backward()
-        loss_trajectory.append(loss.item())
-        # for name, param in mll.named_parameters():
-        #     param.grad.data.clamp_(-1e+50, 1e+50)
-        #     param_trajectory[name].append(param.detach().clone())
+    try:
+        while not stop:
+            optimizer.zero_grad()
+            with gpt_settings.fast_computations(log_prob=approx_mll):
+                output = mll.model(*train_inputs)
+                # we sum here to support batch mode
+                args = [output, train_targets] + _get_extra_mll_args(mll)
+                loss = -mll(*args).sum()
+                loss.backward()
+            loss_trajectory.append(loss.item())
+            # for name, param in mll.named_parameters():
+            #     param.grad.data.clamp_(-1e+50, 1e+50)
+            #     param_trajectory[name].append(param.detach().clone())
 
-        if track_iterations:
-            iterations.append(OptimizationIteration(i, loss.item(), monotonic() - t1))
-
-        optimizer.step()
-        # project onto bounds:
-        if bounds_:
-            for pname, param in mll.named_parameters():
-                if pname in bounds_:
-                    param.data = param.data.clamp(*bounds_[pname])
-        i += 1
-        stop = stopping_criterion.evaluate(fvals=loss.detach())
-    info_dict = {
-        "fopt": loss_trajectory[-1],
-        "wall_time": monotonic() - t1,
-        "iterations": iterations,
-    }
-    return mll, info_dict
+            optimizer.step()
+            # project onto bounds:
+            # if bounds_:
+            #     for pname, param in mll.named_parameters():
+            #         if pname in bounds_:
+            #             param.data = param.data.clamp(*bounds_[pname])
+            i += 1
+            stop = stopping_criterion.evaluate(fvals=loss.detach())
+    except Exception:
+        info_dict = {}
+        return mll, info_dict
+    finally:
+        # info_dict = {
+        # "fopt": loss_trajectory[-1],
+        # "wall_time": monotonic() - t1,
+        # "iterations": iterations,
+        # }
+        info_dict = {}
+        return mll, info_dict
 
 class ResultLogger:
     def __init__(self):
@@ -244,13 +245,3 @@ class ResultLogger:
             data.to_csv(file_name, mode='a', index=False, header=False)
         else:
             data.to_csv(file_name, index=False)
-
-def get_gpu_memory():
-    output_to_list = lambda x: x.decode('ascii').split('\n')[:-1]
-    ACCEPTABLE_AVAILABLE_MEMORY = 1024
-    COMMAND = "nvidia-smi --query-gpu=memory.used --format=csv"
-    try:
-        memory_use_info = output_to_list(sp.check_output(COMMAND.split(),stderr=sp.STDOUT))[1:]
-    except sp.CalledProcessError as e:
-        raise RuntimeError("command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
-    print(memory_use_info)

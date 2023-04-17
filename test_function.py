@@ -5,6 +5,7 @@ import sys
 import torch
 sys.path.append("interactive-rate-tendons/")
 from cpptendon import tension_residual, tendon
+import copy
 
 
 class TestFunction:
@@ -15,7 +16,8 @@ class TestFunction:
         input_ranges=[0.0,1.0],
         num_task = 1, 
         is_custom_func = False,
-        test_device = "cpu"
+        test_device = "cpu",
+        is_input_array = False
         ):
         self.lib = None
         self.MU = 1.0
@@ -32,6 +34,7 @@ class TestFunction:
         self.is_custom_func = is_custom_func
         self.robot = tendon.TendonRobot.from_toml("robot_specs.toml")
         self.test_device = torch.device(test_device)
+        self.is_input_array = is_input_array
 
     def set_kernel(self, CUDA_LIB):
         self.lib = CUDA_LIB
@@ -40,8 +43,8 @@ class TestFunction:
         self.E = ctypes.cdll.LoadLibrary(lib_path)
         if self.num_task == 1:
             self.E.kernel_wrapper_1.restype = ctypes.c_double
-        else:
-            self.E.kernel_wrapper_1.argtypes = [ctypes.c_double for _ in self.num_task]
+        if self.is_input_array:
+            self.E.kernel_wrapper_1.argtypes = [ctypes.POINTER(ctypes.c_double * self.num_input),]
 
     def set_fn_type(self, fn_type):
         self.fn_type = fn_type
@@ -62,8 +65,8 @@ class TestFunction:
         x0, x1, x2 = x[0], x[1], x[2]
         res = self.E.kernel_wrapper_1(ctypes.c_double(x0), ctypes.c_double(x1), ctypes.c_double(x2))
         return res
-
-    def call_GPU_kernel_4(self, x):
+    
+    def call_GPU_kernel_4(self,x):
         if len(self.ignore_params) > 0:
             param_pointer = 0
             for i in range(self.num_input):
@@ -75,6 +78,19 @@ class TestFunction:
         res = self.E.kernel_wrapper_1(*self.params_list_c)
         return res
 
+    def call_GPU_kernel_array(self, x):
+        if len(self.ignore_params) > 0:
+            param_pointer = 0
+            for i in range(self.num_input):
+                if i not in self.ignore_params:
+                    self.params_list_c[i] = ctypes.c_double(x[param_pointer])
+                    param_pointer += 1
+        else:
+            self.params_list_c = [ctypes.c_double(param) for param in x]
+        input_array = (ctypes.c_double * len(self.params_list_c))(*self.params_list_c)
+        x_ptr = ctypes.pointer(input_array)
+        res = self.E.kernel_wrapper_1(x_ptr)
+        return res
     
     #This is for testing, remove when done
     # def call_custom_python_functions(self,x):
@@ -104,15 +120,33 @@ class TestFunction:
         tau = self.params_list[:self.num_input-1]
         s_start = self.params_list[-1]
         res = tension_residual(tau, s_start, self.robot)
-        print("res: ", res)
         return res
     
+    def call_multi_obj_kernel(self, x):
+        if len(self.ignore_params) > 0:
+            param_pointer = 0
+            for i in range(self.num_input):
+                if i not in self.ignore_params:
+                    self.params_list_c[i] = ctypes.c_double(x[param_pointer])
+                    param_pointer += 1
+        else:
+            self.params_list_c = [ctypes.c_double(param) for param in x]
+        input_array = (ctypes.c_double * len(self.params_list_c))(*self.params_list_c)
+        x_ptr = ctypes.pointer(input_array)
+        res = [ctypes.byref(ctypes.c_double(0) for _ in self.num_task)]
+        self.E.kernel_wrapper_1(x_ptr, *res)
+        res_value = [r.value for r in res]
+        return res_value
+    
     def eval(self, x0):
-        x0 = x0.to(device=self.test_device)
         if self.mode == "exp":
             x0 = numpy.power(10, x0)
         if self.is_custom_func:
             r = self.custom_test(x0)
+        if self.num_task != 1:
+            r = self.call_multi_obj_kernel(x0)
+        elif self.is_input_array:
+            r = self.call_GPU_kernel_array(x0)
         elif self.num_input == 1:
             r = self.call_GPU_kernel_1(x0)
         elif self.num_input == 2:
@@ -150,4 +184,5 @@ class TestFunction:
                     condition = numpy.greater(r, -self.smallest_subnormal)
                     return numpy.where(condition, -r, r)
         return r
+    
 
