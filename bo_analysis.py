@@ -1,4 +1,4 @@
-#!//usr/bin/env python3
+#!/usr/bin/env python3
 
 import fcntl
 import random_fp_generator
