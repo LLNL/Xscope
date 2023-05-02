@@ -1,151 +1,3 @@
--------------- Results --------------
-lassen726_116469/cuda_code_acos.cu.so|fp|b_whole :		 [0, 0, 0, 0, 4]
-lassen726_116469/cuda_code_acos.cu.so|fp|b_two :		 [0, 0, 0, 0, 8]
-lassen726_116469/cuda_code_acos.cu.so|fp|b_many :		 [0, 0, 0, 0, 32]
-lassen726_116469/cuda_code_acos.cu.so|exp|b_whole :		 [0, 0, 0, 0, 4]
-lassen726_116469/cuda_code_acos.cu.so|exp|b_two :		 [0, 0, 0, 0, 4]
-lassen726_116469/cuda_code_acos.cu.so|exp|b_many :		 [0, 0, 0, 0, 16]
-lassen726_116469/cuda_code_acosh.cu.so|fp|b_whole :		 [0, 0, 0, 0, 4]
-lassen726_116469/cuda_code_acosh.cu.so|fp|b_two :		 [0, 0, 0, 0, 4]
-lassen726_116469/cuda_code_acosh.cu.so|fp|b_many :		 [0, 0, 0, 0, 56]
-lassen726_116469/cuda_code_acosh.cu.so|exp|b_whole :		 [0, 0, 0, 0, 4]
-lassen726_116469/cuda_code_acosh.cu.so|exp|b_two :		 [0, 0, 0, 0, 4]
-lassen726_116469/cuda_code_acosh.cu.so|exp|b_many :		 [0, 0, 0, 0, 16]
-lassen726_116469/cuda_code_asin.cu.so|fp|b_whole :		 [0, 0, 0, 0, 4]
-lassen726_116469/cuda_code_asin.cu.so|fp|b_two :		 [0, 0, 0, 0, 8]
-lassen726_116469/cuda_code_asin.cu.so|fp|b_many :		 [0, 0, 3, 1, 16]
-lassen726_116469/cuda_code_asin.cu.so|exp|b_whole :		 [0, 0, 0, 0, 4]
-lassen726_116469/cuda_code_asin.cu.so|exp|b_two :		 [0, 0, 0, 0, 4]
-lassen726_116469/cuda_code_asin.cu.so|exp|b_many :		 [0, 0, 0, 0, 16]
-lassen726_116469/cuda_code_asinh.cu.so|fp|b_many :		 [0, 0, 3, 1, 0]
-lassen726_116469/cuda_code_atan.cu.so|fp|b_many :		 [0, 0, 3, 1, 0]
-lassen726_116469/cuda_code_atan2.cu.so|fp|b_many :		 [0, 0, 19, 6, 0]
-lassen726_116469/cuda_code_atan2.cu.so|exp|b_many :		 [0, 0, 9, 0, 0]
-lassen726_116469/cuda_code_atanh.cu.so|fp|b_whole :		 [0, 0, 0, 0, 4]
-lassen726_116469/cuda_code_atanh.cu.so|fp|b_two :		 [0, 0, 0, 0, 8]
-lassen726_116469/cuda_code_atanh.cu.so|fp|b_many :		 [1, 1, 3, 1, 0]
-lassen726_116469/cuda_code_atanh.cu.so|exp|b_whole :		 [0, 0, 0, 0, 4]
-lassen726_116469/cuda_code_atanh.cu.so|exp|b_two :		 [0, 0, 0, 0, 4]
-lassen726_116469/cuda_code_atanh.cu.so|exp|b_many :		 [1, 2, 0, 0, 8]
-lassen726_116469/cuda_code_copysign.cu.so|fp|b_many :		 [0, 0, 53, 0, 0]
-lassen726_116469/cuda_code_cosh.cu.so|fp|b_whole :		 [2, 2, 0, 0, 0]
-lassen726_116469/cuda_code_cosh.cu.so|fp|b_two :		 [3, 3, 0, 0, 0]
-lassen726_116469/cuda_code_cosh.cu.so|fp|b_many :		 [7, 7, 0, 0, 0]
-lassen726_116469/cuda_code_cosh.cu.so|exp|b_whole :		 [1, 2, 0, 0, 0]
-lassen726_116469/cuda_code_cosh.cu.so|exp|b_two :		 [2, 2, 0, 0, 0]
-lassen726_116469/cuda_code_cosh.cu.so|exp|b_many :		 [4, 4, 0, 0, 0]
-lassen726_116469/cuda_code_cyl_bessel_i1.cu.so|fp|b_whole :		 [2, 2, 0, 0, 0]
-lassen726_116469/cuda_code_cyl_bessel_i1.cu.so|fp|b_two :		 [4, 4, 0, 0, 0]
-lassen726_116469/cuda_code_cyl_bessel_i1.cu.so|fp|b_many :		 [1, 1, 3, 1, 0]
-lassen726_116469/cuda_code_cyl_bessel_i1.cu.so|exp|b_whole :		 [1, 2, 0, 0, 0]
-lassen726_116469/cuda_code_cyl_bessel_i1.cu.so|exp|b_two :		 [2, 2, 0, 0, 0]
-lassen726_116469/cuda_code_cyl_bessel_i1.cu.so|exp|b_many :		 [4, 4, 0, 0, 0]
-lassen726_116469/cuda_code_erf.cu.so|fp|b_many :		 [0, 0, 3, 1, 0]
-
--------------- Results --------------
-lassen281_176349/cuda_code_erfcinv.cu.so|fp|b_whole :		 [0, 0, 0, 0, 4]
-lassen281_176349/cuda_code_erfcinv.cu.so|fp|b_two :		 [0, 0, 0, 0, 8]
-lassen281_176349/cuda_code_erfcinv.cu.so|fp|b_many :		 [0, 0, 0, 0, 52]
-lassen281_176349/cuda_code_erfcinv.cu.so|exp|b_whole :		 [0, 0, 0, 0, 4]
-lassen281_176349/cuda_code_erfcinv.cu.so|exp|b_two :		 [0, 0, 0, 0, 4]
-lassen281_176349/cuda_code_erfcinv.cu.so|exp|b_many :		 [0, 0, 0, 0, 16]
-lassen281_176349/cuda_code_erfcx.cu.so|fp|b_whole :		 [2, 2, 0, 0, 0]
-lassen281_176349/cuda_code_erfcx.cu.so|fp|b_two :		 [2, 2, 0, 0, 0]
-lassen281_176349/cuda_code_erfcx.cu.so|fp|b_many :		 [4, 4, 0, 0, 0]
-lassen281_176349/cuda_code_erfinv.cu.so|fp|b_whole :		 [0, 0, 0, 0, 4]
-lassen281_176349/cuda_code_erfinv.cu.so|fp|b_two :		 [0, 0, 0, 0, 8]
-lassen281_176349/cuda_code_erfinv.cu.so|fp|b_many :		 [1, 1, 3, 1, 0]
-lassen281_176349/cuda_code_erfinv.cu.so|exp|b_whole :		 [0, 0, 0, 0, 4]
-lassen281_176349/cuda_code_erfinv.cu.so|exp|b_two :		 [0, 0, 0, 0, 4]
-lassen281_176349/cuda_code_erfinv.cu.so|exp|b_many :		 [1, 2, 0, 0, 8]
-lassen281_176349/cuda_code_exp.cu.so|fp|b_two :		 [2, 2, 0, 0, 0]
-lassen281_176349/cuda_code_exp.cu.so|fp|b_many :		 [4, 4, 0, 0, 0]
-lassen281_176349/cuda_code_exp.cu.so|exp|b_whole :		 [1, 2, 0, 0, 0]
-lassen281_176349/cuda_code_exp.cu.so|exp|b_two :		 [2, 2, 0, 0, 0]
-lassen281_176349/cuda_code_exp.cu.so|exp|b_many :		 [4, 4, 0, 0, 0]
-lassen281_176349/cuda_code_exp10.cu.so|fp|b_two :		 [2, 2, 0, 0, 0]
-lassen281_176349/cuda_code_exp10.cu.so|fp|b_many :		 [4, 4, 0, 0, 0]
-lassen281_176349/cuda_code_exp10.cu.so|exp|b_whole :		 [1, 2, 0, 0, 0]
-lassen281_176349/cuda_code_exp10.cu.so|exp|b_two :		 [2, 2, 0, 0, 0]
-lassen281_176349/cuda_code_exp10.cu.so|exp|b_many :		 [4, 4, 0, 0, 0]
-lassen281_176349/cuda_code_exp2.cu.so|fp|b_two :		 [2, 2, 0, 0, 0]
-lassen281_176349/cuda_code_exp2.cu.so|fp|b_many :		 [4, 4, 0, 0, 0]
-lassen281_176349/cuda_code_exp2.cu.so|exp|b_whole :		 [1, 2, 0, 0, 0]
-lassen281_176349/cuda_code_exp2.cu.so|exp|b_two :		 [2, 2, 0, 0, 0]
-lassen281_176349/cuda_code_exp2.cu.so|exp|b_many :		 [4, 4, 0, 0, 0]
-lassen281_176349/cuda_code_expm1.cu.so|fp|b_two :		 [2, 2, 0, 0, 0]
-lassen281_176349/cuda_code_expm1.cu.so|fp|b_many :		 [1, 1, 3, 1, 0]
-lassen281_176349/cuda_code_expm1.cu.so|exp|b_whole :		 [1, 2, 0, 0, 0]
-lassen281_176349/cuda_code_expm1.cu.so|exp|b_two :		 [2, 2, 0, 0, 0]
-lassen281_176349/cuda_code_expm1.cu.so|exp|b_many :		 [4, 4, 0, 0, 0]
-lassen281_176349/cuda_code_fabs.cu.so|fp|b_many :		 [0, 0, 3, 1, 0]
-lassen281_176349/cuda_code_fdim.cu.so|fp|b_many :		 [0, 0, 1, 0, 0]
-lassen281_176349/cuda_code_fmax.cu.so|fp|b_many :		 [0, 0, 51, 0, 0]
-lassen281_176349/cuda_code_fmin.cu.so|fp|b_many :		 [0, 0, 49, 0, 0]
-lassen281_176349/cuda_code_fmod.cu.so|fp|b_many :		 [0, 0, 109, 5, 9]
-lassen281_176349/cuda_code_fmod.cu.so|exp|b_many :		 [0, 0, 15, 0, 0]
-
-
--------------- Results --------------
-lassen762_14832/cuda_code_j1.cu.so|fp|b_many :		 [0, 0, 3, 1, 0]
-lassen762_14832/cuda_code_lgamma.cu.so|fp|b_whole :		 [2, 2, 0, 0, 0]
-lassen762_14832/cuda_code_lgamma.cu.so|fp|b_two :		 [3, 3, 0, 0, 0]
-lassen762_14832/cuda_code_lgamma.cu.so|fp|b_many :		 [4, 6, 0, 0, 0]
-lassen762_14832/cuda_code_log.cu.so|fp|b_whole :		 [0, 0, 0, 0, 4]
-lassen762_14832/cuda_code_log.cu.so|fp|b_two :		 [0, 0, 0, 0, 4]
-lassen762_14832/cuda_code_log.cu.so|fp|b_many :		 [0, 0, 0, 0, 36]
-lassen762_14832/cuda_code_log10.cu.so|fp|b_whole :		 [0, 0, 0, 0, 4]
-lassen762_14832/cuda_code_log10.cu.so|fp|b_two :		 [0, 0, 0, 0, 4]
-lassen762_14832/cuda_code_log10.cu.so|fp|b_many :		 [0, 0, 0, 0, 36]
-lassen762_14832/cuda_code_log1p.cu.so|fp|b_whole :		 [0, 0, 0, 0, 4]
-lassen762_14832/cuda_code_log1p.cu.so|fp|b_two :		 [0, 0, 0, 0, 4]
-lassen762_14832/cuda_code_log1p.cu.so|fp|b_many :		 [0, 1, 3, 1, 8]
-lassen762_14832/cuda_code_log2.cu.so|fp|b_whole :		 [0, 0, 0, 0, 4]
-lassen762_14832/cuda_code_log2.cu.so|fp|b_two :		 [0, 0, 0, 0, 4]
-lassen762_14832/cuda_code_log2.cu.so|fp|b_many :		 [0, 0, 0, 0, 36]
-lassen762_14832/cuda_code_max.cu.so|fp|b_many :		 [0, 0, 51, 0, 0]
-lassen762_14832/cuda_code_min.cu.so|fp|b_many :		 [0, 0, 49, 0, 0]
-lassen762_14832/cuda_code_nextafter.cu.so|fp|b_many :		 [0, 0, 52, 3, 0]
-lassen762_14832/cuda_code_normcdfinv.cu.so|fp|b_whole :		 [0, 0, 0, 0, 4]
-lassen762_14832/cuda_code_normcdfinv.cu.so|fp|b_two :		 [0, 0, 0, 0, 8]
-lassen762_14832/cuda_code_normcdfinv.cu.so|fp|b_many :		 [1, 2, 0, 0, 34]
-lassen762_14832/cuda_code_normcdfinv.cu.so|exp|b_whole :		 [0, 0, 0, 0, 4]
-lassen762_14832/cuda_code_normcdfinv.cu.so|exp|b_two :		 [0, 0, 0, 0, 4]
-lassen762_14832/cuda_code_normcdfinv.cu.so|exp|b_many :		 [1, 2, 0, 0, 8]
-
-
--------------- Results --------------
-lassen596_128115/cuda_code_remainder.cu.so|fp|b_many :		 [0, 0, 84, 14, 9]
-lassen596_128115/cuda_code_remainder.cu.so|exp|b_many :		 [0, 0, 9, 0, 0]
-lassen596_128115/cuda_code_rsqrt.cu.so|fp|b_whole :		 [0, 0, 0, 0, 4]
-lassen596_128115/cuda_code_rsqrt.cu.so|fp|b_two :		 [0, 0, 0, 0, 4]
-lassen596_128115/cuda_code_rsqrt.cu.so|fp|b_many :		 [0, 0, 0, 0, 36]
-lassen596_128115/cuda_code_sin.cu.so|fp|b_many :		 [0, 0, 3, 1, 0]
-lassen596_128115/cuda_code_sinpi.cu.so|fp|b_many :		 [0, 0, 3, 1, 0]
-lassen596_128115/cuda_code_tan.cu.so|fp|b_many :		 [0, 0, 3, 1, 0]
-lassen596_128115/cuda_code_tanh.cu.so|fp|b_many :		 [0, 0, 3, 1, 0]
-lassen596_128115/cuda_code_tgamma.cu.so|fp|b_whole :		 [0, 0, 0, 0, 4]
-lassen596_128115/cuda_code_tgamma.cu.so|fp|b_two :		 [2, 2, 0, 0, 4]
-lassen596_128115/cuda_code_tgamma.cu.so|fp|b_many :		 [4, 4, 0, 0, 4]
-lassen596_128115/cuda_code_tgamma.cu.so|exp|b_whole :		 [1, 2, 0, 0, 0]
-lassen596_128115/cuda_code_tgamma.cu.so|exp|b_two :		 [2, 2, 0, 0, 0]
-lassen596_128115/cuda_code_tgamma.cu.so|exp|b_many :		 [4, 4, 0, 0, 0]
-lassen596_128115/cuda_code_y0.cu.so|fp|b_whole :		 [0, 0, 0, 0, 4]
-lassen596_128115/cuda_code_y0.cu.so|fp|b_two :		 [0, 0, 0, 0, 4]
-lassen596_128115/cuda_code_y0.cu.so|fp|b_many :		 [0, 0, 0, 0, 36]
-lassen596_128115/cuda_code_y1.cu.so|fp|b_whole :		 [0, 0, 0, 0, 4]
-lassen596_128115/cuda_code_y1.cu.so|fp|b_two :		 [0, 0, 0, 0, 4]
-lassen596_128115/cuda_code_y1.cu.so|fp|b_many :		 [0, 0, 0, 0, 36]
-
-
-
-
-
-
-
-
-
-**** Runs ****
 lassen726_116469/cuda_code_acos.cu.so|fp|b_whole 3
 lassen726_116469/cuda_code_acos.cu.so|fp|b_two 7
 lassen726_116469/cuda_code_acos.cu.so|fp|b_many 1031
@@ -236,8 +88,6 @@ lassen726_116469/cuda_code_erf.cu.so|fp|b_many 721
 lassen726_116469/cuda_code_erf.cu.so|exp|b_whole 99
 lassen726_116469/cuda_code_erf.cu.so|exp|b_two 199
 lassen726_116469/cuda_code_erf.cu.so|exp|b_many 799
-
-**** Runs ****
 lassen281_176349/cuda_code_erfc.cu.so|fp|b_whole 3
 lassen281_176349/cuda_code_erfc.cu.so|fp|b_two 7
 lassen281_176349/cuda_code_erfc.cu.so|fp|b_many 1423
@@ -328,9 +178,6 @@ lassen281_176349/cuda_code_hypot.cu.so|fp|b_many 20351
 lassen281_176349/cuda_code_hypot.cu.so|exp|b_whole 11
 lassen281_176349/cuda_code_hypot.cu.so|exp|b_two 107
 lassen281_176349/cuda_code_hypot.cu.so|exp|b_many 5019
-Tue Mar 22 17:07:10 PDT 2022
-l
-**** Runs ****
 lassen762_14832/cuda_code_j0.cu.so|fp|b_whole 3
 lassen762_14832/cuda_code_j0.cu.so|fp|b_two 7
 lassen762_14832/cuda_code_j0.cu.so|fp|b_many 1423
@@ -415,9 +262,6 @@ lassen762_14832/cuda_code_normcdfinv.cu.so|fp|b_many 441
 lassen762_14832/cuda_code_normcdfinv.cu.so|exp|b_whole 7
 lassen762_14832/cuda_code_normcdfinv.cu.so|exp|b_two 103
 lassen762_14832/cuda_code_normcdfinv.cu.so|exp|b_many 315
-
-
-**** Runs ****
 lassen596_128115/cuda_code_rcbrt.cu.so|fp|b_whole 3
 lassen596_128115/cuda_code_rcbrt.cu.so|fp|b_two 7
 lassen596_128115/cuda_code_rcbrt.cu.so|fp|b_many 1423
@@ -502,5 +346,3 @@ lassen596_128115/cuda_code_y1.cu.so|fp|b_many 655
 lassen596_128115/cuda_code_y1.cu.so|exp|b_whole 59
 lassen596_128115/cuda_code_y1.cu.so|exp|b_two 107
 lassen596_128115/cuda_code_y1.cu.so|exp|b_many 707
-Mon Mar 21 15:42:22 PDT 2022
-lM
