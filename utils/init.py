@@ -7,7 +7,7 @@ import time
 from models.exactGP import ExactGPModel
 
 from botorch.optim import ExpMAStoppingCriterion
-from botorch.optim.utils import  _get_extra_mll_args
+# from botorch.optim.utils import  _get_extra_mll_args
 
 from torch.optim import AdamW
 from torch.optim.optimizer import Optimizer

@@ -110,8 +110,8 @@ class bo_base(ABC):
         if torch.isinf(val):
             #logger.info( "parameter {} caused floating point error {}".format(full_param, val))
             # self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
-            # print("input triggered exception: ", full_param)
-            # print("exception value: ", val)
+            print("input triggered exception: ", full_param)
+            print("exception value: ", val)
             if val < 0.0:
                 self.results["min_inf"] += 1
                 self.exception_induced_params["min_inf"].append(full_param)
@@ -130,15 +130,15 @@ class bo_base(ABC):
                 #logger.info( "parameter {} caused subnormal floating point".format(full_param))
                 if val < 0.0:
                     # self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
-                    # print("input triggered exception: ", full_param)
-                    # print("exception value: ", val)
+                    print("input triggered exception: ", full_param)
+                    print("exception value: ", val)
                     self.results["min_under"] += 1
                     self.exception_induced_params["min_under"].append(full_param)
                     return val, True
                 elif val > 0.0:
                     # self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
-                    # print("input triggered exception: ", full_param)
-                    # print("exception value: ", val)
+                    print("input triggered exception: ", full_param)
+                    print("exception value: ", val)
                     self.results["max_under"] += 1
                     self.exception_induced_params["max_under"].append(full_param)
                     return val, True
@@ -147,8 +147,8 @@ class bo_base(ABC):
         if torch.isnan(val):
             #logger.info( "parameter {} caused floating point error {}".format(full_param, val))
             # self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
-            # print("input triggered exception: ", full_param)
-            # print("exception value: ", val)
+            print("input triggered exception: ", full_param)
+            print("exception value: ", val)
             self.results["nan"] += 1
             self.exception_induced_params["nan"].append(full_param)
             val = 2.1219957915e-314
