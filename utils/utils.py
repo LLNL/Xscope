@@ -1,11 +1,11 @@
 from utils.init import *
 import traceback
 from botorch.optim.initializers import sample_perturbed_subset_dims, sample_truncated_normal_perturbations
-from botorch.optim.utils import (
-    _filter_kwargs,
-    _get_extra_mll_args,
-    create_name_filter,
-)
+# from botorch.optim.utils import (
+#     _filter_kwargs,
+#     _get_extra_mll_args,
+#     create_name_filter,
+# )
 
 class OptimizationIteration(NamedTuple):
     itr: int
@@ -17,8 +17,8 @@ max_normal = 1e+307
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 dtype = torch.float64
 
-from jax.config import config
-config.update("jax_enable_x64", True)
+# from jax.config import config
+# config.update("jax_enable_x64", True)
 
 
 def sample_points_around_best(
@@ -71,123 +71,9 @@ def sample_points_around_best(
         # shuffle points
         perm = torch.randperm(perturbed_X.shape[0], device=best_X.device)
         perturbed_X = perturbed_X[perm]
+    del best_X
+    del bounds
     return perturbed_X
-
-def fit_mll(
-    mll: MarginalLogLikelihood,
-    bounds: Optional[ParameterBounds] = None,
-    optimizer_cls: Optimizer = AdamW,
-    options: Optional[Dict[str, Any]] = None,
-    track_iterations: bool = False,
-    approx_mll: bool = False,
-) -> Tuple[MarginalLogLikelihood, Dict[str, Union[float, List[OptimizationIteration]]]]:
-    r"""Fit a gpytorch model by maximizing MLL with a torch optimizer.
-
-    The model and likelihood in mll must already be in train mode.
-    Note: this method requires that the model has `train_inputs` and `train_targets`.
-
-    Args:
-        mll: MarginalLogLikelihood to be maximized.
-        bounds: A ParameterBounds dictionary mapping parameter names to tuples
-            of lower and upper bounds. Bounds specified here take precedence
-            over bounds on the same parameters specified in the constraints
-            registered with the module.
-        optimizer_cls: Torch optimizer to use. Must not require a closure.
-        options: options for model fitting. Relevant options will be passed to
-            the `optimizer_cls`. Additionally, options can include: "disp"
-            to specify whether to display model fitting diagnostics and "maxiter"
-            to specify the maximum number of iterations.
-        track_iterations: Track the function values and wall time for each
-            iteration.
-        approx_mll: If True, use gpytorch's approximate MLL computation (
-            according to the gpytorch defaults based on the training at size).
-            Unlike for the deterministic algorithms used in fit_gpytorch_scipy,
-            this is not an issue for stochastic optimizers.
-
-    Returns:
-        2-element tuple containing
-        - mll with parameters optimized in-place.
-        - Dictionary with the following key/values:
-        "fopt": Best mll value.
-        "wall_time": Wall time of fitting.
-        "iterations": List of OptimizationIteration objects with information on each
-        iteration. If track_iterations is False, will be empty.
-
-    Example:
-        >>> gp = SingleTaskGP(train_X, train_Y)
-        >>> mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
-        >>> mll.train()
-        >>> fit_gpytorch_torch(mll)
-        >>> mll.eval()
-    """
-    optim_options = {"maxiter": 100, "disp": True, "lr": 1e-5}
-    optim_options.update(options or {})
-    exclude = optim_options.pop("exclude", None)
-    if exclude is None:
-        mll_params = list(mll.parameters())
-    else:
-        mll_params = [
-            v for k, v in filter(create_name_filter(exclude), mll.named_parameters())
-        ]
-
-    optimizer = optimizer_cls(
-        params=[{"params": mll_params}],
-        **_filter_kwargs(optimizer_cls, **optim_options),
-    )
-
-    # get bounds specified in model (if any)
-    # bounds_: ParameterBounds = {}
-    # if hasattr(mll, "named_parameters_and_constraints"):
-    #     for param_name, _, constraint in mll.named_parameters_and_constraints():
-    #         if constraint is not None and not constraint.enforced:
-    #             bounds_[param_name] = constraint.lower_bound, constraint.upper_bound
-
-    # update with user-supplied bounds (overwrites if already exists)
-    # if bounds is not None:
-    #     bounds_.update(bounds)
-
-    # iterations = []
-    # t1 = monotonic()
-    loss_trajectory: List[float] = []
-    i = 0
-    stop = False
-    stopping_criterion = ExpMAStoppingCriterion(
-        **_filter_kwargs(ExpMAStoppingCriterion, **optim_options)
-    )
-    train_inputs, train_targets = mll.model.train_inputs, mll.model.train_targets
-    try:
-        while not stop:
-            optimizer.zero_grad()
-            with gpt_settings.fast_computations(log_prob=approx_mll):
-                output = mll.model(*train_inputs)
-                # we sum here to support batch mode
-                args = [output, train_targets] + _get_extra_mll_args(mll)
-                loss = -mll(*args).sum()
-                loss.backward()
-            loss_trajectory.append(loss.item())
-            # for name, param in mll.named_parameters():
-            #     param.grad.data.clamp_(-1e+50, 1e+50)
-            #     param_trajectory[name].append(param.detach().clone())
-
-            optimizer.step()
-            # project onto bounds:
-            # if bounds_:
-            #     for pname, param in mll.named_parameters():
-            #         if pname in bounds_:
-            #             param.data = param.data.clamp(*bounds_[pname])
-            i += 1
-            stop = stopping_criterion.evaluate(fvals=loss.detach())
-    except Exception:
-        info_dict = {}
-        return mll, info_dict
-    finally:
-        # info_dict = {
-        # "fopt": loss_trajectory[-1],
-        # "wall_time": monotonic() - t1,
-        # "iterations": iterations,
-        # }
-        info_dict = {}
-        return mll, info_dict
 
 class ResultLogger:
     def __init__(self):

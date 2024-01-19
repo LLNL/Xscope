@@ -58,15 +58,24 @@
 #FUNCTION:y0 (double)
 #FUNCTION:y1 (double)
 
-#SHARED_LIB:./app_kernels/LULESH/cuda_code_lulesh.cu.so, 24
-#SHARED_LIB:./app_kernels/SW4Lite/cuda_code_sw4lite.cu.so, 2
-#SHARED_LIB:./app_kernels/NAS/common/cuda_code_randlc.cu.so, 6
-#SHARED_LIB:./app_kernels/NAS/SP/cuda_code_sp.cu.so, 2
-#SHARED_LIB:./app_kernels/lammps/cuda_code_lammps.cu.so, 2
-#SHARED_LIB:./app_kernels/CFD_Rodinia/cuda_code_cfd.cu.so, 3
-#SHARED_LIB:./app_kernels/backprop_Rodinia/cuda_code_backprop.cu.so, 1
-#SHARED_LIB:./app_kernels/leukocyte_Rodinia/cuda_code_leukocyte.cu.so, 1
-#SHARED_LIB:./app_kernels/exaMiniMD/cuda_code_examinimd.cu.so, 3
-#SHARED_LIB:./app_kernels/HPCCG/cuda_code_hpccg.cu.so, 2
-#SHARED_LIB:./app_kernels/miniFE/cuda_code_minife.cu.so, 2
-SHARED_LIB:./app_kernels/eigen/eigen_matrix.cu.so, 16
+#SHARED_LIB:./app_kernels/LULESH/cuda_code_lulesh.cu.so, 24, single
+#SHARED_LIB:./app_kernels/SW4Lite/cuda_code_sw4lite.cu.so, 2, single
+#SHARED_LIB:./app_kernels/NAS/common/cuda_code_randlc.cu.so, 6, single
+#SHARED_LIB:./app_kernels/NAS/SP/cuda_code_sp.cu.so, 2, single
+#SHARED_LIB:./app_kernels/lammps/cuda_code_lammps.cu.so, 2, single
+#SHARED_LIB:./app_kernels/CFD_Rodinia/cuda_code_cfd.cu.so, 3, single
+#SHARED_LIB:./app_kernels/backprop_Rodinia/cuda_code_backprop.cu.so, 1, single
+#SHARED_LIB:./app_kernels/leukocyte_Rodinia/cuda_code_leukocyte.cu.so, 1, single
+#SHARED_LIB:./app_kernels/exaMiniMD/cuda_code_examinimd.cu.so, 3, single
+#SHARED_LIB:./app_kernels/HPCCG/cuda_code_hpccg.cu.so, 2, single
+#SHARED_LIB:./app_kernels/miniFE/cuda_code_minife.cu.so, 2, single
+SHARED_LIB:./app_kernels/eigen/eigen_determinant.so, 16, singles
+#SHARED_LIB:./app_kernels/eigen/eigen_BDCSVD_4.so, 20, single
+#SHARED_LIB:./app_kernels/eigen/eigen_BDCSVD_2.so, 6, single
+#SHARED_LIB:./app_kernels/eigen/eigen_BDCSVD_2_o1.so, 6, single
+#SHARED_LIB:./app_kernels/eigen/eigen_BDCSVD_2_o2.so, 6, single
+#SHARED_LIB:./app_kernels/eigen/eigen_BDCSVD_2_o3.so, 6, single
+#SHARED_LIB:./app_kernels/eigen/eigen_BDCSVD_2_fast_math.so, 6, single
+#SHARED_LIB:./app_kernels/eigen/eigen_determinant_o1.so, 16, single
+#SHARED_LIB:./app_kernels/eigen/eigen_determinant_o2.so, 16, single
+#SHARED_LIB:./app_kernels/eigen/eigen_determinant_o3.so, 16, single

@@ -29,7 +29,7 @@ class bo_base(ABC):
         self.GP = None
         self.mll = None
         self.best_y = None
-        self.result_file = open("Tendon_result", "a")
+        self.result_file = open("experiment_result", "a")
 
     @abstractmethod
     def initialize_data(self, normalize, num_samples):
@@ -108,10 +108,10 @@ class bo_base(ABC):
 
         # Infinity
         if torch.isinf(val):
-            logger.info( "parameter {} caused floating point error {}".format(full_param, val))
-            self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
-            print("input triggered exception: ", full_param)
-            print("exception value: ", val)
+            #logger.info( "parameter {} caused floating point error {}".format(full_param, val))
+            # self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
+            # print("input triggered exception: ", full_param)
+            # print("exception value: ", val)
             if val < 0.0:
                 self.results["min_inf"] += 1
                 self.exception_induced_params["min_inf"].append(full_param)
@@ -127,25 +127,28 @@ class bo_base(ABC):
         # Subnormals
         if torch.isfinite(val):
             if val > -2.22e-308 and val < 2.22e-308:
-                logger.info( "parameter {} caused subnormal floating point".format(full_param))
-                self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
-                if val != 0.0 and val != -0.0:
-                    if val < 0.0:
-                        print("input triggered exception: ", full_param)
-                        print("exception value: ", val)
-                        self.results["min_under"] += 1
-                        self.exception_induced_params["min_under"].append(full_param)
-                    else:
-                        self.results["max_under"] += 1
-                        self.exception_induced_params["max_under"].append(full_param)
+                #logger.info( "parameter {} caused subnormal floating point".format(full_param))
+                if val < 0.0:
+                    # self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
+                    # print("input triggered exception: ", full_param)
+                    # print("exception value: ", val)
+                    self.results["min_under"] += 1
+                    self.exception_induced_params["min_under"].append(full_param)
+                    return val, True
+                elif val > 0.0:
+                    # self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
+                    # print("input triggered exception: ", full_param)
+                    # print("exception value: ", val)
+                    self.results["max_under"] += 1
+                    self.exception_induced_params["max_under"].append(full_param)
                     return val, True
 
         # Nan
         if torch.isnan(val):
-            logger.info( "parameter {} caused floating point error {}".format(full_param, val))
-            self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
-            print("input triggered exception: ", full_param)
-            print("exception value: ", val)
+            #logger.info( "parameter {} caused floating point error {}".format(full_param, val))
+            # self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
+            # print("input triggered exception: ", full_param)
+            # print("exception value: ", val)
             self.results["nan"] += 1
             self.exception_induced_params["nan"].append(full_param)
             val = 2.1219957915e-314
@@ -163,7 +166,7 @@ class bo_base(ABC):
         :return: A new set of predicted best candidates for each bounds.
 
         """
-        lb, ub = self.bounds_object.bounds[:,0,:].unsqueeze(1), self.bounds_object.bounds[:,1,:].unsqueeze(1)
+        lb, ub = self.bounds_object.current_bounds[:,0,:].unsqueeze(1), self.bounds_object.current_bounds[:,1,:].unsqueeze(1)
         _clamp = partial(columnwise_clamp, lower=lb, upper=ub)
         clamped_candidates = _clamp(candidates).requires_grad_(True)
         to_minimize = lambda x: -self.acq.forward(self.GP, self.GP.likelihood, x, y_max=self.best_y)
@@ -189,8 +192,11 @@ class bo_base(ABC):
                 clamped_candidates = X
                 break
             stop = stopping_criterion.evaluate(fvals=loss.detach())
-        clamped_candidates, _ = self.acq.extract_best_candidate(clamped_candidates, self.GP, self.GP.likelihood, y_max=self.best_y)
-        return clamped_candidates
+        clamped_candidates, _ = self.acq.extract_best_candidate(clamped_candidates, self.GP, self.GP.likelihood, y_max=self.best_y, batch_size=self.batch_size)
+        del loss
+        del grad_params
+        del X
+        return clamped_candidates.detach()
 
     def best_interval(self):
         max_index = 0

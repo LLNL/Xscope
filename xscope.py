@@ -167,7 +167,7 @@ if __name__ == "__main__":
   parser.add_argument('function', metavar='FUNCTION_TO_TEST', nargs=1, help='Function to test (file or shared library .so)')
   parser.add_argument('-a', '--af', default='ei', help='Acquisition function: ei, ucb, pi')
   parser.add_argument('-n', '--number-sampling', default='fp', help='Number sampling method: fp, exp')
-  parser.add_argument('-r', '--range-splitting',type=int, default=10, help='How many intervals the range will be splitted into')
+  parser.add_argument('-r', '--range-splitting',type=int, default=2 , help='How many intervals the range will be splitted into')
   parser.add_argument('-s', '--samples', type=int, default=30, help='Number of BO samples (default: 30)')
   parser.add_argument('--random_sampling', action='store_true', help='Use random sampling')
   parser.add_argument('--random_sampling_unb', action='store_true', help='Use random sampling unbounded')
@@ -209,26 +209,16 @@ if __name__ == "__main__":
       f = generate_CUDA_code(i.fun_name, i.input_types, d)
       shared_lib = compile_CUDA_code(f, d)
       num_inputs = len(i.input_types)
+      inputs_type = "single"
     elif type(i) is SharedLib:
       shared_lib = i.path
       num_inputs = i.inputs
       inputs_type = i.inputs_type
 
-    # Random Sampling
-    if args.random_sampling or args.random_sampling_unb:
-      print('******* RANDOM SAMPLING on:', shared_lib)
-      # Total samples per each input depends on:
-      # 18 ranges, 30 max samples (per range), n inputs
-      inputs = num_inputs
-      max_iters = 30 * int(math.pow(18, inputs))
-      unbounded = False
-      if args.random_sampling_unb:
-        unbounded = True
-      random_optimizer.optimize_randomly(shared_lib, inputs, max_iters, unbounded)
-      random_optimizer.print_results_random(shared_lib)
-
     # Run BO optimization
     print('*** Running BO on:', shared_lib)
+    # input_splits = [1,2,3,4,5,6]
+    # for split in input_splits:
     bo_analysis.optimize(shared_lib,
                           args.number_sampling, 
                           num_inputs, 

@@ -1,4 +1,4 @@
-from distrax import Normal
+# from distrax import Normal
 import gpytorch
 import torch
 from torch.cuda.amp import autocast

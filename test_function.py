@@ -3,8 +3,8 @@ import ctypes
 import numpy
 import sys
 import torch
-sys.path.append("interactive-rate-tendons/")
-from cpptendon import tension_residual, tendon
+# sys.path.append("interactive-rate-tendons/")
+# from cpptendon import tension_residual, tendon
 import copy
 
 
@@ -32,7 +32,7 @@ class TestFunction:
         self.params_list_c = [ctypes.c_double(x) for x in self.params_list]
         self.num_task = num_task
         self.is_custom_func = is_custom_func
-        self.robot = tendon.TendonRobot.from_toml("robot_specs.toml")
+        # self.robot = tendon.TendonRobot.from_toml("robot_specs.toml")
         self.test_device = torch.device(test_device)
         self.is_input_array = is_input_array
 
@@ -71,10 +71,13 @@ class TestFunction:
             param_pointer = 0
             for i in range(self.num_input):
                 if i not in self.ignore_params:
+                    print("hereerereererere")
                     self.params_list_c[i] = ctypes.c_double(x[param_pointer])
+                    #self.params_list_c[i] = x[param_pointer].ctypes.data_as(POINTER(c_double))
                     param_pointer += 1
         else:
             self.params_list_c = [ctypes.c_double(param) for param in x]
+            # self.params_list_c = [ctypes.pointer(ctypes.c_long(param.data_ptr())) for param in x]
         res = self.E.kernel_wrapper_1(*self.params_list_c)
         return res
 

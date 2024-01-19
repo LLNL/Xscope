@@ -72,14 +72,15 @@ class AcquisitionFunction(object):
         x_max = torch.gather(x, 1, indices.repeat(1,1,x.shape[-1]))
         return max_acq, x_max
 
-    def extract_best_candidate(self, candidates, gp, likelihood, y_max=None, ref_point=None):
+    def extract_best_candidate(self, candidates, gp, likelihood, y_max=None, ref_point=None, batch_size=1):
         with torch.no_grad(), autocast(), gpytorch.settings.fast_pred_var():
             ys = self.forward(gp, likelihood, candidates, y_max=y_max, ref_point=ref_point).unsqueeze(-1)
             ys = torch.nan_to_num(ys, nan=2.1219957915e-314)
             if ref_point is not None:
                 ys = ys.transpose(1,0)
-            max_acq, indices = ys.max(dim=1, keepdim=True)
-            x_max = torch.gather(candidates, 1, indices.repeat(1,1,candidates.shape[-1]))
+            # max_acq, indices = ys.max(dim=1, keepdim=True)
+            max_acq, indices = torch.topk(ys.squeeze(dim=-1), batch_size)
+            x_max = torch.gather(candidates, 1, indices.unsqueeze(-1).repeat(1,1,candidates.shape[-1]))
         return x_max, max_acq
 
     @staticmethod
@@ -105,7 +106,7 @@ class AcquisitionFunction(object):
     @staticmethod
     def _poi(mean, std, y_max, xi):
         z = (mean - y_max - xi)/std
-        norm = Normal(torch.tensor([0.0]).to(device=device, dtype=dtype), torch.tensor([1.0]).to(device=device, dtype=dtype))
+        norm =  torch.distributions.normal.Normal(0.0, 1.0)
         return norm.cdf(z)
 
     #This function was derived from BOTorch at: https://github.dev/pytorch/botorch/blob/main/botorch/acquisition/multi_objective/monte_carlo.py

@@ -22,7 +22,9 @@ class ExactGPModel(BaseGPModel):
         super(ExactGPModel, self).__init__(train_x, train_y, likelihood)
         batch_dim = train_x.shape[0]
         self.mean_module = gpytorch.means.ConstantMean()
-        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.keops.MaternKernel(nu=2.5,batch_shape=torch.Size([batch_dim])))
+        self.covar_module = gpytorch.kernels.ScaleKernel(
+            gpytorch.kernels.keops.MaternKernel(nu=2.5,batch_shape=torch.Size([batch_dim]))
+            )
 
         # self.covar_module = gpytorch.kernels.MaternKernel(nu=0.5, batch_shape=torch.Size([batch_dim]))
         #self.covar_module = gpytorch.kernels.MaternKernel(nu=2.5)
