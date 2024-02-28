@@ -108,7 +108,7 @@ class bo_base(ABC):
 
         # Infinity
         if torch.isinf(val):
-            #logger.info( "parameter {} caused floating point error {}".format(full_param, val))
+            logger.info( "parameter {} caused floating point error {}".format(full_param, val))
             # self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
             print("input triggered exception: ", full_param)
             print("exception value: ", val)
@@ -127,7 +127,7 @@ class bo_base(ABC):
         # Subnormals
         if torch.isfinite(val):
             if val > -2.22e-308 and val < 2.22e-308:
-                #logger.info( "parameter {} caused subnormal floating point".format(full_param))
+                logger.info( "parameter {} caused subnormal floating point".format(full_param))
                 if val < 0.0:
                     # self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
                     print("input triggered exception: ", full_param)
@@ -145,7 +145,7 @@ class bo_base(ABC):
 
         # Nan
         if torch.isnan(val):
-            #logger.info( "parameter {} caused floating point error {}".format(full_param, val))
+            logger.info( "parameter {} caused floating point error {}".format(full_param, val))
             # self.result_file.write("parameter {} caused floating point error {} \n".format(full_param, val))
             print("input triggered exception: ", full_param)
             print("exception value: ", val)
